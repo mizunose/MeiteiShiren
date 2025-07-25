@@ -9,8 +9,10 @@
 =====*/
 
 // 名前空間宣言
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 // クラス定義
 /// <summary>
@@ -26,20 +28,32 @@ public class Map : MonoBehaviour
 	[Header("ステータス")]
 	[SerializeField, Tooltip("データ")] private MapData _data;
 
+	public Image img;
+
+
 	/// <summary>
-	/// マップ生成処理
+	/// 初期化処理
 	/// </summary>
-	/// <param name="_Oneself">効果の発動者</param>
-	/// <param name="_Opponent">効果の受動者</param>
 	private void Start()
 	{
 		if(_data != null)
 		{
 			_data.Generate();
+
+			img.material.SetTexture("_MainTex", _data.MapTexture);
 		}
 		else
 		{
 			Debug.Log("マップデータ不足");
 		}
+	}
+	
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	private void Update()
+	{
+		//TODO:レンダーターゲットに描きこみ
 	}
 }

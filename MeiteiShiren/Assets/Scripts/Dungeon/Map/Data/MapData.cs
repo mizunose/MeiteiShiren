@@ -11,6 +11,7 @@
 // 名前空間宣言
 using UnityEditor;
 using UnityEngine;
+using Unity.Collections;
 
 // クラス定義
 /// <summary>
@@ -28,6 +29,14 @@ public abstract class MapData : ScriptableObject
 	[Header("マスの情報")]
 	[SerializeField, Tooltip("地面のテクスチャ")] protected Material _ground_texture;
 	[SerializeField, Tooltip("壁のモデル")] protected GameObject _wall_model;
+
+	// プロパティ定義
+	/// <summary>
+	/// 外部には読み込み専用なマップ情報
+	/// </summary>
+	/// <value>マップ情報を格納したテクスチャ</value>
+	public Texture2D MapTexture {get; protected set;}
+
 
 	/// <summary>
 	/// マップ生成処理

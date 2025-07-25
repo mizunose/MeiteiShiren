@@ -34,10 +34,12 @@ public class Mass : MonoBehaviour
 
 	GameObject g;
 
+
 	void Start()
 	{
 		GameObject.Instantiate(g, Vector3.zero, Quaternion.identity);
 	}
+
 
 	// Update is called once per frame
 	void Update()
