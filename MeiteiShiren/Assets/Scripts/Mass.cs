@@ -21,6 +21,7 @@ public class Mass : MonoBehaviour
 	public enum TYPE	// éÌóﬁ
 	{
 		GROUND,	// ínñ 
+		ROOM,	// ínñ 
 		WALL,	// ï«
 		MAX	// óvëfêî
 	}

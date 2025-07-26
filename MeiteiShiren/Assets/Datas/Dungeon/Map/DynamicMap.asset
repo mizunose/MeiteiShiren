@@ -16,7 +16,10 @@ MonoBehaviour:
   _ground_texture: {fileID: 2100000, guid: 276c0b36c6f4f674a88564ea0ffb957e, type: 2}
   _wall_model: {fileID: 0}
   _min_rooms: 15
-  _smallest_room: {x: 7, y: 7}
+  _smallest_room: {x: 5, y: 5}
   _area_split_base: {x: 3, y: 3}
+  _area_margin: 0
   _room_margin: 1
-  _area_split_threshold: 2
+  _area_split_threshold: 22
+  _room_sharpen_threshold: 24
+  _road_width: 1
