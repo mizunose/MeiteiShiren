@@ -12,9 +12,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.Searcher;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 // クラス定義
 /// <summary>
@@ -50,12 +48,27 @@ class DynamicMap : MapData
 	[SerializeField, Tooltip("最低部屋作成数"), Min(1)]private uint _min_rooms = 1;
 	[SerializeField, Tooltip("最小部屋サイズ(幅,　高さ)"), Min(3)]private Vector2Int _smallest_room = new Vector2Int(3, 3);	// 通路や削りの関係で2x2以下は動作不可
 	[SerializeField, Tooltip("空間の分割数(横, 縦)"), Min(1)]private Vector2Int _area_split_base = new Vector2Int(3, 3);
-	[SerializeField, Tooltip("空間の周囲のゆとり(壁)"), Min(0)]private int _area_margin = 1;	// ※0だと周囲に壁がない
+	[SerializeField, Tooltip("空間の周囲のゆとり(壁)"), Min(0)]private int _arround_wall = 1;	// ※0だと周囲に壁がない
 	[SerializeField, Tooltip("部屋の周囲のゆとり"), Min(0)]private int _room_margin = 1;	// ※0だと部屋と接合する
 	[SerializeField, Tooltip("空間分割の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)]private int _area_split_threshold = 2;
 	[SerializeField, Tooltip("部屋掘削の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)]private int _room_sharpen_threshold = 2;
 	[Header("通路 ステータス")]
 	[SerializeField, Tooltip("幅"), Min(0)]private int _road_width = 1;
+	private List<Mass.TYPE[]> _map_info = new List<Mass.TYPE[]>();	// マップの情報
+	
+	// プロパティ定義
+	/// <summary>
+	/// マップ全体のサイズ
+	/// </summary>
+	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
+	public override Vector2Int MapSize
+	{
+		get
+		{
+			// 提供
+			return _size + Vector2Int.one * _arround_wall * 2;	// 周囲の壁も含めたサイズ
+		}
+	}
 
 
 	/// <summary>
@@ -76,7 +89,7 @@ class DynamicMap : MapData
 		bool[][] _road_infos = new bool[_size.y][];	// 通路候補マス(trueで通路にでき、falseで不可)
 
 		// 初期化
-		for(uint _y_idx = 0; _y_idx < _size.y; _y_idx++)	// 列単位でのループ
+		for(uint _y_idx = 0; _y_idx < _size.y; _y_idx++)	// 行単位でのループ
 		{
 			// 行を作成
 			_area_infos[_y_idx] = new Mass.TYPE[_size.x];	// エリア用
@@ -219,15 +232,15 @@ class DynamicMap : MapData
 			Vector2Int _max_room_size_rand_range = _area.size - _smallest_area + _smallest_room;	// 部屋をおける範囲の大きさ
 
 			// 部屋データ作成
-			_room.size = _max_room_size_rand_range;
-			//_room.size = new Vector2Int(UnityEngine.Random.Range(_smallest_room.x, _max_room_size_rand_range.x + 1),
-			//	UnityEngine.Random.Range(_smallest_room.y, _max_room_size_rand_range.y + 1));	// 部屋のサイズを決定	※ここのRangeMaxは選択肢なので含まれる値
+			//_room.size = _max_room_size_rand_range;	// ※最大サイズでのテスト用コード
+			_room.size = new Vector2Int(UnityEngine.Random.Range(_smallest_room.x, _max_room_size_rand_range.x + 1),
+				UnityEngine.Random.Range(_smallest_room.y, _max_room_size_rand_range.y + 1));	// 部屋のサイズを決定	※ここのRangeMaxは選択肢なので含まれる値
 			_room.position = new Vector2Int(_area.xMin + UnityEngine.Random.Range(0, _max_room_size_rand_range.x - _room.width) + _room_margin,
 				_area.yMin + UnityEngine.Random.Range(0, _max_room_size_rand_range.y - _room.height) + _room_margin);	// 部屋の位置を決定	※ここのRangeMaxは閾値なので含まれない値
 			_rooms.Add((_room, _area));	// 作成した部屋の情報を登録
 
 			// データから階層の情報を更新
-			for(int _y_idx = _room.yMin; _y_idx < _room.yMax; _y_idx++)	// 列単位でのループ
+			for(int _y_idx = _room.yMin; _y_idx < _room.yMax; _y_idx++)	// 行単位でのループ
 			{
 				for(int _x_idx = _room.xMin; _x_idx < _room.xMax; _x_idx++)	// マス単位でのループ
 				{
@@ -300,14 +313,14 @@ class DynamicMap : MapData
 			}
 
 			// エリアと部屋の領域から通路の候補を演算
-			if (_area.xMin == _area_margin && _area.xMin +_room_margin + _road_width < _room.xMin)	// 左隣にエリアがなく、エリアの左端に通路を設置しても必要なゆとりを保てる
+			if (_area.xMin == 0 && _area.xMin +_room_margin + _road_width < _room.xMin)	// 左隣にエリアがなく、エリアの左端に通路を設置しても必要なゆとりを保てる
 			{
 				for (int _idx = _area.yMin; _idx < _area.yMax; _idx++)	// エリア端のマス単位でのループ
 				{
 					_road_infos[_idx][_area.xMin] = true;	// 通路の候補にできる
 				}
 			}
-			if(_area.yMin == _area_margin && _area.yMin + _room_margin + _road_width < _room.yMin)	// 上隣にエリアがなく、エリアの上端に通路を設置しても必要なゆとりを保てる
+			if(_area.yMin == 0 && _area.yMin + _room_margin + _road_width < _room.yMin)	// 上隣にエリアがなく、エリアの上端に通路を設置しても必要なゆとりを保てる
 			{
 				for (int _idx = _area.xMin; _idx < _area.xMax; _idx++)	// エリア端のマス単位でのループ
 				{
@@ -334,11 +347,11 @@ class DynamicMap : MapData
 			List<Edge> _edges = new List<Edge>{ Edge.Right, Edge.Bottom };	// 辺の選択肢
 
 			// 初期化
-			if (_room.parent_area.xMin > _area_margin || _room.parent_area.xMin - _room.room.xMin > _room_margin + _road_width)	// 左隣にエリアがあるか、エリアの左端に通路を設置しても必要なゆとりを保てる
+			if (_room.parent_area.xMin > 0 || _room.parent_area.xMin - _room.room.xMin > _room_margin + _road_width)	// 左隣にエリアがあるか、エリアの左端に通路を設置しても必要なゆとりを保てる
 			{
 				_edges.Add(Edge.Left);	// 左辺を選択肢に含める
 			}
-			if (_room.parent_area.yMin > _area_margin || _room.parent_area.yMin - _room.room.yMin > _room_margin + _road_width)	// 上隣にエリアがあるか、エリアの上端に通路を設置しても必要なゆとりを保てる
+			if (_room.parent_area.yMin > 0 || _room.parent_area.yMin - _room.room.yMin > _room_margin + _road_width)	// 上隣にエリアがあるか、エリアの上端に通路を設置しても必要なゆとりを保てる
 			{
 				_edges.Add(Edge.Top);	// 上辺を選択肢に含める
 			}
@@ -447,7 +460,7 @@ class DynamicMap : MapData
 				{
 					// 左辺
 					case Edge.Left:
-						for (int _idx = _entrance.x - 1; _idx > _area_margin; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
+						for (int _idx = _entrance.x - 1; _idx > 0; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
 							_area_infos[_entrance.y][_idx] = Mass.TYPE.GROUND;	// マスを通路に設定
@@ -479,7 +492,7 @@ class DynamicMap : MapData
 
 					// 上辺
 					case Edge.Top:
-						for (int _idx = _entrance.y - 1; _idx > _area_margin; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
+						for (int _idx = _entrance.y - 1; _idx > 0; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
 							_area_infos[_idx][_entrance.x] = Mass.TYPE.GROUND;	// マスを通路に設定
@@ -533,13 +546,13 @@ class DynamicMap : MapData
 			List<bool[]> _search_map = new List<bool[]>();	// 通路の開拓用マップ
 
 			// 配列コピー
-			foreach (var _road_info in _road_infos)	// 列単位でコピー
+			foreach (var _road_info in _road_infos)	// 行単位でコピー
 			{
 				// 変数宣言
 				bool[] _line = new bool[_road_info.Length];	// マップ1行分のデータ格納用
 
 				// コピー
-				Array.Copy(_road_info, _line, _road_info.Length);	// 列の情報をコピー
+				Array.Copy(_road_info, _line, _road_info.Length);	// 行の情報をコピー
 				_search_map.Add(_line);	// コピー体を格納
 			}
 
@@ -678,14 +691,44 @@ class DynamicMap : MapData
 
 
 
+		// 作成した階層の情報をマップの情報に変換する
+		foreach (var _area_line_info in _area_infos)	// 生成空間の行単位でのループ
+		{
+			// 変数宣言
+			Mass.TYPE[] _map_line = new Mass.TYPE[_size.x + 2 * _arround_wall];	// マップの行
+			
+			// 初期化
+			Array.Fill(_map_line, Mass.TYPE.WALL);	// 壁で埋めておく
+
+			// 生成情報を登録
+			for (int _area_info_idx = 0; _area_info_idx < _area_line_info.Length; _area_info_idx++)	// 生成空間のマス単位でのループ
+			{
+				_map_line[_area_info_idx + _arround_wall] = _area_line_info[_area_info_idx];	// 該当マスの情報を登録
+			}
+
+			// マップに登録する
+			_map_info.Add(_map_line);	// 行を追加
+		}
+		for (int _idx = 0; _idx < _arround_wall; _idx++)	// 上下面の壁行単位でのループ
+		{
+			// 変数宣言
+			Mass.TYPE[] _wall_line = new Mass.TYPE[_size.x + 2 * _arround_wall];	// 壁の行
+
+			// 初期化
+			Array.Fill(_wall_line, Mass.TYPE.WALL);	// 壁として設定
+
+			// マップに登録する
+			_map_info.Insert(0, _wall_line);	// 初頭に追加
+			_map_info.Add(_wall_line);	// 末尾に追加
+		}
 
 		// マス作成
-		for (int _y_idx = 0;  _y_idx < _area_infos.Length; _y_idx++)	// 列単位でのループ
+		for (int _y_idx = 0;  _y_idx < _map_info.Count; _y_idx++)	// 行単位でのループ
 		{
-			for (int _x_idx = 0;  _x_idx < _area_infos[_y_idx].Length; _x_idx++)	// マス単位でのループ
+			for (int _x_idx = 0;  _x_idx < _map_info[_y_idx].Length; _x_idx++)	// マス単位でのループ
 			{
 				// マスの生成
-				switch (_area_infos[_y_idx][_x_idx])	// マスの種類によって分岐
+				switch (_map_info[_y_idx][_x_idx])	// マスの種類によって分岐
 				{
 					// 通路
 					case Mass.TYPE.GROUND:
@@ -712,34 +755,35 @@ class DynamicMap : MapData
 		}
 
 		// テクスチャ作成
-		MapTexture = new Texture2D(_size.x, _size.y, TextureFormat.RGBA32, false);	// インスタンス作成
+		MapTexture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成
 		MapTexture.filterMode = FilterMode.Point;	// ぼかさない(ドット表現)
 		MapTexture.wrapMode = TextureWrapMode.Clamp;	// 繰り返さない
 
 		// 変数宣言
-		 Color[] pixels = new Color[_size.x * _size.y];	// カラーバッファ
+		 Color[] pixels = new Color[MapSize.x * MapSize.y];	// カラーバッファ
 
 		// カラーバッファ作成
-		for (int _y_idx = 0; _y_idx < _size.y; _y_idx++)	// 列単位でのループ
+		for (int _y_idx = 0; _y_idx < MapSize.y; _y_idx++)	// 行単位でのループ
 		{
-			for (int _x_idx = 0; _x_idx < _size.x; _x_idx++)	// マス単位でのループ
+			for (int _x_idx = 0; _x_idx < MapSize.x; _x_idx++)	// マス単位でのループ
 			{
-				switch (_area_infos[_y_idx][_x_idx])	// マスの種類によって分岐
+				switch (_map_info[_y_idx][_x_idx])	// マスの種類によって分岐
 				{
 					// 通路
 					case Mass.TYPE.GROUND:
-						pixels[_y_idx * _size.x + _x_idx] = new Color(0.6f, 0.95f, 0.9f, 1.0f);
+						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.6f, 0.95f, 0.9f, 1.0f);
 						break;
 
 					// 部屋
 					case Mass.TYPE.ROOM:
-						pixels[_y_idx * _size.x + _x_idx] = new Color(0.6f, 0.95f, 0.9f, 1.0f);
+						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.6f, 0.95f, 0.9f, 1.0f);
 						break;
 
 					// 壁
 					case Mass.TYPE.WALL:
-						pixels[_y_idx * _size.x + _x_idx] = Color.clear;
+						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.1f, 0.0f, 0.5f, 1.0f);
 						break;
+
 					// その他
 					default:
 #if UNITY_EDITOR

@@ -36,6 +36,11 @@ public abstract class MapData : ScriptableObject
 	/// </summary>
 	/// <value>マップ情報を格納したテクスチャ</value>
 	public Texture2D MapTexture {get; protected set;}
+	/// <summary>
+	/// マップ全体のサイズ
+	/// </summary>
+	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
+	public abstract Vector2Int MapSize{get;}
 
 
 	/// <summary>

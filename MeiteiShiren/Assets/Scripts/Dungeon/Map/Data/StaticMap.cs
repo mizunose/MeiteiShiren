@@ -16,6 +16,20 @@ class StaticMap : MapData
 {
 	// 定数定義
 	private const string _NAME = "StaticMap";	// タブ名称
+	
+	// プロパティ定義
+	/// <summary>
+	/// マップ全体のサイズ
+	/// </summary>
+	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
+	public override Vector2Int MapSize
+	{
+		get
+		{
+			// 提供
+			return _size;	// 仮置き
+		}
+	}
 
 	
 	/// <summary>
