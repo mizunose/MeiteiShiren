@@ -41,7 +41,8 @@ class DynamicMap : MapData
 			new Vector2(0.0f, 1.0f),	// 左下
 			new Vector2(1.0f, 1.0f),	// 右下
 		};
-	private const uint _RATIO_RAND_RANGE_MAX = 100;	// 空間分割の乱数幅
+	private const int _RATIO_RAND_RANGE_MAX = 100;	// 空間分割の乱数幅
+	private int _ROAD_WIDTH = 1;	// 道の幅
 
 	// 変数宣言
 	[Header("空間分割・部屋作成 ステータス")]
@@ -52,10 +53,12 @@ class DynamicMap : MapData
 	[SerializeField, Tooltip("部屋の周囲のゆとり"), Min(0)]private int _room_margin = 1;	// ※0だと部屋と接合する
 	[SerializeField, Tooltip("空間分割の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)]private int _area_split_threshold = 2;
 	[SerializeField, Tooltip("部屋掘削の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)]private int _room_sharpen_threshold = 2;
-	[Header("通路 ステータス")]
-	[SerializeField, Tooltip("幅"), Min(0)]private int _road_width = 1;
+	[SerializeField, Tooltip("入口設立の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)]private int _make_entrance_threshold = 2;
 	private List<Mass.TYPE[]> _map_info = new List<Mass.TYPE[]>();	// マップの情報
-	
+	[Header("商店作成 ステータス")]
+	[SerializeField, Tooltip("商店作成率"), Range(0, _RATIO_RAND_RANGE_MAX)]private int _make_shop_threshold = 2;
+
+
 	// プロパティ定義
 	/// <summary>
 	/// マップ全体のサイズ
@@ -107,8 +110,8 @@ class DynamicMap : MapData
 		List<RectInt> _areas = new List<RectInt>();	// 部屋を作るスペース
 		_areas.Add(new RectInt(0, 0, _size.x, _size.y ));	// エリア全体はすでに確保されている
 		List<(RectInt room, RectInt parent_area)> _rooms = new List<(RectInt room, RectInt parent_area)>();	// 部屋
-		Vector2Int _smallest_area = new Vector2Int(_smallest_room.x + _room_margin * 2 + _road_width
-			, _smallest_room.y + _room_margin * 2 + _road_width);	// 各エリアに求められる最小限の容量	※最小ルーム, その周囲のゆとり(端の場合は壁), 通路(右端/下端 に設定するため1本分でOK)
+		Vector2Int _smallest_area = new Vector2Int(_smallest_room.x + _room_margin * 2 + _ROAD_WIDTH
+			, _smallest_room.y + _room_margin * 2 + _ROAD_WIDTH);	// 各エリアに求められる最小限の容量	※最小ルーム, その周囲のゆとり(端の場合は壁), 通路(右端/下端 に設定するため1本分でOK)
 
 		// 保全
 		if(_size.x < _smallest_area.x || _size.y < _smallest_area.y)	// 部屋を格納できるスペースがない
@@ -252,7 +255,7 @@ class DynamicMap : MapData
 					}
 					else
 					{
-						_area_infos[_y_idx][_x_idx] = Mass.TYPE.ROOM;	// マスを部屋に設定
+						_area_infos[_y_idx][_x_idx] = Mass.TYPE.PUBLIC_ROOM;	// マスを部屋に設定
 					}
 				}
 			}
@@ -313,14 +316,14 @@ class DynamicMap : MapData
 			}
 
 			// エリアと部屋の領域から通路の候補を演算
-			if (_area.xMin == 0 && _area.xMin +_room_margin + _road_width < _room.xMin)	// 左隣にエリアがなく、エリアの左端に通路を設置しても必要なゆとりを保てる
+			if (_area.xMin == 0 && _area.xMin +_room_margin + _ROAD_WIDTH < _room.xMin)	// 左隣にエリアがなく、エリアの左端に通路を設置しても必要なゆとりを保てる
 			{
 				for (int _idx = _area.yMin; _idx < _area.yMax; _idx++)	// エリア端のマス単位でのループ
 				{
 					_road_infos[_idx][_area.xMin] = true;	// 通路の候補にできる
 				}
 			}
-			if(_area.yMin == 0 && _area.yMin + _room_margin + _road_width < _room.yMin)	// 上隣にエリアがなく、エリアの上端に通路を設置しても必要なゆとりを保てる
+			if(_area.yMin == 0 && _area.yMin + _room_margin + _ROAD_WIDTH < _room.yMin)	// 上隣にエリアがなく、エリアの上端に通路を設置しても必要なゆとりを保てる
 			{
 				for (int _idx = _area.xMin; _idx < _area.xMax; _idx++)	// エリア端のマス単位でのループ
 				{
@@ -339,19 +342,21 @@ class DynamicMap : MapData
 		
 		// 変数宣言
 		List<Vector2Int> _road_points = new List<Vector2Int>();	// 通路の軌跡上に配置された接続待ち端子
+		List<(RectInt room, List<(Vector2Int position, Vector2Int normal)> entrances)> _rooms_entrances = new();	// 部屋の入口
 
 		// 派生通路作成	※全エリアの通路候補地割り出しが終わってから処理
 		foreach (var _room in _rooms)
 		{
 			// 変数宣言
 			List<Edge> _edges = new List<Edge>{ Edge.Right, Edge.Bottom };	// 辺の選択肢
+			List<(Vector2Int position, Vector2Int normal)> _entrances = new();	// 確定した入口格納用
 
 			// 初期化
-			if (_room.parent_area.xMin > 0 || _room.parent_area.xMin - _room.room.xMin > _room_margin + _road_width)	// 左隣にエリアがあるか、エリアの左端に通路を設置しても必要なゆとりを保てる
+			if (_room.parent_area.xMin > 0 || _room.parent_area.xMin - _room.room.xMin > _room_margin + _ROAD_WIDTH)	// 左隣にエリアがあるか、エリアの左端に通路を設置しても必要なゆとりを保てる
 			{
 				_edges.Add(Edge.Left);	// 左辺を選択肢に含める
 			}
-			if (_room.parent_area.yMin > 0 || _room.parent_area.yMin - _room.room.yMin > _room_margin + _road_width)	// 上隣にエリアがあるか、エリアの上端に通路を設置しても必要なゆとりを保てる
+			if (_room.parent_area.yMin > 0 || _room.parent_area.yMin - _room.room.yMin > _room_margin + _ROAD_WIDTH)	// 上隣にエリアがあるか、エリアの上端に通路を設置しても必要なゆとりを保てる
 			{
 				_edges.Add(Edge.Top);	// 上辺を選択肢に含める
 			}
@@ -371,7 +376,7 @@ class DynamicMap : MapData
 					case Edge.Left:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_idx][_room.room.xMin] == Mass.TYPE.ROOM)	// 削り取られていないマス
+							if (_area_infos[_idx][_room.room.xMin] == Mass.TYPE.PUBLIC_ROOM)	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_room.room.xMin, _idx));	// 入口の候補として優先される
 							}
@@ -386,7 +391,7 @@ class DynamicMap : MapData
 					case Edge.Right:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_idx][_room.room.xMax - 1] == Mass.TYPE.ROOM)	// 削り取られていないマス
+							if (_area_infos[_idx][_room.room.xMax - 1] == Mass.TYPE.PUBLIC_ROOM)	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_room.room.xMax - 1, _idx));	// 入口の候補として優先される
 							}
@@ -401,7 +406,7 @@ class DynamicMap : MapData
 					case Edge.Top:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_room.room.yMin][_idx] == Mass.TYPE.ROOM)	// 削り取られていないマス
+							if (_area_infos[_room.room.yMin][_idx] == Mass.TYPE.PUBLIC_ROOM)	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_idx, _room.room.yMin));	// 入口の候補として優先される
 							}
@@ -416,7 +421,7 @@ class DynamicMap : MapData
 					case Edge.Bottom:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_room.room.yMax - 1][_idx] == Mass.TYPE.ROOM)	// 削り取られていないマス
+							if (_area_infos[_room.room.yMax - 1][_idx] == Mass.TYPE.PUBLIC_ROOM)	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_idx, _room.room.yMax - 1));	// 入口の候補として優先される
 							}
@@ -436,7 +441,7 @@ class DynamicMap : MapData
 				}
 				
 				// 変数宣言
-				Vector2Int _entrance = new Vector2Int();	// 部屋の入り口	//TODO:リスト化
+				Vector2Int _entrance = new Vector2Int();	// 部屋の入り口
 
 				// 入口を選択
 				if(_entryables.Count > 0)	// 候補が存在
@@ -446,7 +451,7 @@ class DynamicMap : MapData
 				else if(_lost_masses.Count > 0)	// 壁で埋められ候補がない
 				{
 					_entrance = _lost_masses[UnityEngine.Random.Range(0, _lost_masses.Count)];	// 一か所ランダムで選択する
-					_area_infos[_entrance.y][_entrance.x] = Mass.TYPE.ROOM;	// ここだけ部屋のままだったことにする
+					_area_infos[_entrance.y][_entrance.x] = Mass.TYPE.PUBLIC_ROOM;	// ここだけ部屋のままだったことにする
 				}
 #if UNITY_EDITOR
 				else	// 領域自体がない
@@ -460,6 +465,8 @@ class DynamicMap : MapData
 				{
 					// 左辺
 					case Edge.Left:
+
+						// 通路生成
 						for (int _idx = _entrance.x - 1; _idx > 0; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
@@ -471,11 +478,19 @@ class DynamicMap : MapData
 								_road_points.Add(new Vector2Int(_idx, _entrance.y));	// 接続待ちに登録
 								break;	// ループ処理完了
 							}
+
 						}
+
+						// リスト更新
+						_entrances.Add((_entrance, Vector2Int.left));	// 作成した入口部分の情報を登録
+
+						// 終了
 						break;	// 分岐処理完了
 
 					// 右辺
 					case Edge.Right:
+
+						// 通路生成
 						for (int _idx = _entrance.x + 1; _idx < _size.x; _idx++)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
@@ -488,10 +503,17 @@ class DynamicMap : MapData
 								break;	// ループ処理完了
 							}
 						}
+
+						// リスト更新
+						_entrances.Add((_entrance, Vector2Int.right));	// 作成した入口部分の情報を登録
+
+						// 終了
 						break;	// 分岐処理完了
 
 					// 上辺
 					case Edge.Top:
+
+						// 通路生成
 						for (int _idx = _entrance.y - 1; _idx > 0; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
@@ -504,10 +526,17 @@ class DynamicMap : MapData
 								break;	// ループ処理完了
 							}
 						}
+
+						// リスト更新
+						_entrances.Add((_entrance, Vector2Int.down));	// 作成した入口部分の情報を登録
+
+						// 終了
 						break;	// 分岐処理完了
 
 					// 下辺
 					case Edge.Bottom:
+
+						// 通路生成
 						for (int _idx = _entrance.y + 1; _idx < _size.y; _idx++)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
@@ -520,6 +549,11 @@ class DynamicMap : MapData
 								break;	// ループ処理完了
 							}
 						}
+
+						// リスト更新
+						_entrances.Add((_entrance, Vector2Int.up));	// 作成した入口部分の情報を登録
+
+						// 終了
 						break;	// 分岐処理完了
 
 					// その他
@@ -534,8 +568,14 @@ class DynamicMap : MapData
 				_edges.RemoveAt(edge_idx);	// 選択済なので次回以降は免除
 
 				// 終了
-				//TODO:確率で打ち切り
+				if (UnityEngine.Random.Range(0, _RATIO_RAND_RANGE_MAX) < _make_entrance_threshold)	// 閾値チェックに失敗
+				{
+					break;	// 終了条件を満たす
+				}
 			}
+
+			// リスト更新
+			_rooms_entrances.Add((_room.room, _entrances));	// 部屋の入口を登録
 		}
 
 		// 接続待ちの端子同士を繋げる
@@ -679,16 +719,242 @@ class DynamicMap : MapData
 			}
 		}
 
+		// 変数宣言
+		List<List<RectInt>> _room_contacts = new();	// 各連続区域に含まれる部屋
 
+		// メイン空間(通常アクセス可能なマス)を求める
+		while (_rooms_entrances.Count > 0)	// 連続区間単位でのループ
+		{
+			// 変数宣言
+			List<(Vector2Int position, Vector2Int direction)> _searchables = new();	// 探索予定
+			List<RectInt> _room_contact = new();	// 今回扱う連続区域における部屋情報格納用
+			(Vector2Int position, Vector2Int stride) _searcher;	// 探索情報
 
+			// リスト更新
+			_room_contact.Add(_rooms_entrances[0].room);	// ループ条件上、初項は必ず存在するのでそれを起点とする)
 
+			// 初期化
+			if (_rooms_entrances[0].entrances.Count == 0)	// 入口がない(あり得ない)
+			{
+				_rooms_entrances.RemoveAt(0);	// 一応通過した部屋なのでリストから外す
+				continue;	// この処理の影響で処理対象がなくなった場合の不具合を防ぐため、一度ループをやり直し条件チェックを受ける
+			}
+			else
+			{
+				_searcher = _rooms_entrances[0].entrances[0];	// 条件上、初項は必ず存在するのでそれを起点とする)
+				for (int _idx = 1; _idx < _rooms_entrances[0].entrances.Count; _idx++)	// 他にも探索可能領域がある
+				{
+					_searchables.Add(_rooms_entrances[0].entrances[_idx]);	// 探索予定として保存
+				}
+				_rooms_entrances.RemoveAt(0);	// この部屋については見たので今後の候補から外す
+			}
+
+			// 変数宣言
+			bool[][] _search_map = new bool[_size.y][];	// 通路の開拓用マップ(trueで探索可能)
+
+			// 初期化
+			for (int _y_idx = 0; _y_idx < _size.y; _y_idx++)	// 行単位でのループ
+			{
+				// 変数宣言
+				_search_map[_y_idx] = new bool[_size.x];	// 行を作成
+
+				// 探索可能領域を反映
+				for(int _x_idx = 0; _x_idx < _size.x; _x_idx++)	// マス単位でのループ
+				{
+					if (_area_infos[_y_idx][_x_idx] == Mass.TYPE.GROUND)	// 通路マス
+					{
+						_search_map[_y_idx][_x_idx] = true;	// 通路があるなら探索可能
+					}
+					else	// 通路でないマス
+					{
+						_search_map[_y_idx][_x_idx] = false;	// 探索範囲ではない
+					}
+				}
+			}
+
+			// 連続区域が含む部屋を走査
+			while (true)	// 探索マス単位でのループ
+			{
+				// 移動
+				_searcher.position += _searcher.stride;	// 移動方向に沿って探索
+
+				// 足元チェック
+				if (_searcher.position.x < 0 || _searcher.position.x >= _size.x || _searcher.position.y < 0|| _searcher.position.y >= _size.y
+					|| !_search_map[_searcher.position.y][_searcher.position.x])	// 探索済、もしくは探索不可
+				{
+					if (_searchables.Count > 0)	// 次の探索地点がある
+					{
+						_searcher = _searchables[0];	// 探索場所を切り替え
+						_searchables.RemoveAt(0);	// 初項は抽出済み
+						continue;	// 切り替えた探索情報でまた探索する
+					}
+					else	// 探索完了
+					{
+						break;	// 連続区間が確定
+					}
+				}
+				else	// 未探索
+				{
+					_search_map[_searcher.position.y][_searcher.position.x] = false;	// 探索済に更新
+				}
+
+				// 変数宣言
+				Vector2Int[] _directions = { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down };	// 移動方向の選択肢
+
+				// 新規探索方向のチェック
+				foreach (var _direction in _directions)	// 候補単位でのループ
+				{
+					// パス
+					if (_searcher.stride == _direction)	// 現在探索中
+					{
+						continue;	// 新規の候補とはならない
+					}
+
+					// 変数宣言
+					Vector2Int _moved_position = _searcher.position + _direction;	// 移動先位置
+
+					// 検査
+					if (_moved_position.x >= 0 && _moved_position.x < _size.x && _moved_position.y >= 0 && _moved_position.y < _size.y
+						&& _search_map[_moved_position.y][_moved_position.x])	// 移動できる方向
+					{
+						_searchables.Add((_searcher.position, _direction));	// 探索予定として保存
+					}
+				}
+
+				// 部屋への到達検査
+				for (int _room_entrances_idx = 0; _room_entrances_idx < _rooms_entrances.Count; _room_entrances_idx++)	// 部屋単位でのループ
+				{
+					// 変数宣言
+					bool _is_find = false;	// 検査用フラグ。到達時true, それ以外ではfalse
+
+					// 各入口に到達しているか検査する
+					foreach (var _entrance in _rooms_entrances[_room_entrances_idx].entrances)	// 入口単位でのループ
+					{
+						if (_searcher.position == _entrance.position + _entrance.normal)	// 入口の目前のマス	※接するマスなので部屋を連続区域に含められる
+						{
+							// 探索領域拡張
+							foreach (var _other_entrance in _rooms_entrances[_room_entrances_idx].entrances)	// この部屋の入口単位でのループ
+							{
+								if (_other_entrance == _entrance)	// 今扱っているもの
+								{
+									continue;	// ここにアクセスしているのでこの後扱う必要がない
+								}
+								else
+								{
+									_searchables.Add(_other_entrance);	// この部屋を通じてアクセスできる通路になるので探索予定にする
+								}
+							}
+
+							// 検査完了
+							_is_find = true;	// 見つかった
+							break;	// 他の部屋はすでに探索予定にしたので処理する必要がない
+						}
+					}
+
+					// 検査結果をルーム単位でも処理
+					if (_is_find)	// すでに部屋が見つかっている
+					{
+						_room_contact.Add(_rooms_entrances[_room_entrances_idx].room);	// 連続区域として部屋を登録
+						_rooms_entrances.RemoveAt(_room_entrances_idx);	// 所属区域が確定したので今後の走査に含めない
+						_room_entrances_idx--;	// リストから取り除いた分、添え字を調整する
+					}
+				}
+			}
+
+			// リスト更新
+			_room_contacts.Add(_room_contact);	// 連続区域を登録
+		}
+
+		// 主部分と副部分に切り分け
+		if (_room_contacts.Count == 0)	// 連続区間無し(あり得ない)
+		{
+#if UNITY_EDITOR
+			Debug.LogError("連続区間の抽出に失敗しました");
+#endif	// end UNITY_EDITOR
+			return;	// 異常中断
+		}
+		if(_room_contacts.Count > 1)	// 0つなら無い、1つなら分類不可能、複数なら通常アクセスの可否で分別する
+		{
+			// 並び替え
+			_room_contacts.Sort((List<RectInt> first, List<RectInt> second) => second.Count - first.Count);	// 容量の多い順
+
+			// 主部分以外を抽出
+			for (int _idx = 1; _idx < _room_contacts.Count; _idx++)	// 副部分の連続区域単位でのループ
+			{
+				foreach (var _room in _room_contacts[_idx])	// 部屋単位でのループ
+				{
+					for (int _y_idx = _room.yMin; _y_idx < _room.yMax; _y_idx++)	// 行単位でのループ
+					{
+						for (int _x_idx = _room.xMin; _x_idx < _room.xMax; _x_idx++)	// マス単位でのループ
+						{
+							if (_area_infos[_y_idx][_x_idx] == Mass.TYPE.PUBLIC_ROOM)	// 通常部屋のマス
+							{
+								// 階層の情報を更新
+								_area_infos[_y_idx][_x_idx] = Mass.TYPE.PRIVATE_ROOM;	// 通常部屋を隠し部屋に変換する
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// 変数宣言
+		List<RectInt> _main_contact = _room_contacts[0];	// 主部分連続区域
 
 		// 商店作成
+		if (UnityEngine.Random.Range(0, _RATIO_RAND_RANGE_MAX) < _make_shop_threshold)	// 閾値チェックに成功
+		{
+			// 変数宣言
+			int _shop_idx = UnityEngine.Random.Range(0, _main_contact.Count);	// 商店にする部屋の番号
+			RectInt _shop_area = _main_contact[_shop_idx];	// 商店
+			
+			// 部屋を商店に変換
+			for (int _y_idx = _shop_area.yMin; _y_idx < _shop_area.yMax; _y_idx++)	// 行単位でのループ
+			{
+				for (int _x_idx = _shop_area.xMin; _x_idx < _shop_area.xMax; _x_idx++)	// マス単位でのループ
+				{
+					if (_area_infos[_y_idx][_x_idx] == Mass.TYPE.PUBLIC_ROOM)	// 通常部屋のマス
+					{
+						// 階層の情報を更新
+						_area_infos[_y_idx][_x_idx] = Mass.TYPE.SHOP;	// 通常部屋を商店に変換する
+					}
+				}
+			}
+		}
+
+		// 変数宣言
+		List<Vector2Int> _main_spwan_masses = new();	// 主部分のオブジェクト生成可能マス
+
+		// 主部分のマスを抽出
+		foreach (var _room in _main_contact)	// 部屋単位でのループ
+		{
+			for (int _y_idx = _room.yMin; _y_idx < _room.yMax; ++_y_idx)	// 行単位でのループ
+			{
+				for (int _x_idx = _room.xMin; _x_idx < _room.xMax; ++_x_idx)	// マス単位でのループ
+				{
+					if (_area_infos[_y_idx][_x_idx] == Mass.TYPE.PUBLIC_ROOM)	// 通常部屋のマス
+					{
+						_main_spwan_masses.Add(new Vector2Int(_x_idx, _y_idx));	// マスの情報を登録
+					}
+				}
+			}
+		}
 
 		// プレイヤー初期位置作成
+		int _player_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// プレイヤー生成位置の番号
+		Vector2Int _player_position = _main_spwan_masses[_player_spawn_idx];	// プレイヤー生成
+		_main_spwan_masses.RemoveAt(_player_spawn_idx);	// プレイヤー生成に使うマスなので他の生成に使わない
 
 		// 階段作成
+		int _goal_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// 階段位置の番号
+		Vector2Int _goal_position = _main_spwan_masses[_goal_spawn_idx];	// 階段生成
+		_main_spwan_masses.RemoveAt(_goal_spawn_idx);	// 階段生成に使うマスなので他の生成に使わない
 
+
+		// 罠作成
+
+
+		// アイテム作成
 
 
 		// 作成した階層の情報をマップの情報に変換する
@@ -732,17 +998,27 @@ class DynamicMap : MapData
 				{
 					// 通路
 					case Mass.TYPE.GROUND:
-						MakeMass(new Vector3(_x_idx, 0.0f,  _y_idx) * _MASS_SIZE);	// マス作成
-						break;
+						MakeMass(new Vector3(_x_idx, 0.0f, _y_idx) * _MASS_SIZE);	// マス作成
+						break;	// 分岐処理完了
 
-					// 部屋
-					case Mass.TYPE.ROOM:
-						MakeMass(new Vector3(_x_idx, 0.0f,  _y_idx) * _MASS_SIZE);	// マス作成
-						break;
+					// 通常部屋
+					case Mass.TYPE.PUBLIC_ROOM:
+						MakeMass(new Vector3(_x_idx, 0.0f, _y_idx) * _MASS_SIZE);	// マス作成
+						break;	// 分岐処理完了
+
+					// 隠し部屋
+					case Mass.TYPE.PRIVATE_ROOM:
+						MakeMass(new Vector3(_x_idx, 0.0f, _y_idx) * _MASS_SIZE);	// マス作成
+						break;	// 分岐処理完了
+
+					// 商店
+					case Mass.TYPE.SHOP:
+						MakeMass(new Vector3(_x_idx, 0.0f, _y_idx) * _MASS_SIZE);	// マス作成
+						break;	// 分岐処理完了
 
 					// 壁
 					case Mass.TYPE.WALL:
-						break;
+						break;	// 分岐処理完了
 
 					// その他
 					default:
@@ -772,17 +1048,27 @@ class DynamicMap : MapData
 					// 通路
 					case Mass.TYPE.GROUND:
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.6f, 0.95f, 0.9f, 1.0f);
-						break;
+						break;	// 分岐処理完了
 
-					// 部屋
-					case Mass.TYPE.ROOM:
+					// 通常部屋
+					case Mass.TYPE.PUBLIC_ROOM:
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.6f, 0.95f, 0.9f, 1.0f);
-						break;
+						break;	// 分岐処理完了
+
+					// 隠し部屋
+					case Mass.TYPE.PRIVATE_ROOM:
+						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.9f, 0.9f, 0.5f, 1.0f);
+						break;	// 分岐処理完了
+
+					// 商店
+					case Mass.TYPE.SHOP:
+						pixels[_y_idx * MapSize.x + _x_idx] = new Color(1.0f, 0.2f, 0.2f, 1.0f);
+						break;	// 分岐処理完了
 
 					// 壁
 					case Mass.TYPE.WALL:
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.1f, 0.0f, 0.5f, 1.0f);
-						break;
+						break;	// 分岐処理完了
 
 					// その他
 					default:

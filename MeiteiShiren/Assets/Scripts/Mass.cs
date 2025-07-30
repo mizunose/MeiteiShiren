@@ -21,7 +21,9 @@ public class Mass : MonoBehaviour
 	public enum TYPE	// í—Ş
 	{
 		GROUND,	// ’n–Ê
-		ROOM,	// ’n–Ê
+		PUBLIC_ROOM,	// ’Êí•”‰®
+		PRIVATE_ROOM,	// ‰B‚µ•”‰®
+		SHOP,	// ¤“X
 		WALL,	// •Ç
 		MAX	// —v‘f”
 	}
