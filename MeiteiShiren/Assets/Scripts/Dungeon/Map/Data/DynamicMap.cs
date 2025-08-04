@@ -16,7 +16,7 @@ using UnityEngine;
 
 // クラス定義
 /// <summary>
-/// 自動生成マップデータ
+/// <para>自動生成マップデータ</para>
 /// </summary>
 [CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
 class DynamicMap : MapData
@@ -24,12 +24,11 @@ class DynamicMap : MapData
 	// 定数定義
 	private const string _NAME = "DynamicMap";	// タブ名称
 	private const Mass.TYPE _INITIAL_PACK = Mass.TYPE.WALL;	// 最初にエリアを仮埋めするマス種
-	private const float _MASS_SIZE = 1.0f;	// 1マスあたりの大きさ
 	private static readonly Vector3[] _MASS_VERTICES = {	// マスメッシュの頂点情報
-			new Vector3(-_MASS_SIZE * 0.5f, 0.0f, _MASS_SIZE * 0.5f),	// 左上
-			new Vector3(_MASS_SIZE * 0.5f, 0.0f, _MASS_SIZE * 0.5f),	// 右上
-			new Vector3(-_MASS_SIZE * 0.5f, 0.0f, -_MASS_SIZE * 0.5f),	// 左下
-			new Vector3(_MASS_SIZE * 0.5f, 0.0f, -_MASS_SIZE * 0.5f),	// 右下
+			new Vector3(-MASS_SIZE * 0.5f, 0.0f, MASS_SIZE * 0.5f),	// 左上
+			new Vector3(MASS_SIZE * 0.5f, 0.0f, MASS_SIZE * 0.5f),	// 右上
+			new Vector3(-MASS_SIZE * 0.5f, 0.0f, -MASS_SIZE * 0.5f),	// 左下
+			new Vector3(MASS_SIZE * 0.5f, 0.0f, -MASS_SIZE * 0.5f),	// 右下
 		};
 	private static readonly int[] _MASS_INDICES = {	// マスメッシュの頂点インデックス
 			0, 1, 2,	// 左側三角形
@@ -60,8 +59,9 @@ class DynamicMap : MapData
 
 
 	// プロパティ定義
+
 	/// <summary>
-	/// マップ全体のサイズ
+	/// <para>マップ全体のサイズ</para>
 	/// </summary>
 	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
 	public override Vector2Int MapSize
@@ -940,14 +940,29 @@ class DynamicMap : MapData
 			}
 		}
 
-		// プレイヤー初期位置作成
+		// 変数宣言
 		int _player_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// プレイヤー生成位置の番号
-		Vector2Int _player_position = _main_spwan_masses[_player_spawn_idx];	// プレイヤー生成
-		_main_spwan_masses.RemoveAt(_player_spawn_idx);	// プレイヤー生成に使うマスなので他の生成に使わない
+		Vector2Int _player_position = _main_spwan_masses[_player_spawn_idx];	// マップ上のプレイヤー生成位置
+
+		// プレイヤー作成	//TODO:チーム配置
+		if (_player.model)	// ヌルチェック
+		{
+			_player_position = PositionAreaToMap(_player_position);	// マップ上の位置に変換
+			Player = Instantiate(_player.model, new Vector3(_player_position.x, 0.0f, _player_position.y) * MASS_SIZE + _player.center, Quaternion.identity);	// プレイヤー生成
+			_main_spwan_masses.RemoveAt(_player_spawn_idx);	// プレイヤー生成に使うマスなので他の生成に使わない
+		}
+#if UNITY_EDITOR
+		else
+		{
+			Debug.LogError("生成プレイヤーの情報が設定されていません");
+		}
+#endif	// end UNITY_EDITOR
+
+		// 変数宣言
+		int _goal_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// 階段位置の番号
 
 		// 階段作成
-		int _goal_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// 階段位置の番号
-		Vector2Int _goal_position = _main_spwan_masses[_goal_spawn_idx];	// 階段生成
+		Vector2Int _goal_position = PositionAreaToMap(_main_spwan_masses[_goal_spawn_idx]);	// 階段生成
 		_main_spwan_masses.RemoveAt(_goal_spawn_idx);	// 階段生成に使うマスなので他の生成に使わない
 
 
@@ -988,6 +1003,9 @@ class DynamicMap : MapData
 			_map_info.Add(_wall_line);	// 末尾に追加
 		}
 
+		// 初期化
+		MapMasses = new Mass[MapSize.y, MapSize.x];	// マス管理のリサイズ
+
 		// マス作成
 		for (int _y_idx = 0;  _y_idx < _map_info.Count; _y_idx++)	// 行単位でのループ
 		{
@@ -998,22 +1016,22 @@ class DynamicMap : MapData
 				{
 					// 通路
 					case Mass.TYPE.GROUND:
-						MakeMass(new Vector3(_x_idx, 0.0f, _y_idx) * _MASS_SIZE);	// マス作成
+						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
 						break;	// 分岐処理完了
 
 					// 通常部屋
 					case Mass.TYPE.PUBLIC_ROOM:
-						MakeMass(new Vector3(_x_idx, 0.0f, _y_idx) * _MASS_SIZE);	// マス作成
+						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
 						break;	// 分岐処理完了
 
 					// 隠し部屋
 					case Mass.TYPE.PRIVATE_ROOM:
-						MakeMass(new Vector3(_x_idx, 0.0f, _y_idx) * _MASS_SIZE);	// マス作成
+						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
 						break;	// 分岐処理完了
 
 					// 商店
 					case Mass.TYPE.SHOP:
-						MakeMass(new Vector3(_x_idx, 0.0f, _y_idx) * _MASS_SIZE);	// マス作成
+						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
 						break;	// 分岐処理完了
 
 					// 壁
@@ -1085,10 +1103,43 @@ class DynamicMap : MapData
 
 
 	/// <summary>
+	/// <para>空間ベースでの位置をマップベースでの位置に変換</para>
+	/// </summary>
+	/// <param name="area_position">空間ベースでの位置</param>
+	/// <returns>マップベースでの位置</returns>
+	private Vector2Int PositionAreaToMap (Vector2Int area_position)
+	{
+		// 変数宣言
+		Vector2Int _result = area_position;	// 演算結果格納用
+
+		// 変換処理
+		if (area_position.x >= 0)	// 左壁生成によってずらされる位置
+		{
+			_result.x += _arround_wall;	// 壁の生成層分ずれる
+		}
+		if (area_position.x >= _size.x)	// 右壁壁生成によってずらされる位置
+		{
+			_result.x += _arround_wall;	// 壁の生成層分ずれる
+		}
+		if (area_position.y >= 0)	// 上壁生成によってずらされる位置
+		{
+			_result.y += _arround_wall;	// 壁の生成層分ずれる
+		}
+		if (area_position.y >= _size.y)	// 下壁壁生成によってずらされる位置
+		{
+			_result.y += _arround_wall;	// 壁の生成層分ずれる
+		}
+
+		// 提供
+		return _result;	// マップ上での位置
+	}
+
+
+	/// <summary>
 	/// <para>マスをインスタンスとして作成</para>
 	/// </summary>
 	/// <param name="position">生成位置</param>
-	private void MakeMass(Vector3 position)
+	private void MakeMass(Vector2Int position)
 	{
 		// 変数宣言
 		Mesh _mesh = new Mesh();	//メッシュ本体
@@ -1097,14 +1148,23 @@ class DynamicMap : MapData
 		GameObject _object = new GameObject();	// マスのインスタンス作成
 		var _mesh_filter = _object.AddComponent<MeshFilter>();	// メッシュ管理機能追加
 		_object.AddComponent<MeshRenderer>().material = _ground_texture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
-		//TODO:Mass機能を作成、中身は必ず"壁"で初期化	_INITIAL_PACK
+		_object.transform.parent = Dungeon.Instance.Map.transform;	// マップの子に登録
+#if UNITY_EDITOR
+		_object.name = "Mass_" + position.x + "_" + position.y;	// デバッグ時にはわかりやすいように命名しておく
+#endif	// end UNITY_EDITOR
+		var _mass = _object.AddComponent<Mass>();
+		_mass.type = _map_info[position.y][position.x];	
 
 		// 初期化
-		_object.transform.position = position;	// 生成位置を設定
+		_object.transform.position = new Vector3(position.x, 0.0f, position.y) * MASS_SIZE;	// 生成位置を設定
 		_mesh.vertices = _MASS_VERTICES;	// メッシュの頂点情報を設定
 		_mesh.triangles = _MASS_INDICES;	// メッシュの頂点インデックスを設定
 		_mesh.RecalculateNormals();	// 法線を再計算
 		_mesh.uv = _MASS_UVS;	// テクスチャ座標を設定
-		_mesh_filter.sharedMesh = _mesh;	// 作成したメッシュを登録
+		_mesh_filter.sharedMesh = _mesh;    // 作成したメッシュを登録
+
+
+		MapMasses[position.y, position.x] = _mass;
+
 	}
 }

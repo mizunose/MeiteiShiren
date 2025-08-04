@@ -18,8 +18,9 @@ class StaticMap : MapData
 	private const string _NAME = "StaticMap";	// タブ名称
 	
 	// プロパティ定義
+
 	/// <summary>
-	/// マップ全体のサイズ
+	/// <para>マップ全体のサイズ</para>
 	/// </summary>
 	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
 	public override Vector2Int MapSize
@@ -33,7 +34,7 @@ class StaticMap : MapData
 
 	
 	/// <summary>
-	/// マップ生成処理
+	/// <para>マップ生成処理</para>
 	/// </summary>
 	/// <param name="_Oneself">効果の発動者</param>
 	/// <param name="_Opponent">効果の受動者</param>
