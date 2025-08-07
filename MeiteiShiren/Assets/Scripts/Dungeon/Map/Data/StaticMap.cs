@@ -11,6 +11,10 @@
 // 名前空間宣言
 using UnityEngine;
 
+// クラス定義
+/// <summary>
+/// <para>固定生成マップデータ</para>
+/// </summary>
 [CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
 class StaticMap : MapData
 {
@@ -36,8 +40,6 @@ class StaticMap : MapData
 	/// <summary>
 	/// <para>マップ生成処理</para>
 	/// </summary>
-	/// <param name="_Oneself">効果の発動者</param>
-	/// <param name="_Opponent">効果の受動者</param>
 	public override void Generate()
 	{
 	}

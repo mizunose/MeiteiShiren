@@ -80,7 +80,7 @@ Shader "Custom/Ground"	// シェーダー名
 			/// </summary>
 			/// <param name="input">頂点情報</param>
 			/// <returns>次のシェーダー(ピクセルシェーダー)に渡すデータ</returns>
-			FragmentInput vertex_shader(VertexInput input) // 構造体を使用した入出力
+			FragmentInput vertex_shader(VertexInput input)	// 構造体を使用した入出力
 			{
 				// 変数宣言
 				FragmentInput _result;	// 結果格納用
