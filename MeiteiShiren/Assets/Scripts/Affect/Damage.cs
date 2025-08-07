@@ -12,7 +12,10 @@
 using UnityEngine;
 
 // クラス定義
-[CreateAssetMenu(menuName = _AFFECT_MENU_TAB_NAME + _AFFECT_NAME, fileName = _AFFECT_NAME)]
+/// <summary>
+/// <para>ダメージ効果</para>
+/// </summary>
+[CreateAssetMenu(menuName = _MENU_TAB_NAME + _AFFECT_NAME, fileName = _AFFECT_NAME)]
 public class Damage : Affect
 {
 	// 定数定義
@@ -21,97 +24,78 @@ public class Damage : Affect
 
 	// 変数宣言
 	[Header("パラメータ")]
-	[SerializeField, Tooltip("ダメージ値")] private float m_fDamage = 0.0f;
+	[SerializeField, Tooltip("ダメージ値")] private float _value = 0.0f;
 	[Header("状態")]
-	[SerializeField, Tooltip("無敵貫通")] private bool m_bIgnoreInvincible = false;
-	[SerializeField, Tooltip("ダメージ発生時無敵付与")] private bool m_bGrantInvincible = true;
-	[SerializeField, Tooltip("致死性")] private bool m_bKillable = true;
+	[SerializeField, Tooltip("防御貫通")] private bool _ignore_defence = false;
+	[SerializeField, Tooltip("無敵貫通")] private bool _ignore_invincible = false;
+	[SerializeField, Tooltip("致死性")] private bool _killable = true;
 
 	// プロパティ定義
 
 	/// <summary>
-	/// 基礎ダメージプロパティ
+	/// <para>基礎ダメージ</para>
 	/// </summary>
-	/// <value><see cref="m_fDamage"/></value>
+	/// <value><see cref="_value"/></value>
 	public float BaseDamage	// 無補正ダメージ値
 	{
 		get
 		{
 			// 提供
-			return m_fDamage;	// 計算前の基礎ダメージを提供
+			return _value;	// 計算前の基礎ダメージを提供
 		}
 		set
 		{
 			// 更新
-			m_fDamage = value;	// 計算前の基礎ダメージを更新
+			_value = value;	// 計算前の基礎ダメージを更新
 		}
 	}
 
 	/// <summary>
-	/// 無敵貫通フラグプロパティ
+	/// <para>無敵貫通フラグ</para>
 	/// </summary>
-	/// <value><see cref="m_bIgnoreInvincible"/></value>
+	/// <value><see cref="_ignore_invincible"/></value>
 	public bool IgnoreInvincible
 	{
 		get
 		{
 			// 提供
-			return m_bIgnoreInvincible;	// 無敵貫通フラグを提供
+			return _ignore_invincible;	// 無敵貫通フラグを提供
 		}
 		set
 		{
 			// 更新
-			m_bIgnoreInvincible = value;	// フラグ値更新
+			_ignore_invincible = value;	// フラグ値更新
 		}
 	}
 
 	/// <summary>
-	/// 無敵付与フラグプロパティ
+	/// <para>致死性フラグ</para>
 	/// </summary>
-	/// <value><see cref="m_bGrantInvincible"/></value>
-	public bool GrantInvincible
-	{
-		get
-		{
-			// 提供
-			return m_bGrantInvincible;	// 無敵付与フラグを提供
-		}
-		set
-		{
-			// 更新
-			m_bGrantInvincible = value;	// フラグ値更新
-		}
-	}
-
-	/// <summary>
-	/// 致死性フラグプロパティ
-	/// </summary>
-	/// <value><see cref="m_bKillable"/></value>
+	/// <value><see cref="_killable"/></value>
 	public bool Killable
 	{
 		get
 		{
 			// 提供
-			return m_bKillable;	// 致死性フラグを提供
+			return _killable;	// 致死性フラグを提供
 		}
 		set
 		{
 			// 更新
-			m_bKillable = value;	// フラグ値更新
+			_killable = value;	// フラグ値更新
 		}
 	}
 
 
 	/// <summary>
-	/// -ダメージ効果関数
-	/// <para>ダメージを与える効果を行う関数</para>
+	/// <para>ダメージを与える効果処理</para>
 	/// </summary>
-	/// <param name="_Oneself">効果の発動者</param>
-	/// <param name="_Opponent">効果の受動者</param>
-	public override void Boot(GameObject _Oneself, GameObject _Opponent)
+	/// <param name="oneself">効果の発動者</param>
+	/// <param name="opponent">効果の受動者</param>
+	public override void Boot(GameObject oneself, GameObject opponent)
 	{
 		// 保全
-		if(_Opponent == null)	// 相手がいない
+		if(opponent == null)	// 相手がいない
 		{
 #if UNITY_EDITOR
 			Debug.Log("効果発動対象が見つかりません");
@@ -120,61 +104,66 @@ public class Damage : Affect
 		}
 
 		// 変数宣言
-		var _HitPoint = _Opponent.GetComponent<HitPoint>();	// ダメージを受けるHP
+		var _hit_point = opponent.GetComponent<HitPoint>();	// ダメージを受けるHP
 
 		// ダメージ処理
-		if (_HitPoint)	// ダメージを受けられる
+		if (_hit_point)	// ダメージを受けられる
 		{
 			// 変数宣言
-			int _nTemporalHP = _HitPoint.HP;	// 現在HPの退避
-			var _Corrections = _Oneself.GetComponentsInChildren<DamageCorrection>();	// 補正値一覧
-			float _fAllBaseCorrection = 0.0f;	// 基礎値補正の合計
-			float _fAllCorrectionRatio = 1.0f;	// 補正倍率の合計
+			var _corrections = oneself.GetComponentsInChildren<DamageCorrection>();	// 補正値一覧
+			float _all_base_correction = 0.0f;	// 基礎値補正の合計
+			float _all_correction_ratio = 1.0f;	// 補正倍率の合計
 
 			// 初期化
-			foreach (var _Correction in _Corrections)	// 補正機能単位でのループ
+			foreach (var _correction in _corrections)	// 補正機能単位でのループ
 			{
-				_fAllBaseCorrection += _Correction.BaseCorrection;	// 基礎値を反映
-				_fAllCorrectionRatio *= _Correction.CorrectionRatio;	// 倍率を反映
+				_all_base_correction += _correction.BaseCorrection;	// 基礎値を反映
+				_all_correction_ratio *= _correction.CorrectionRatio;	// 倍率を反映
 			}
 			
 			// 補正
-			float _fCorrectedDamage = (BaseDamage + _fAllBaseCorrection) * _fAllCorrectionRatio;	// ダメージ補正を反映
+			float _corrected_damage = (BaseDamage + _all_base_correction) * _all_correction_ratio;	// ダメージ補正を反映
 
 			// ダメージを与える
-			if (m_bKillable || _HitPoint.HP - CulcDamage(_fCorrectedDamage, _HitPoint.Defence) > 0)	// 致死性がある・もしくはそもそも殺せていない
+			if (_killable || _hit_point.HP - CulcDamage(_corrected_damage, _hit_point.Data.Defence) > 0)	// 致死性がある・もしくはそもそも殺せていない
 			{
-				_HitPoint.HP -= CulcDamage(_fCorrectedDamage, _HitPoint.Defence);	// 通常のダメージ処理
+				_hit_point.HP -= CulcDamage(_corrected_damage, _hit_point.Data.Defence);	// 通常のダメージ処理
 			}
-			else if(_HitPoint.HP > 0)	// 本来ならこのダメージ処理で死ぬが、非致死性ダメージとして扱う
+			else if(_hit_point.HP > 0)	// 本来ならこのダメージ処理で死ぬが、非致死性ダメージとして扱う
 			{
-				_HitPoint.HP = 1;	// 非致死性効果で1耐えさせる
+				_hit_point.HP = 1;	// 非致死性効果で1耐えさせる
 			}
 		}
 	}
 	
 	/// <summary>
-	/// -ダメージ計算関数
-	/// <para>ダメージ処理に必要な情報をすべて揃え、演算する</para>
+	/// <para>ダメージ処理に必要な情報をすべて揃え、演算</para>
 	/// </summary>
-	/// <param name="_fDamageValue">与えるダメージ値</param>
-	/// <param name="_fDefence">ダメージ抵抗値</param>
+	/// <param name="damage_value">与えるダメージ値</param>
+	/// <param name="defence">ダメージ抵抗値</param>
 	/// <returns>最終ダメージ</returns>
-	private int CulcDamage(float _fDamageValue, float _fDefence)
+	private int CulcDamage(float damage_value, float defence)
 	{
 		// 変数宣言
-		int _nResult = 0;	// 演算結果格納用
+		int _result = 0;	// 演算結果格納用
 
 		// ダメージ計算
-		_nResult = (int)(_fDamageValue - _fDefence);	// 最終ダメージを求める
+		if (_ignore_defence)
+		{
+			_result = (int)(damage_value);	// 最終ダメージを求める
+		}
+		else
+		{
+			_result = (int)(damage_value - defence);	// 最終ダメージを求める
+		}
 
 		// 補正
-		if(_nResult < _MIN_DAMAGE)	// 最低保証が成立していない
+		if(_result < _MIN_DAMAGE)	// 最低保証が成立していない
 		{
-			_nResult = _MIN_DAMAGE;	// ダメージを保証
+			_result = _MIN_DAMAGE;	// ダメージを保証
 		}
 
 		// 提供
-		return _nResult;	// 最終ダメージ確定
+		return _result;	// 最終ダメージ確定
 	}
 }

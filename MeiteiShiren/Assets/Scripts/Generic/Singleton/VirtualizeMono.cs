@@ -20,6 +20,9 @@
 using UnityEngine;
 
 // クラス定義
+/// <summary>
+/// <para>イベント関数仮想化クラス</para>
+/// </summary>
 public class VirtualizeMono : MonoBehaviour
 {
 	/// <summary>

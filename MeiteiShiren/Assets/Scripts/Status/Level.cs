@@ -12,6 +12,10 @@
 using System;
 using UnityEngine;
 
+// クラス定義
+/// <summary>
+/// <para>レベル</para>
+/// </summary>
 public class Level : MonoBehaviour
 {
 	// 定数定義
@@ -21,16 +25,16 @@ public class Level : MonoBehaviour
 	public event Action OnLevelUp;	// レベルアップ時のイベント
 
 	// 変数宣言
-	[SerializeField, Tooltip("経験値テーブル")]private ExperienceTable _experience_table;
+	[SerializeField, Tooltip("経験値テーブル")] private ExperienceTable _experience_table;
 	private uint _experience;	// 経験値
 
 	// プロパティ定義
 
 	/// <summary>
-	/// 経験値
+	/// <para>経験値</para>
 	/// </summary>
 	/// <value>次レベルまでに積み立てる経験値</value>
-	private uint Experience
+	public uint Experience
 	{
 		get
 		{
@@ -43,37 +47,51 @@ public class Level : MonoBehaviour
 			_experience = value;	// 経験値を更新
 
 			// レベルアップ
-			if(_experience_table.Table.Length > Value - _INITIAL_LEVEL)	// 次のレベルがある
+			while (true)	// レベル単位でのループ
 			{
-				while (value > _experience_table.Table[Value - _INITIAL_LEVEL])	// 必要な経験値を満たした
+				if(_experience_table.Table.Length > Value - _INITIAL_LEVEL)	// 次のレベルがある
 				{
-					// 補正
-					_experience -= _experience_table.Table[Value - _INITIAL_LEVEL];	// レベルに必要な分の経験値を消費
-
-					// イベント発行
-					if (OnLevelUp != null)	// ヌルチェック
+					if (_experience > _experience_table.Table[Value - _INITIAL_LEVEL])	// 必要な経験値を満たした
 					{
-						OnLevelUp.Invoke();	// レベルアップ時イベント発行
+						// 補正
+						_experience -= _experience_table.Table[Value - _INITIAL_LEVEL];	// レベルに必要な分の経験値を消費
+					
+						// レベル上昇
+						Value++;	// レベル値を加算
+
+						// イベント発行
+						if (OnLevelUp != null)	// ヌルチェック
+						{
+							OnLevelUp.Invoke();	// レベルアップ時イベント発行
+						}
+					}
+					else	// 経験値不足
+					{
+						// 終了
+						break;	// ループ処理終了
 					}
 				}
-			}
-			else
-			{
-				// 補正
-				_experience = 0;	// 経験値を積み重ねる必要がない
+				else	// レベル上限
+				{
+					// 補正
+					_experience = 0;	// 経験値を積み重ねる必要がない
+
+					// 終了
+					break;	// ループ処理終了
+				}
 			}
 		}
 	}
 
 	/// <summary>
-	/// レベル値
+	/// <para>レベル値</para>
 	/// </summary>
 	/// <value>内部で上下するレベル</value>
 	public uint Value { get; private set; } = _INITIAL_LEVEL;
 
 
 	/// <summary>
-	/// レベルアップ処理
+	/// <para>レベルアップ処理</para>
 	/// </summary>
 	public void LevelUp()
 	{

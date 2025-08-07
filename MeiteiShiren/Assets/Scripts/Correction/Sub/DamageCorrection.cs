@@ -9,6 +9,9 @@
 =====*/
 
 // クラス定義
+/// <summary>
+/// <para>ダメージ値の補正値</para>
+/// </summary>
 public abstract class DamageCorrection : FloatCorrection
 {
 }

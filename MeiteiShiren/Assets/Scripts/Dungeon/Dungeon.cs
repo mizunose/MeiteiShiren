@@ -13,7 +13,7 @@ using UnityEngine;
 
 // クラス定義
 /// <summary>
-/// <para>マップ</para>
+/// <para>ダンジョン</para>
 /// </summary>
 public class Dungeon : MonoSingleton<Dungeon>
 {
@@ -26,12 +26,25 @@ public class Dungeon : MonoSingleton<Dungeon>
 	public Map Map { get { return _map; } }
 
 	public DungeonTurnState TurnFlow { get; private set; }
+	
+	public GameObject Player{get; protected set;}
 
 	/// <summary>
 	/// <para>初期化処理</para>
 	/// </summary>
 	protected override void Start()
 	{
+		if (_data.Player.model)	// ヌルチェック
+		{
+			Player = Instantiate(_data.Player.model, _data.Player.center, Quaternion.identity);	// プレイヤー生成
+		}
+#if UNITY_EDITOR
+		else
+		{
+			Debug.LogError("生成プレイヤーの情報が設定されていません");
+		}
+#endif	// end UNITY_EDITOR
+
 		if(_data != null)
 		{
 #if UNITY_EDITOR
@@ -46,7 +59,7 @@ public class Dungeon : MonoSingleton<Dungeon>
 			GameObject _map_object = new();	// マップのインスタンス
 
 			// マップ機能作成
-			_map_object.transform.parent = transform;	// 自身の子に登録
+			_map_object.transform.SetParent(transform, false);	// 自身の子に登録
 			_map = _map_object.AddComponent<Map>();	// マップ機能付与
 			_map.Data = _data.MapDatas[_floor_idx];	// マップにデータ適用
 #if UNITY_EDITOR
@@ -67,7 +80,7 @@ public class Dungeon : MonoSingleton<Dungeon>
 	/// <summary>
 	/// <para>更新処理</para>
 	/// </summary>
-	private void Update()
+	protected override void Update()
 	{
 		//TODO:レンダーターゲットに描きこみ
 	}

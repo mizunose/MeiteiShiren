@@ -1,5 +1,5 @@
 ﻿/*=====
-<Player.cs>
+<InputManager.cs>
 
 -author
 	mizunose

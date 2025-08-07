@@ -5,7 +5,7 @@
 	mizunose
 
 -about
-	補正値を定義
+	float型の補正値を定義
 
 -note
 ・実際には何にも影響していません。
@@ -24,44 +24,44 @@ public abstract class FloatCorrection : MonoBehaviour
 {
 	// 変数宣言
 	[Header("パラメータ")]
-	[SerializeField, Tooltip("基礎値補正")] private float m_fBaseCorrection = 0.0f;
-	[SerializeField, Tooltip("補正倍率")] private float m_fCorrectionRatio = 1.0f;
+	[SerializeField, Tooltip("基礎値補正")] private float _base_correction = 0.0f;
+	[SerializeField, Tooltip("補正倍率")] private float _correction_ratio = 1.0f;
 	
 	// プロパティ定義
 
 	/// <summary>
-	/// 基礎補正プロパティ
+	/// <para>基礎補正</para>
 	/// </summary>
-	/// <value><see cref="m_fBaseCorrection"/></value>
+	/// <value><see cref="_base_correction"/></value>
 	public float BaseCorrection
 	{
 		get
 		{
 			// 提供
-			return m_fBaseCorrection;	// 基礎値補正を提供
+			return _base_correction;	// 基礎値補正を提供
 		}
 		set
 		{
 			// 更新
-			m_fBaseCorrection = value;	// 基礎値補正を更新
+			_base_correction = value;	// 基礎値補正を更新
 		}
 	}
 
 	/// <summary>
-	/// 補正倍率プロパティ
+	/// <para>倍率補正</para>
 	/// </summary>
-	/// <value><see cref="m_fCorrectionRatio"/></value>
+	/// <value><see cref="_correction_ratio"/></value>
 	public float CorrectionRatio
 	{
 		get
 		{
 			// 提供
-			return m_fCorrectionRatio;	// 補正倍率を提供
+			return _correction_ratio;	// 補正倍率を提供
 		}
 		set
 		{
 			// 更新
-			m_fCorrectionRatio = value;	// 補正倍率を更新
+			_correction_ratio = value;	// 補正倍率を更新
 		}
 	}
 }
