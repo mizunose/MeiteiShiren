@@ -1,0 +1,40 @@
+/*=====
+<ExperienceTable.cs>
+
+-author
+	mizunose
+
+-about
+	経験値テーブルを実装
+=====*/
+
+// 名前空間宣言
+using UnityEngine;
+
+// クラス定義
+/// <summary>
+/// <para>経験値テーブル</para>
+/// </summary>
+[CreateAssetMenu(menuName = _NAME, fileName = _NAME)]
+public class ExperienceTable : ScriptableObject
+{
+	// 定数定義
+	private const string _NAME = "ExperienceTable";	// タブ名称
+
+	// 変数宣言
+	[SerializeField, Tooltip("次レベルまでの経験値")] private uint[] _table;
+
+	// プロパティ定義
+	/// <summary>
+	/// <para>レベルごとの必要経験値</para>
+	/// </summary>
+	/// <value><see cref="_table"/></value>
+	public uint[] Table
+	{
+		get
+		{
+			// 提供
+			return _table;	// レベルごとのレベルアップ用経験値量
+		}
+	}
+}

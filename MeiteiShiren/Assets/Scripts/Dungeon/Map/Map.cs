@@ -5,55 +5,146 @@
 	mizunose
 
 -about
-	マップのデータを定義
+	マップを実装
 =====*/
 
 // 名前空間宣言
 using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 // クラス定義
 /// <summary>
-/// マップデータの抽象クラス
+/// <para>マップ</para>
 /// </summary>
-//[CreateAssetMenu(menuName = _MENU_TAB_NAME + "MapName", fileName = "MapName")]	と子クラスは記述
 public class Map : MonoBehaviour
 {
-	// 定数定義
-	protected const string _MENU_TAB_NAME = "MapData/"; // 共通メニュータブ名
+	// プロパティ定義
 
-	// 変数宣言
-	[Header("ステータス")]
-	[SerializeField, Tooltip("データ")] private MapData _data;
-
-	public Image img;
+	/// <summary>
+	/// <para>データ設定用プロパティ</para>
+	/// </summary>
+	/// <value>マップ作成に使用するデータ</value>
+	public MapData Data { private get; set; }
+	
+	/// <summary>
+	/// <para>マップの構成マス</para>
+	/// </summary>
+	/// <value>実際に配置されているマスのインスタンス</value>
+	public Mass[,] Masses
+	{
+		get
+		{
+			// 提供
+			return Data.MapMasses;	// データが生成後に保持しているマスの情報
+		}
+	}
 
 
 	/// <summary>
-	/// 初期化処理
+	/// <para>初期化処理</para>
 	/// </summary>
 	private void Start()
 	{
-		if(_data != null)
+		// マップ生成
+		if(Data != null)	// データ有り
 		{
-			_data.Generate();
-
-			img.material.SetTexture("_MainTex", _data.MapTexture);
+			Data.Generate();	// データからマップを作成
 		}
+		else	// データ無し
+		{
+#if UNITY_EDITOR
+			Debug.Log("マップデータが不足しています");
+#endif	// end UNITY_EDITOR
+			return;	// 異常中断
+		}
+
+		// 変数宣言
+		GameObject _canvas_object = new();	// キャンバス用インスタンス
+
+		// 初期化
+#if UNITY_EDITOR
+		_canvas_object.name = "MapCanvas";	// デバッグ時にはわかりやすいように命名しておく
+#endif	// end UNITY_EDITOR
+
+		// 変数宣言
+		Canvas _canvas = _canvas_object.AddComponent<Canvas>();	// キャンバス機能
+
+		// 初期化
+		_canvas.renderMode = RenderMode.ScreenSpaceOverlay;	// UIを最前面に出す
+		_canvas.AddComponent<CanvasScaler>();	// UIのスケール制御
+		_canvas.AddComponent<GraphicRaycaster>();	// キャンバスへのレイ判定
+		_canvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord1;	// シェーダーセマンティクス：テクスチャ座標
+		_canvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.Normal;	// シェーダーセマンティクス：法線
+		_canvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.Tangent;	// シェーダーセマンティクス：接線
+
+		// 変数宣言
+		GameObject _image_object = new(); //画像表示用インスタンス
+
+		// 初期化
+#if UNITY_EDITOR
+		_image_object.name = "MiniMap";	// デバッグ時にはわかりやすいように命名しておく
+#endif	// end UNITY_EDITOR
+		_image_object.transform.parent = _canvas_object.transform;	// キャンバスに親子付け
+
+		// 変数宣言
+		var _image = _image_object.AddComponent<Image>();	// 画像表示機能
+
+		// 画像読み込み
+		_image.material.SetTexture("_MainTex", Data.MapTexture);	// テクスチャ登録
+		var _color = _image.color;	// 構造体の取り出し(CS1612エラーの回避)
+		_color.a = Settings.Instance.Map.Alpha;	// 表示透明度を変更
+		_image.color = _color;	// 変更を反映
+
+		// 変数宣言
+		var _image_transform = _image_object.GetComponent<RectTransform>();	// 平面ポリゴン	※自動で付与されているはず
+		
+		// 初期化
+		if (_image_transform != null)	// ヌルチェック
+		{
+			_image_transform.anchorMin = Vector2.up;	// 左上アンカー
+			_image_transform.anchorMax = Vector2.up;	// 左上アンカー
+			_image_transform.anchoredPosition = Data.AnchorPosition;	// アンカー基準の位置
+			_image_transform.sizeDelta = Data.MiniMapSize;	// 画像サイズ
+		}
+#if UNITY_EDITOR	// エディタ使用中
 		else
 		{
-			Debug.Log("マップデータ不足");
+			Debug.LogWarning("画像の表示座標を設定できませんでした");
 		}
+#endif	// end UNITY_EDITOR
 	}
 	
-
 	/// <summary>
-	/// 更新処理
+	/// <para>float型の座標をグリッド座標(マス番号)に変更</para>
 	/// </summary>
-	private void Update()
+	/// <param name="position">変換する座標</param>
+	/// <returns>変換先データ</returns>
+	public static int PositionToMass(float position)
 	{
-		//TODO:レンダーターゲットに描きこみ
+		// 提供
+		return (int)((position + Settings.Instance.Map.MassSize / 2.0f) / Settings.Instance.Map.MassSize);	// どのマス目に含まれるかを演算
+	}
+	
+	/// <summary>
+	/// <para>Vector2型の座標をグリッド座標(マス番号)に変更</para>
+	/// </summary>
+	/// <param name="position">変換する座標</param>
+	/// <returns>変換先データ</returns>
+	public static Vector2Int PositionToMass(Vector2 position)
+	{
+		// 提供
+		return new Vector2Int(PositionToMass(position.x), PositionToMass(position.y));	// 各要素で座標変換
+	}
+	
+	/// <summary>
+	/// <para>Vector3型の座標をグリッド座標(マス番号)に変更</para>
+	/// </summary>
+	/// <param name="position">変換する座標</param>
+	/// <returns>変換先データ</returns>
+	public static Vector2Int PositionToMass(Vector3 position)
+	{
+		// 提供
+		return PositionToMass(new Vector2(position.x, position.z));	// xz面で切り出し、座標変換
 	}
 }
