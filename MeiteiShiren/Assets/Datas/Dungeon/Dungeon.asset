@@ -15,6 +15,4 @@ MonoBehaviour:
   _map_datas:
   - {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
   - {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
-  _player:
-    model: {fileID: 5498470843638692480, guid: 38fec33e53fed48468f57e6e52915822, type: 3}
-    center: {x: 0, y: 0.5, z: 0}
+  _player: {fileID: 5498470843638692480, guid: 38fec33e53fed48468f57e6e52915822, type: 3}
