@@ -34,9 +34,9 @@ public class Dungeon : MonoSingleton<Dungeon>
 	/// </summary>
 	protected override void Start()
 	{
-		if (_data.Player.model)	// ヌルチェック
+		if (_data.Player)	// ヌルチェック
 		{
-			Player = Instantiate(_data.Player.model, _data.Player.center, Quaternion.identity);	// プレイヤー生成
+			Player = Instantiate(_data.Player);	// プレイヤー生成
 		}
 #if UNITY_EDITOR
 		else

@@ -26,7 +26,7 @@ public abstract class MapData : ScriptableObject
 	[SerializeField, Tooltip("サイズ"), Min(1)] protected Vector2Int _size = new Vector2Int(1, 1);
 	[Header("生成物の情報")]
 	[SerializeField, Tooltip("地面のテクスチャ")] protected Material _ground_texture;
-	[SerializeField, Tooltip("壁のモデル")] protected ObjectMakeInfo _wall_model;
+	[SerializeField, Tooltip("壁のモデル")] protected GameObject _wall_model;
 	[Header("ミニマップ")]
 	[SerializeField, Tooltip("アンカー(左上)に対する位置")] protected Vector2 _anchor_position = new Vector2(220, -220);
 	[SerializeField, Tooltip("ミニマップ表示サイズ")] protected Vector2 _minimap_size = new Vector2(400, 400);

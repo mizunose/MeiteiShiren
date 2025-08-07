@@ -24,7 +24,7 @@ public class DungeonData : ScriptableObject
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("階層")] private MapData[] _map_datas;
-	[SerializeField, Tooltip("操作キャラ")] private ObjectMakeInfo _player;	//TODO:チーム配置
+	[SerializeField, Tooltip("操作キャラ")] private GameObject _player;	//TODO:チーム配置
 
 	// プロパティ定義
 
@@ -45,7 +45,7 @@ public class DungeonData : ScriptableObject
 	/// <para>操作キャラ</para>
 	/// </summary>
 	/// <value>操作キャラのプレハブ</value>
-	public ObjectMakeInfo Player
+	public GameObject Player
 	{
 		get
 		{
