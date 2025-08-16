@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 // クラス定義
 /// <summary>
@@ -369,7 +370,7 @@ class DynamicMap : MapData
 					case Edge.Left:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_idx][_room.room.xMin] == Mass.Type.PUBLIC_ROOM)	// 削り取られていないマス
+							if (IsRoomType(_area_infos[_idx][_room.room.xMin]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_room.room.xMin, _idx));	// 入口の候補として優先される
 							}
@@ -384,7 +385,7 @@ class DynamicMap : MapData
 					case Edge.Right:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_idx][_room.room.xMax - 1] == Mass.Type.PUBLIC_ROOM)	// 削り取られていないマス
+							if (IsRoomType(_area_infos[_idx][_room.room.xMax - 1]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_room.room.xMax - 1, _idx));	// 入口の候補として優先される
 							}
@@ -399,7 +400,7 @@ class DynamicMap : MapData
 					case Edge.Top:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_room.room.yMin][_idx] == Mass.Type.PUBLIC_ROOM)	// 削り取られていないマス
+							if (IsRoomType(_area_infos[_room.room.yMin][_idx]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_idx, _room.room.yMin));	// 入口の候補として優先される
 							}
@@ -414,7 +415,7 @@ class DynamicMap : MapData
 					case Edge.Bottom:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_room.room.yMax - 1][_idx] == Mass.Type.PUBLIC_ROOM)	// 削り取られていないマス
+							if (IsRoomType(_area_infos[_room.room.yMax - 1][_idx]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_idx, _room.room.yMax - 1));	// 入口の候補として優先される
 							}
@@ -906,10 +907,10 @@ class DynamicMap : MapData
 			{
 				for (int _x_idx = _shop_area.xMin; _x_idx < _shop_area.xMax; _x_idx++)	// マス単位でのループ
 				{
-					if (_area_infos[_y_idx][_x_idx] == Mass.Type.PUBLIC_ROOM)	// 通常部屋のマス
+					if (IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
 					{
 						// 階層の情報を更新
-						_area_infos[_y_idx][_x_idx] = Mass.Type.SHOP;	// 通常部屋を商店に変換する
+						_area_infos[_y_idx][_x_idx] = Mass.Type.SHOP;	// 部屋を商店に変換する
 					}
 				}
 			}
@@ -1031,6 +1032,64 @@ class DynamicMap : MapData
 			}
 		}
 
+		// 連続区域のインスタンス作成
+		for (int _contact_idx = 0; _contact_idx < _room_contacts.Count; _contact_idx++)	// 連続区域単位でのループ
+		{
+			// 変数宣言
+			GameObject _contact_object = new GameObject();	// 接続部屋のインスタンス
+
+			// 初期化
+			_contact_object.transform.SetParent(Dungeon.Instance.Map.transform, false);	// マップの子に登録
+
+#if UNITY_EDITOR
+			// 変数宣言
+			string _contact_object_name_base;	// オブジェクト名のベース
+
+			// 初期化
+			if (_contact_idx == 0)	// 主部分
+			{
+				_contact_object_name_base = "PublicSpace";	// 主部分を意味
+			}
+			else	// 副部分
+			{
+				_contact_object_name_base = "PrivateSpace";	// 副部分を意味
+			}
+			_contact_object.name = _contact_object_name_base + "_" + _contact_idx;	// デバッグ時にはわかりやすいように命名しておく
+#endif	// end UNITY_EDITOR
+
+			// 部屋のインスタンス作成
+			for (int _room_idx = 0; _room_idx < _room_contacts[_contact_idx].Count; _room_idx++) // 部屋単位でのループ
+			{
+				// 変数宣言
+				GameObject _room_object = new GameObject();	// 接続部屋のインスタンス
+				
+				// 初期化
+				_room_object.AddComponent<Room>();	// 部屋の機能作成
+	#if UNITY_EDITOR
+				_room_object.name = "Room";	// デバッグ時にはわかりやすいように命名しておく
+	#endif	// end UNITY_EDITOR
+
+				// マスの親子付け
+				for (int _y_idx = _room_contacts[_contact_idx][_room_idx].yMin; _y_idx < _room_contacts[_contact_idx][_room_idx].yMax; _y_idx++)	// 行単位でのループ
+				{
+					for (int _x_idx = _room_contacts[_contact_idx][_room_idx].xMin; _x_idx < _room_contacts[_contact_idx][_room_idx].xMax; _x_idx++)	// マス単位でのループ
+					{
+						if (IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
+						{
+							// 変数宣言
+							Vector2Int _position_on_map = PositionAreaToMap(new Vector2Int(_x_idx, _y_idx));	// マップ上での位置
+
+							// 初期化
+							MapMasses[_position_on_map.y, _position_on_map.x].transform.SetParent(_room_object.transform, false);	// 部屋にマスを持たせる
+						}
+					}
+				}
+
+				// 部屋の親子付け
+				_room_object.transform.SetParent(_contact_object.transform, false);	// 連続区域に部屋を持たせる
+			}
+		}
+
 		// プレイヤー作成	//TODO:チーム配置
 		Dungeon.Instance.Player.transform.SetParent(MapMasses[_player_position.y, _player_position.x].transform, false);	// 対象マスに管理させる
 
@@ -1122,9 +1181,22 @@ class DynamicMap : MapData
 
 
 	/// <summary>
+	/// <para>マスの種類が部屋に分類できるかを検証し返す</para>
+	/// </summary>
+	/// <param name="target">見分ける対象</param>
+	/// <returns>マスを部屋と見做せるときtrue, そうでなければfalse</returns>
+	private bool IsRoomType(Mass.Type target)
+	{
+		// 提供
+		return target == Mass.Type.PUBLIC_ROOM || target == Mass.Type.PRIVATE_ROOM || target == Mass.Type.SHOP;	// 部屋に分類できるマス種か
+	}
+
+
+	/// <summary>
 	/// <para>マスをインスタンスとして作成</para>
 	/// </summary>
 	/// <param name="position">生成位置</param>
+	/// <returns>作成したマスの姿勢情報</returns>
 	private void MakeMass(Vector2Int position)
 	{
 		// 変数宣言

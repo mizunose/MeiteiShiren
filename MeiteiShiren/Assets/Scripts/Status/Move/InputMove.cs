@@ -101,11 +101,11 @@ public class InputMove : Move
 		Vector2Int _next_mass_idx = Map.PositionToMass(_world_moved);	// 移動先のワールド座標から該当マスの番号を取得
 
 		// 保全
-		if (_next_mass_idx.x >= Dungeon.Instance.Map.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
+		if (_next_mass_idx.x < 0 || _next_mass_idx.x >= Dungeon.Instance.Map.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
 		{
 			_next_mass_idx.x = _currect_mass_idx.x;	// 移動先として選択させない
 		}
-		if (_next_mass_idx.y >= Dungeon.Instance.Map.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
+		if (_next_mass_idx.y < 0 ||_next_mass_idx.y >= Dungeon.Instance.Map.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
 		{
 			_next_mass_idx.y = _currect_mass_idx.y;	// 移動先として選択させない
 		}

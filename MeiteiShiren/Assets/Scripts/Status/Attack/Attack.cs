@@ -11,6 +11,7 @@
 // 名前空間宣言
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static MassRange;
@@ -106,7 +107,8 @@ public abstract class Attack : MonoBehaviour
 						);	// 対象マスの番号	※鉛直上向きを基準に範囲を回転させている
 
 					// 保全
-					if (_target_idx.x >= Dungeon.Instance.Map.Masses.GetLength(1) || _target_idx.y >= Dungeon.Instance.Map.Masses.GetLength(0))	// マップ外のマス
+					if (_target_idx.x < 0 || _target_idx.x >= Dungeon.Instance.Map.Masses.GetLength(1)
+						|| _target_idx.y < 0 || _target_idx.y >= Dungeon.Instance.Map.Masses.GetLength(0))	// マップ外のマス
 					{
 						continue;	// マスとして処理できないので次の処理へ移る
 					}
@@ -130,62 +132,6 @@ public abstract class Attack : MonoBehaviour
 			// 直線範囲
 			case RangeType.FRONT_LINE:
 
-				// 変数宣言
-				Vector2Int _direction;	// 攻撃方向
-
-				// 初期化
-				switch ((int)((angle + _ROUND_DEGREE / _SPLIT_DIRECTION / 2) / (_ROUND_DEGREE / _SPLIT_DIRECTION)))	// 攻撃方向によって分岐
-				{
-					// 0 / 8
-					case 0:
-						_direction = Vector2Int.up;	// 上
-						break;	// 分岐処理完了
-						
-					// 1 / 8
-					case 1:
-						_direction = Vector2Int.one;	// 右上
-						break;	// 分岐処理完了
-						
-					// 2 / 8
-					case 2:
-						_direction = Vector2Int.right;	// 右
-						break;	// 分岐処理完了
-						
-					// 3 / 8
-					case 3:
-						_direction = new Vector2Int(1, -1);	// 右下
-						break;	// 分岐処理完了
-
-					// 4 / 8
-					case 4:
-						_direction = Vector2Int.down;	// 下
-						break;	// 分岐処理完了
-
-					// 5 / 8
-					case 5:
-						_direction = -Vector2Int.one;	// 左下
-						break;	// 分岐処理完了
-
-					// 6 / 8
-
-					case 6:
-						_direction = Vector2Int.left;	// 左
-						break;	// 分岐処理完了
-
-					// 7 / 8
-					case 7:
-						_direction = new Vector2Int(-1, 1);	// 左上
-						break;	// 分岐処理完了
-
-					// その他
-					default:
-#if UNITY_EDITOR
-						Debug.LogError("攻撃方向に対応が定義されていません");
-#endif	// end UNITY_EDITOR
-						_direction = Vector2Int.up;	// 仮データ
-						break;	// 分岐処理完了
-				}
-
 				// 攻撃処理
 				while (true)	// マス単位でのループ
 				{
@@ -193,10 +139,11 @@ public abstract class Attack : MonoBehaviour
 					if (transform.parent)	// ヌルチェック
 					{
 						// 更新
-						_mass_idx += _direction;	// 移動して走査
+						_mass_idx += CalculateAttackDirection(angle);	// 移動して走査
 
 						// 終了条件
-						if (_mass_idx.x >= Dungeon.Instance.Map.Masses.GetLength(1) || _mass_idx.y >= Dungeon.Instance.Map.Masses.GetLength(0))	// マップ外のマス
+						if (_mass_idx.x < 0 || _mass_idx.x >= Dungeon.Instance.Map.Masses.GetLength(1)
+							|| _mass_idx.y < 0 || _mass_idx.y >= Dungeon.Instance.Map.Masses.GetLength(0))	// マップ外のマス
 						{
 							break;	// マップ外へ進出させない
 						}
@@ -226,6 +173,45 @@ public abstract class Attack : MonoBehaviour
 			case RangeType.ROOM:
 
 				//TODO:マスの親をroomに
+				// 変数宣言
+				Room _current_room = null;	// 現在いる部屋
+
+				// 初期化
+				if (_current_mass.transform.parent)	// ヌルチェック
+				{
+					_current_room = _current_mass.transform.parent.GetComponent<Room>();	// 現在マスから部屋を取得
+				}
+
+				// 処理分岐
+				if (_current_room)	// ヌルチェック
+				{
+					// リスト更新
+					foreach (Mass _target_mass in _current_room.GetComponentsInChildren<Mass>())	// 部屋に含まれるマス単位でのループ
+					{
+						_target_masses.Add(_target_mass);	// 効果範囲に登録
+					}
+				}
+				else	// 部屋に対する行動ができない
+				{
+					// 更新
+					_mass_idx += CalculateAttackDirection(angle);	// 移動して走査
+
+					// 保全
+					if (_mass_idx.x < 0 || _mass_idx.x >= Dungeon.Instance.Map.Masses.GetLength(1)
+						|| _mass_idx.y < 0 || _mass_idx.y >= Dungeon.Instance.Map.Masses.GetLength(0))	// マップ外のマス
+					{
+						break;	// マップ外へ進出させない
+					}
+
+					// 変数宣言
+					Mass _target_mass = Dungeon.Instance.Map.Masses[_mass_idx.y, _mass_idx.x];	// 対象となるマス本体を取得
+					
+					// リスト更新
+					if (_target_mass)	// ヌルチェック
+					{
+						_target_masses.Add(_target_mass);	// 効果範囲に登録
+					}
+				}
 
 				// 終了
 				break;	// 分岐処理完了
@@ -265,10 +251,62 @@ public abstract class Attack : MonoBehaviour
 					if (_affect)	// ヌルチェック
 					{
 						_affect.Boot(gameObject, _target_mass.transform.GetChild(_idx).gameObject);	// 設置物に効果発動
-						}
 					}
+				}
 			}
 			Destroy(_target_mass.gameObject);
+		}
+	}
+
+
+	/// <summary>
+	/// <para>角度を攻撃方向に変換する</para>
+	/// </summary>
+	/// <param name="angle">角度で表された向き</param>
+	/// <returns>攻撃方向を示すベクトル</returns>
+	private Vector2Int CalculateAttackDirection(float angle)
+	{
+		// 初期化
+		switch ((int)((angle + _ROUND_DEGREE / _SPLIT_DIRECTION / 2) / (_ROUND_DEGREE / _SPLIT_DIRECTION)))	// 攻撃方向によって分岐
+		{
+			// 0 / 8
+			case 0:
+				return Vector2Int.up;	// 上
+
+			// 1 / 8
+			case 1:
+				return Vector2Int.one;	// 右上
+
+			// 2 / 8
+			case 2:
+				return Vector2Int.right;	// 右
+
+			// 3 / 8
+			case 3:
+				return new Vector2Int(1, -1);	// 右下
+
+			// 4 / 8
+			case 4:
+				return Vector2Int.down;	// 下
+
+			// 5 / 8
+			case 5:
+				return -Vector2Int.one;	// 左下
+
+			// 6 / 8
+			case 6:
+				return Vector2Int.left;	// 左
+
+			// 7 / 8
+			case 7:
+				return new Vector2Int(-1, 1);	// 左上
+
+			// その他
+			default:
+#if UNITY_EDITOR
+				Debug.LogError("攻撃方向に対応が定義されていません");
+#endif	// end UNITY_EDITOR
+				return Vector2Int.up;	// 仮データ
 		}
 	}
 }

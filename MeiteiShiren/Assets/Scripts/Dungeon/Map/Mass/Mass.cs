@@ -13,7 +13,7 @@ using UnityEngine;
 
 // クラス定義
 /// <summary>
-/// マップを構成するマス。子に管理物(乗っているもの)を持つ想定。また、親がMapである想定。
+/// マップを構成するマス。子に管理物(乗っているもの)を持つ想定。また、親が構成物(マップや部屋など)である想定。
 /// </summary>
 public class Mass : MonoBehaviour
 {
