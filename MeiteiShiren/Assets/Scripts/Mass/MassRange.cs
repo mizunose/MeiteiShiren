@@ -6,6 +6,9 @@
 
 -about
 	マスの範囲を実装
+
+-note
+・鉛直上向きを正面としている。
 =====*/
 
 // 名前空間宣言
@@ -319,7 +322,7 @@ public class MassRange : ScriptableObject
 	}
 #endif	// end UNITY_EDITOR
 
-	
+
 #if UNITY_EDITOR
 	/// <summary>
 	/// <para>範囲UI描画グリッドの詳細を作成</para>
@@ -367,6 +370,7 @@ public class MassRange : ScriptableObject
 		return _result;	// 演算結果を提供
 	}
 
+
 	/// <summary>
 	/// <para>マス描画領域を作成</para>
 	/// </summary>
@@ -382,7 +386,7 @@ public class MassRange : ScriptableObject
 		
 		// 初期化
 		_result.size = Vector2.one * size;	// マスの領域を初期化
-		_result.position = center + (new Vector2(idx.x - draw_property.xMin, idx.y - draw_property.yMin) - (draw_property.size * Vector2.one * 0.5f)) * size;	// マスの描画位置
+		_result.position = center + (new Vector2(idx.x - draw_property.xMin, -idx.y + draw_property.yMax - 1) - (draw_property.size * Vector2.one * 0.5f)) * size;	// マスの描画位置	※y座標は上を正とする補正をしている
 
 		// 提供
 		return _result;	// マスの描画領域
