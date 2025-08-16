@@ -72,7 +72,7 @@ public class DungeonTurnState : MonoBehaviour
 	private void Start()
 	{
 		// 入力管理
-		InputManager.Instance.Ingame.Player.Enable();	// プレイヤーの干渉権を有効化
+		IngameInputManager.Instance.Player.TrendEnable();	// プレイヤーの干渉権を有効化
 
 		// イベント接続
 		Dungeon.Instance.Player.GetComponent<Move>().OnMoveStarted += OnMoveStarted;	// プレイヤー移動時処理を接続
@@ -97,7 +97,7 @@ public class DungeonTurnState : MonoBehaviour
 	private IEnumerator TurnFlow(TurnCommandType command)
 	{
 		// 入力管理
-		InputManager.Instance.Ingame.Player.Disable();	// ターンの処理が始まったのでプレイヤーの干渉権は一時的に失われる
+		IngameInputManager.Instance.Player.TrendDisable();	// ターンの処理が始まったのでプレイヤーの干渉権は一時的に失われる
 
 		// 先行処理
 		switch (command)	// プレイヤーのコマンド状態によって分岐
@@ -117,7 +117,7 @@ public class DungeonTurnState : MonoBehaviour
 		yield return MoveAll(false);	// 移動処理
 
 		// ターン終了
-		InputManager.Instance.Ingame.Player.Enable();	// プレイヤーの干渉権を復権させる
+		IngameInputManager.Instance.Player.TrendEnable();	// プレイヤーの干渉権を復権させる
 		if(OnTurnChanged != null)	// ヌルチェック
 		{
 			OnTurnChanged.Invoke();	// ターン変更時イベント発行

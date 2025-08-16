@@ -24,37 +24,6 @@ public abstract class Move : MonoBehaviour
 
 
 	/// <summary>
-	/// <para>初期化処理</para>
-	/// </summary>
-	private void Start()
-	{
-		// 更新
-		StartCoroutine(LateableUpdate());	// 更新処理の軌道
-	}
-
-
-	/// <summary>
-	/// <para>遅延可能な更新処理</para>
-	/// </summary>
-	/// <returns>遅延処理用のインターフェース</returns>
-	private IEnumerator LateableUpdate()
-	{
-		// フレーム更新
-		while (true)
-		{
-			// 入力処理
-			if (InputManager.Instance.Ingame.Player.Move.IsPressed())	// 移動入力中
-			{
-				yield return MoveMotion();	// 移動モーションを実行 (モーション完了待機)
-			}
-
-			// 待機
-			yield return null;	// 次フレームを待つ
-		}
-	}
-
-
-	/// <summary>
 	/// <para>移動モーション処理</para>
 	/// </summary>
 	/// <returns>遅延処理用のインターフェース</returns>

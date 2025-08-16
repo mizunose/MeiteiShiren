@@ -23,6 +23,37 @@ public class InputMove : Move
 
 
 	/// <summary>
+	/// <para>初期化処理</para>
+	/// </summary>
+	private void Start()
+	{
+		// 更新
+		StartCoroutine(LateableUpdate());	// 更新処理の軌道
+	}
+
+
+	/// <summary>
+	/// <para>遅延可能な更新処理</para>
+	/// </summary>
+	/// <returns>遅延処理用のインターフェース</returns>
+	private IEnumerator LateableUpdate()
+	{
+		// フレーム更新
+		while (true)
+		{
+			// 入力処理
+			if (IngameInputManager.Instance.Player.Move.IsPressed())	// 攻撃入力中
+			{
+				yield return MoveMotion();	// 攻撃モーションを実行 (モーション完了待機)
+			}
+
+			// 待機
+			yield return null;	// 次フレームを待つ
+		}
+	}
+
+
+	/// <summary>
 	/// <para>移動モーション処理</para>
 	/// </summary>
 	/// <returns>遅延処理用のインターフェース</returns>
@@ -35,7 +66,7 @@ public class InputMove : Move
 		if (transform.parent)	// ヌルチェック
 		{
 			_current_mass = transform.parent.GetComponent<Mass>();	// 現在マスの取得
-			
+
 			// 保全
 			if(!_current_mass)	// ヌルチェック
 			{
@@ -59,7 +90,7 @@ public class InputMove : Move
 
 		// 変数宣言
 		Vector2Int _currect_mass_idx = Map.PositionToMass(_current_mass.transform.position);	// 現在マスの番号
-		Vector2 _input = InputManager.Instance.Ingame.Player.Move.ReadValue<Vector2>();	// 入力値
+		Vector2 _input = IngameInputManager.Instance.Player.Move.ReadValue<Vector2>();	// 入力値
 		Vector3 _world_moved = _current_mass.transform.position;	// 移動先のワールド座標
 
 		// 初期化
@@ -83,7 +114,7 @@ public class InputMove : Move
 		Mass _next_mass = Dungeon.Instance.Map.Masses[_next_mass_idx.y, _next_mass_idx.x];	// 移動先のマス番号からマス本体を取得
 
 		// 移動可否検査
-		if(!_next_mass || _next_mass.type == Mass.TYPE.WALL)	// 移動不可能	//TODO:object->GetComponent<Wall>() ? null
+		if(!_next_mass || _next_mass.type == Mass.Type.WALL)	// 移動不可能	//TODO:object->GetComponent<Wall>() ? null
 		{
 			if (_input.x != 0.0f && _input.y != 0.0f)	// 斜め移動で演算していた
 			{
@@ -91,13 +122,13 @@ public class InputMove : Move
 				_next_mass = Dungeon.Instance.Map.Masses[_currect_mass_idx.y, _next_mass_idx.x];	// x成分に沿った移動で再度試す
 
 				// 検査
-				if(!_next_mass || _next_mass.type == Mass.TYPE.WALL)	// x方向にも移動できない
+				if(!_next_mass || _next_mass.type == Mass.Type.WALL)	// x方向にも移動できない
 				{
 					// 更新
 					_next_mass = Dungeon.Instance.Map.Masses[_next_mass_idx.y, _currect_mass_idx.x];	// y成分に沿った移動で再度試す
 					
 					// 検査
-					if(!_next_mass || _next_mass.type == Mass.TYPE.WALL)	// y方向にも移動できない
+					if(!_next_mass || _next_mass.type == Mass.Type.WALL)	// y方向にも移動できない
 					{
 						_next_mass = _current_mass;	// 移動出来ないので移動先を元のマスに戻しておく
 					}
@@ -162,6 +193,9 @@ public class InputMove : Move
 			}
 		}
 
+		// 入力管理
+		IngameInputManager.Instance.Player.TrendDisable();	// 入力系の処理なのでモーション中は干渉権を無効化する
+
 		// 変数宣言
 		float _time = 0.0f;	// 経過時間
 
@@ -191,7 +225,7 @@ public class InputMove : Move
 			// 終了
 			if (_timerate == 1.0f)	// モーション完了
 			{
-				yield break;	// 処理完了
+				break;	// 処理完了
 			}
 			else
 			{
@@ -199,5 +233,8 @@ public class InputMove : Move
 				yield return null;	// 次フレームを待つ
 			}
 		}
+
+		// 入力管理
+		IngameInputManager.Instance.Player.TrendEnable();	// プレイヤーの干渉権を復権させる
 	}
 }
