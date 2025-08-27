@@ -30,44 +30,24 @@ public class IngameInputManager : MonoSingleton<IngameInputManager>
 		/// <summary>
 		/// <para>扱う対象のInputMap</para>
 		/// </summary>
-		/// <value>子クラスで管理するInputMap</value>
-		protected override InputActionMap Target
-		{
-			get
-			{
-
-				// 提供
-				return _parent.Target.Player;	// インスタンス本体
-			}
-		}
+		/// <value>管理しているInputMap</value>
+		protected override InputActionMap Target => _parent.Target.Player;
 
 		/// <summary>
 		/// <para>移動入力値</para>
 		/// </summary>
 		/// <value>移動入力受付インスタンス</value>
-		public InputAction Move
-		{
-			get
-			{
-				return _parent.Target.Player.Move;
-			}
-		}
+		public InputAction Move => _parent.Target.Player.Move;
 
 		/// <summary>
 		/// <para>攻撃入力値</para>
 		/// </summary>
 		/// <value>攻撃入力受付インスタンス</value>
-		public InputAction Attack
-		{
-			get
-			{
-				return _parent.Target.Player.Attack;
-			}
-		}
+		public InputAction Attack => _parent.Target.Player.Attack;
 
 
 		/// <summary>
-		/// <para>初期化処理</para>
+		/// <para>コンストラクタ</para>
 		/// </summary>
 		/// <param name="parent">親クラス</param>
 		public IngamePlayerInput(in IngameInputManager parent)
@@ -84,15 +64,15 @@ public class IngameInputManager : MonoSingleton<IngameInputManager>
 	// プロパティ定義
 
 	/// <summary>
-	/// <para>InputMap</para>
+	/// <para>子クラスで管理するInputMap</para>
 	/// </summary>
-	/// <value>子クラスで管理するInputMap</value>
+	/// <value><see cref="_target"/></value>
 	private IngameInput Target
 	{
 		get
 		{
 			// 保全
-			if ( _target  == null)	// ヌルチェック
+			if (_target  == null)	// ヌルチェック
 			{
 				_target = new();	// 作成
 			}
@@ -105,7 +85,7 @@ public class IngameInputManager : MonoSingleton<IngameInputManager>
 	/// <summary>
 	/// <para>プレイヤー入力管理</para>
 	/// </summary>
-	/// <value></value>
+	/// <value><see cref="_player"/></value>
 	public IngamePlayerInput Player
 	{
 		get
@@ -130,6 +110,7 @@ public class IngameInputManager : MonoSingleton<IngameInputManager>
 		// 解放
 		if (_target != null)	// ヌルチェック
 		{
+			_target.Disable();	// 無効化
 			_target.Dispose();	// 内部状態を解放(GC対象外)
 		}
 	}

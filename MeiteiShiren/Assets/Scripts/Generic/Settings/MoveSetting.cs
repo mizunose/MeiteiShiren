@@ -5,7 +5,7 @@
 	mizunose
 
 -about
-	マップのプロパティ値を実装
+	移動のプロパティ値を実装
 =====*/
 
 // 名前空間宣言
@@ -21,7 +21,7 @@ public class MoveSetting : ScriptableObject
 	private const string _NAME = "MoveSetting";	// タブ名称
 
 	// 変数宣言
-	[SerializeField, Tooltip("速度")] private float _spend = 0.25f;
+	[SerializeField, Tooltip("再生時間")] private float _spend = 0.25f;
 	[SerializeField, Tooltip("再生速度")] private float _spend_ratio = 1.0f;
 
 	// プロパティ定義
@@ -29,12 +29,5 @@ public class MoveSetting : ScriptableObject
 	/// <para>移動にかける時間</para>
 	/// </summary>
 	/// <value>補正済みの移動にかける時間</value>
-	public float Spend
-	{
-		get
-		{
-			// 提供
-			return _spend * _spend_ratio;	// 補正済みの移動にかける時間
-		}
-	}
+	public float Spend => _spend * _spend_ratio;
 }

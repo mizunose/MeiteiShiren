@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a1a4186cddafb6488291706de3b50b0, type: 3}
   m_Name: Dungeon
   m_EditorClassIdentifier: 
-  _map_datas:
-  - {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
-  - {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
+  _floor_datas:
+  - _map_data: {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
+    _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
   _player: {fileID: 5498470843638692480, guid: 38fec33e53fed48468f57e6e52915822, type: 3}

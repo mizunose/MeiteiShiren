@@ -19,37 +19,18 @@ using UnityEngine.UI;
 /// </summary>
 public class Map : MonoBehaviour
 {
-	// プロパティ定義
-
-	/// <summary>
-	/// <para>データ設定用プロパティ</para>
-	/// </summary>
-	/// <value>マップ作成に使用するデータ</value>
-	public MapData Data { private get; set; }
-	
-	/// <summary>
-	/// <para>マップの構成マス</para>
-	/// </summary>
-	/// <value>実際に配置されているマスのインスタンス</value>
-	public Mass[,] Masses
-	{
-		get
-		{
-			// 提供
-			return Data.MapMasses;	// データが生成後に保持しているマスの情報
-		}
-	}
-
-
 	/// <summary>
 	/// <para>初期化処理</para>
 	/// </summary>
 	private void Start()
 	{
+		// 変数宣言
+		MapData _data = Dungeon.Instance.FloorData.MapData;	// データ
+
 		// マップ生成
-		if(Data != null)	// データ有り
+		if(_data)	// データ有り
 		{
-			Data.Generate();	// データからマップを作成
+			_data.Generate();	// データからマップを作成
 		}
 		else	// データ無し
 		{
@@ -62,8 +43,8 @@ public class Map : MonoBehaviour
 		// 変数宣言
 		GameObject _canvas_object = new();	// キャンバス用インスタンス
 
-		// 初期化
 #if UNITY_EDITOR
+		// 初期化
 		_canvas_object.name = "MapCanvas";	// デバッグ時にはわかりやすいように命名しておく
 #endif	// end UNITY_EDITOR
 
@@ -91,7 +72,7 @@ public class Map : MonoBehaviour
 		var _image = _image_object.AddComponent<Image>();	// 画像表示機能
 
 		// 画像読み込み
-		_image.material.SetTexture("_MainTex", Data.MapTexture);	// テクスチャ登録
+		_image.material.SetTexture("_MainTex", _data.Texture);	// テクスチャ登録
 		var _color = _image.color;	// 構造体の取り出し(CS1612エラーの回避)
 		_color.a = Settings.Instance.Map.Alpha;	// 表示透明度を変更
 		_image.color = _color;	// 変更を反映
@@ -104,8 +85,8 @@ public class Map : MonoBehaviour
 		{
 			_image_transform.anchorMin = Vector2.up;	// 左上アンカー
 			_image_transform.anchorMax = Vector2.up;	// 左上アンカー
-			_image_transform.anchoredPosition = Data.AnchorPosition;	// アンカー基準の位置
-			_image_transform.sizeDelta = Data.MiniMapSize;	// 画像サイズ
+			_image_transform.anchoredPosition = _data.AnchorPosition;	// アンカー基準の位置
+			_image_transform.sizeDelta = _data.MiniMapSize;	// 画像サイズ
 		}
 #if UNITY_EDITOR	// エディタ使用中
 		else
@@ -114,7 +95,8 @@ public class Map : MonoBehaviour
 		}
 #endif	// end UNITY_EDITOR
 	}
-	
+
+
 	/// <summary>
 	/// <para>float型の座標をグリッド座標(マス番号)に変更</para>
 	/// </summary>
@@ -125,7 +107,8 @@ public class Map : MonoBehaviour
 		// 提供
 		return (int)((position + Settings.Instance.Map.MassSize / 2.0f) / Settings.Instance.Map.MassSize);	// どのマス目に含まれるかを演算
 	}
-	
+
+
 	/// <summary>
 	/// <para>Vector2型の座標をグリッド座標(マス番号)に変更</para>
 	/// </summary>
@@ -136,7 +119,8 @@ public class Map : MonoBehaviour
 		// 提供
 		return new Vector2Int(PositionToMass(position.x), PositionToMass(position.y));	// 各要素で座標変換
 	}
-	
+
+
 	/// <summary>
 	/// <para>Vector3型の座標をグリッド座標(マス番号)に変更</para>
 	/// </summary>

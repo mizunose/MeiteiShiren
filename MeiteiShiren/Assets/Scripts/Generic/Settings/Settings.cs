@@ -29,6 +29,7 @@ public class Settings : MonoSingleton<Settings>
 	// 変数宣言
 	[Header("ダンジョン")]
 	[SerializeField, Tooltip("マップのプロパティ")] private MapSetting _map_setting;
+	[SerializeField, Tooltip("敵生成のプロパティ")] private EnemySpawnerSetting _enemy_spawner_setting;
 	[SerializeField, Tooltip("移動のプロパティ")] private MoveSetting _move_setting;
 
 	// プロパティ定義
@@ -53,9 +54,28 @@ public class Settings : MonoSingleton<Settings>
 	}
 
 	/// <summary>
+	/// <para>敵生成のプロパティ</para>
+	/// </summary>
+	/// <value><see cref="_enemy_spawner_setting"/></value>
+	public EnemySpawnerSetting EnemySpawner
+	{
+		get
+		{
+			// インスタンス確保
+			if (!_enemy_spawner_setting)	// ヌルチェック
+			{
+				_enemy_spawner_setting = ScriptableObject.CreateInstance<EnemySpawnerSetting>();	// 規定値で作成
+			}
+
+			// 提供
+			return _enemy_spawner_setting;	// 敵生成のプロパティ一覧
+		}
+	}
+
+	/// <summary>
 	/// <para>移動のプロパティ</para>
 	/// </summary>
-	/// <value><see cref="_map_setting"/></value>
+	/// <value><see cref="_move_setting"/></value>
 	public MoveSetting Move
 	{
 		get

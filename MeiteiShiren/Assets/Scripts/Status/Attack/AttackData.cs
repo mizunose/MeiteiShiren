@@ -23,34 +23,27 @@ public class AttackData : ScriptableObject
 
 	// 変数宣言
 	[Header("ステータス")]
+	[SerializeField, Tooltip("味方討ち")] private bool _fiendry_fire = false;	// trueで味方も攻撃に含める
 	[SerializeField, Tooltip("攻撃範囲")] private MassRange _range;
 	[SerializeField, Tooltip("攻撃効果")] private Affect[] _affects;
 
 	// プロパティ定義
 
 	/// <summary>
-	/// <para>腹が減るターン数</para>
+	/// <para>フレンドリーファイア</para>
+	/// </summary>
+	/// <value><see cref="_fiendry_fire"/></value>
+	public bool FriendryFire => _fiendry_fire;
+
+	/// <summary>
+	/// <para>攻撃範囲</para>
 	/// </summary>
 	/// <value><see cref="_range"/></value>
-	public MassRange Range
-	{
-		get
-		{
-			// 提供
-			return _range;	// 腹が減るターン数
-		}
-	}
+	public MassRange Range => _range;
 
 	/// <summary>
 	/// <para>攻撃時効果一覧</para>
 	/// </summary>
 	/// <value><see cref="_affects"/></value>
-	public Affect[] Affects
-	{
-		get
-		{
-			// 提供
-			return _affects;	// 攻撃時に発動する効果
-		}
-	}
+	public Affect[] Affects => _affects;
 }
