@@ -157,7 +157,6 @@ public abstract class Attack : MonoBehaviour
 			// 部屋全体
 			case MassRange.RangeType.ROOM:
 
-				//TODO:マスの親をroomに
 				// 変数宣言
 				Room _current_room = null;	// 現在いる部屋
 
