@@ -1,5 +1,5 @@
 ﻿/*=====
-<MapSetting.cs>
+<MoveSetting.cs>
 
 -author
 	mizunose
