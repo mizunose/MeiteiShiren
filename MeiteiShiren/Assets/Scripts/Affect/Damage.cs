@@ -125,14 +125,10 @@ public class Damage : Affect
 			float _corrected_damage = (BaseDamage + _all_base_correction) * _all_correction_ratio;	// ダメージ補正を反映
 
 			// ダメージ計算
-			int _final_damage = CulcDamage(_corrected_damage, _hit_point.Data.Defence);	// ダメージ値を算出
+			int _final_damage = CalculateDamage(_corrected_damage, _hit_point.Data.Defence);	// ダメージ値を算出
 
 			// ダメージ補正
-			if ( _hit_point.HP <= 0)	// すでにHPを削り切っている
-			{
-				_final_damage = 0;	// HPを削る必要がない
-			}
-			else if (!_killable && _hit_point.HP - _final_damage < 0)	// 本来ならこのダメージ処理で死ぬが、非致死性ダメージとして扱う
+			if (!_killable && _hit_point.HP - _final_damage < 0)	// 本来ならこのダメージ処理で死ぬが、非致死性ダメージとして扱う
 			{
 				_final_damage = _hit_point.HP - 1;	// 1残すダメージに補正する
 			}
@@ -149,14 +145,15 @@ public class Damage : Affect
 			_printer.transform.SetParent(opponent.transform, false);	// 親子付け
 		}
 	}
-	
+
+
 	/// <summary>
 	/// <para>ダメージ処理に必要な情報をすべて揃え、演算</para>
 	/// </summary>
 	/// <param name="damage_value">与えるダメージ値</param>
 	/// <param name="defence">ダメージ抵抗値</param>
 	/// <returns>最終ダメージ</returns>
-	private int CulcDamage(float damage_value, float defence)
+	private int CalculateDamage(float damage_value, float defence)
 	{
 		// 変数宣言
 		int _result = 0;	// 演算結果格納用
