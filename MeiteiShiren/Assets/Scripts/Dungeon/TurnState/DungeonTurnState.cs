@@ -207,16 +207,17 @@ public class DungeonTurnState : MonoBehaviour
 					// 変数宣言
 					var _attack = _actor.GetComponent<Attack>();	// 攻撃機能
 
-					// 行動権の消費
+					// 攻撃
 					if (_attack)	// ヌルチェック
 					{
 						// 変数宣言
-						var _attack_targets = _attack.Simulate();	// 試算結果
+						var _simulate_data = _attack.Simulate();	// 試算結果
 
-						if (_attack_targets.Count > 0)	// 攻撃するとき
+						// 行動権の消費
+						if (_simulate_data.AreThereAttackable)	// 攻撃するとき
 						{
 							_actor.Chance = false;	// 行動した
-							yield return _attack.AttackMotion(_attack_targets);	// 処理完了待機
+							yield return _attack.AttackMotion(_simulate_data);	// 処理完了待機
 						}
 					}
 				}

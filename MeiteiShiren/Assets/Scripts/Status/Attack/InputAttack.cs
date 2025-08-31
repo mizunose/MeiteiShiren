@@ -72,15 +72,9 @@ public class InputAttack : Attack
 	/// <para>試算処理</para>
 	/// </summary>
 	/// <returns>試算結果</returns>
-	public override List<GameObject> Simulate()
+	public override SimulatedData Simulate()
 	{
-		// 変数宣言
-		List<GameObject> _result = new();	// 演算結果格納用
-
-		// 算出
-		CalculateAttackableMasses(true, transform, new float[]{transform.eulerAngles.y}, ref _result);	// 攻撃可能マスの演算
-
 		// 提供
-		return _result;	// 演算結果
+		return CalculateAttackableMasses(true, transform, new[]{transform.eulerAngles.y});	// 攻撃可能マスの演算結果
 	}
 }

@@ -25,6 +25,7 @@ public abstract class Move : MonoBehaviour
 	/// </summary>
 	public struct SimulatedData
 	{
+		// 変数宣言
 		public Transform next_mass;	// 移動先のマス
 		public float direction;	// 終了時点での向き
 	}
@@ -46,6 +47,7 @@ public abstract class Move : MonoBehaviour
 	/// <summary>
 	/// <para>移動モーション処理</para>
 	/// </summary>
+	/// <param name="data">試算データ</param>
 	/// <returns>遅延処理用のインターフェース</returns>
 	public IEnumerator MoveMotion(SimulatedData data)
 	{

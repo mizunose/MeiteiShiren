@@ -98,8 +98,10 @@ public class ChaseMove : Move
 		// 変数宣言
 		Attack _attack = GetComponent<Attack>();	// 攻撃機能
 
+
+
 		// 状態遷移
-		if (_attack && _attack.Simulate().Count > 0)	// 攻撃できる場合はそれを最優先とする
+		if (_attack && _attack.Simulate().AreThereAttackable)	// 攻撃できる場合はそれを最優先とする
 		{
 			// 終了
 			return (false, _result);	// 攻撃できる位置から移動する必要がないため中断

@@ -19,6 +19,44 @@ using UnityEngine;
 /// </summary>
 public abstract class Attack : MonoBehaviour
 {
+	// 構造体定義
+	/// <summary>
+	/// <para>試算データ</para>
+	/// </summary>
+	public struct SimulatedData
+	{
+		// 変数宣言
+		public List<(float angle, List<GameObject> targets)> attackables;	// 攻撃に含める相手
+
+
+		// プロパティ定義
+		/// <summary>
+		/// <para>データの中にオブジェクトが1つでも含めれているかを調べる</para>
+		/// </summary>
+		/// <value>有効な攻撃ならtrue, そうでなければfalse</value>
+		public bool AreThereAttackable
+		{
+			get
+			{
+				// 変数宣言
+				bool _result = false;	// 演算結果格納用
+
+				// 検査
+				foreach (var _data in attackables)	// 方向単位でのループ
+				{
+					if (_data.targets.Count > 0)	// 攻撃対象を確認
+					{
+						_result = true;	// 攻撃対象を保証できる
+						break;	// 目的を果たしたのでこれ以降のループは不要
+					}
+				}
+			
+				// 提供
+				return _result;	// 演算結果
+			}
+		}
+	}
+
 	// 定数定義
 	private const float _ROUND_DEGREE = 360.0f;	// 円の角度
 	private const int _SPLIT_DIRECTION = 8;	// 攻撃の方向候補数
@@ -55,16 +93,38 @@ public abstract class Attack : MonoBehaviour
 	/// <para>試算処理</para>
 	/// </summary>
 	/// <returns>試算結果</returns>
-	public abstract List<GameObject> Simulate();
+	public abstract SimulatedData Simulate();
 
 
 	/// <summary>
 	/// <para>攻撃モーション処理</para>
 	/// </summary>
-	/// <param name="targets">攻撃対象</param>
+	/// <param name="data">試算データ</param>
 	/// <returns>遅延処理用のインターフェース</returns>
-	public IEnumerator AttackMotion(List<GameObject> targets)
+	public IEnumerator AttackMotion(SimulatedData data)
 	{
+		// 変数宣言
+		List<GameObject> _targets = new();	// 攻撃対象一覧
+
+		// 選択
+		if (data.attackables.Count > 0)
+		{
+			data.attackables.Sort((first, second) => second.targets.Count - first.targets.Count);	// 対象の多い順に並べ替え
+
+			// 変数宣言
+			Move _move = GetComponent<Move>();	// 移動機能
+			var _selected_data = data.attackables[0];	// 最も対象の多いものを選択
+
+			// 回転処理
+			if (_move && _selected_data.angle != transform.eulerAngles.y)	// 攻撃方向へ回転できる
+			{
+				yield return _move.MoveMotion(new Move.SimulatedData{next_mass = transform, direction = _selected_data.angle});	// 攻撃方向に回転
+			}
+
+			// 初期化
+			_targets = _selected_data.targets;	// 攻撃対象を設定
+		}
+
 		//TODO:モーション再生
 		//if (PlayableGraph _playable_graph.IsPlaying) { yield return null; }	// モーション中は待機
 
@@ -110,7 +170,7 @@ public abstract class Attack : MonoBehaviour
 			}
 
 			// 内容処理
-			DoAttack(targets);	// 攻撃の効果発生タイミング
+			DoAttack(_targets);	// 攻撃の効果発生タイミング
 
 			// 初期化
 			_time = 0.0f;	// 経過時間
@@ -224,14 +284,15 @@ public abstract class Attack : MonoBehaviour
 	/// </summary>
 	/// <param name="activity">能動側の演算ならtrue, 受動側の演算ならfalse</param>
 	/// <param name="base_transform">計算基準の姿勢情報</param>
-	/// <param name="angles">攻撃方向</param>
-	/// <param name="result_masses">算出したマスを格納する領域</param>
-	public void CalculateAttackableMasses(in bool activity, in Transform base_transform, in float[] angles, ref List<GameObject> result_masses)
+	/// <param name="result_datas">算出した情報を格納する領域</param>
+	public SimulatedData CalculateAttackableMasses(in bool activity, in Transform base_transform, in float[] angles)
 	{
 		// 変数宣言
 		Mass _base_mass = null;	// 基準のマス
+		SimulatedData _result;	// 演算結果格納用
 
 		// 初期化
+		_result.attackables = new();	// 領域確保
 		if (transform.parent)	// ヌルチェック
 		{
 			_base_mass = transform.parent.GetComponent<Mass>();	// 基準マスの取得
@@ -257,22 +318,26 @@ public abstract class Attack : MonoBehaviour
 #if UNITY_EDITOR
 			Debug.LogError("攻撃のデータが設定されていません");
 #endif	// end UNITY_EDITOR
-			return;	// 処理不可能なため終了
+			return _result;	// 処理不可能なため終了
 		}
 
 		// 変数宣言
 		Vector2Int _base_idx = Map.PositionToMass(_base_mass.transform.position);	// 基準マスの番号
-		List<Mass> _target_masses = new();	// 効果対象のマス一覧
+		List<((float angle, List<GameObject> targets) result_data, List<Mass> target_masses)> _target_datas = new();	// 方向別の効果対象一覧
 
 		// 初期化
 		switch (_data.Range.Type)	// 範囲の定義によって分岐
 		{
 			// 限定範囲
 			case MassRange.RangeType.RANGED:
-
+			{
 				// 範囲登録
-				foreach (float _angle in angles)	// 方向単位でのループ
+				foreach (var _angle in angles)	// 方向単位でのループ
 				{
+					// 変数宣言
+					((float angle, List<GameObject> targets) result_data, List<Mass> target_masses) _target_data = ((_angle, new()), new());	// 範囲格納場所
+
+					// 走査
 					foreach (Vector2Int _shift in _data.Range.Range)	// マス単位でのループ
 					{
 						// 変数宣言
@@ -298,20 +363,25 @@ public abstract class Attack : MonoBehaviour
 						}
 
 						// リスト更新
-						_target_masses.Add(_target_mass);	// 効果範囲に登録
+						_target_data.target_masses.Add(_target_mass);	// 効果範囲に登録
 					}
+
+					// リスト更新
+					_target_datas.Add(_target_data);	// 求めた対象を登録
 				}
 
 				// 終了
 				break;	// 分岐処理完了
+			}
 
 			// 直線範囲
 			case MassRange.RangeType.FRONT_LINE:
-
+			{
 				// 範囲登録
-				foreach (float _angle in angles)	// 方向単位でのループ
+				foreach (var _angle in angles)	// 方向単位でのループ
 				{
 					// 変数宣言
+					((float angle, List<GameObject> targets) result_data, List<Mass> target_masses) _target_data = ((_angle, new()), new());	// 範囲格納場所
 					Vector2Int _target_idx = _base_idx;	// 対象マスの番号
 
 					// 線上走査
@@ -341,18 +411,23 @@ public abstract class Attack : MonoBehaviour
 							//TODO:壁で妨害されていて先に届かない
 
 							// リスト更新
-							_target_masses.Add(_target_mass);	// 効果範囲に登録
+							_target_data.target_masses.Add(_target_mass);	// 効果範囲に登録
 						}
 					}
+
+					// リスト更新
+					_target_datas.Add(_target_data);	// 求めた対象を登録
 				}
 
 				// 終了
 				break;	// 分岐処理完了
+			}
 
 			// 部屋全体
 			case MassRange.RangeType.ROOM:
-
+			{
 				// 変数宣言
+				((float angle, List<GameObject> targets) result_data, List<Mass> target_masses) _target_data = ((transform.eulerAngles.y, new()), new());	// 範囲格納場所
 				Room _base_room = null;	// 基準位置のある部屋
 
 				// 初期化
@@ -367,7 +442,7 @@ public abstract class Attack : MonoBehaviour
 					// リスト更新
 					foreach (Mass _target_mass in _base_room.GetComponentsInChildren<Mass>())	// 部屋に含まれるマス単位でのループ
 					{
-						_target_masses.Add(_target_mass);	// 効果範囲に登録
+						_target_data.target_masses.Add(_target_mass);	// 効果範囲に登録
 					}
 				}
 				else	// 部屋に対する行動ができない
@@ -391,16 +466,23 @@ public abstract class Attack : MonoBehaviour
 						// リスト更新
 						if (_target_mass)	// ヌルチェック
 						{
-							_target_masses.Add(_target_mass);	// 効果範囲に登録
+							_target_data.target_masses.Add(_target_mass);	// 効果範囲に登録
 						}
 					}
 				}
 
+				// リスト更新
+				_target_datas.Add(_target_data);	// 効果対象に登録
+
 				// 終了
 				break;	// 分岐処理完了
-				
+			}
+
 			// マップ全体
 			case MassRange.RangeType.WORLD:
+			{
+				// 変数宣言
+				((float angle, List<GameObject> targets) result_data, List<Mass> target_masses) _target_data = ((transform.eulerAngles.y, new()), new());	// 範囲格納場所
 
 				// 攻撃処理
 				foreach (Mass _mass in Dungeon.Instance.FloorData.MapData.Masses)	// マス単位でのループ
@@ -412,12 +494,16 @@ public abstract class Attack : MonoBehaviour
 					}
 					
 					// リスト更新
-					_target_masses.Add(_mass);	// 効果範囲に登録
+					_target_data.target_masses.Add(_mass);	// 効果範囲に登録
 				}
+
+				// リスト更新
+				_target_datas.Add(_target_data);	// 効果対象に登録
 
 				// 終了
 				break;	// 分岐処理完了
-				
+			}
+
 			// その他
 			default:
 				Debug.LogError("対応の定義されていない範囲が使用されています");
@@ -425,48 +511,57 @@ public abstract class Attack : MonoBehaviour
 		}
 
 		// 攻撃対象を設定
-		foreach (Mass _target_mass in _target_masses)	// 対象マス単位でのループ
+		foreach (var _target_data in _target_datas)
 		{
-			for (int _idx = 0; _idx < _target_mass.transform.childCount; _idx++)	// 設置物単位でのループ
+			foreach (Mass _target_mass in _target_data.target_masses)	// 対象マス単位でのループ
 			{
-				// 変数宣言
-				GameObject _target = _target_mass.transform.GetChild(_idx).gameObject;	// 攻撃を受けるオブジェクト
-
-				// フレンドリーファイア
-				if (!_data.FriendryFire)	// 味方討ちを防ぐ
+				for (int _idx = 0; _idx < _target_mass.transform.childCount; _idx++)	// 設置物単位でのループ
 				{
 					// 変数宣言
-					Camp _my_camp = GetComponent<Camp>();	// 自身の陣営
+					GameObject _target = _target_mass.transform.GetChild(_idx).gameObject;	// 攻撃を受けるオブジェクト
 
-					if (_my_camp)	// 陣営所属済
+					// フレンドリーファイア
+					if (!_data.FriendryFire)	// 味方討ちを防ぐ
 					{
 						// 変数宣言
-						Camp _target_camp = _target.GetComponent<Camp>();	// 相手の陣営
+						Camp _my_camp = GetComponent<Camp>();	// 自身の陣営
 
-						// 免除
-						if (_target_camp && _my_camp.Type == _target_camp.Type)	// 同じ陣営に所属しているため候補から外す
+						if (_my_camp)	// 陣営所属済
 						{
-							continue;	// 追加させずに次の項へ
-						}
-					}
-					else	// 無所属
-					{
-#if UNITY_EDITOR
-						Debug.LogError("所属陣営が存在しません");
-#endif	// end UNITY_EDITOR
+							// 変数宣言
+							Camp _target_camp = _target.GetComponent<Camp>();	// 相手の陣営
 
-						// 免除
-						if (_target == gameObject)	// 少なくとも自身は同じ陣営として見做せるため候補から外す
-						{
-							continue;	// 追加させずに次の項へ
+							// 免除
+							if (_target_camp && _my_camp.Type == _target_camp.Type)	// 同じ陣営に所属しているため候補から外す
+							{
+								continue;	// 追加させずに次の項へ
+							}
 						}
+						else	// 無所属
+						{
+	#if UNITY_EDITOR
+							Debug.LogError("所属陣営が存在しません");
+	#endif	// end UNITY_EDITOR
+
+							// 免除
+							if (_target == gameObject)	// 少なくとも自身は同じ陣営として見做せるため候補から外す
+							{
+								continue;	// 追加させずに次の項へ
+							}
 						
+						}
 					}
-				}
 
-				// リスト更新
-				result_masses.Add(_target);	// 攻撃対象として登録
+					// リスト更新
+					_target_data.result_data.targets.Add(_target);	// 攻撃対象として登録
+				}
 			}
+
+			// リスト更新
+			_result.attackables.Add(_target_data.result_data);	// 攻撃対象として登録
 		}
+
+		// 提供
+		return _result;	// 演算結果
 	}
 }
