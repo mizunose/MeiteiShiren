@@ -12,6 +12,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 // クラス定義
 /// <summary>
@@ -26,7 +27,7 @@ public abstract class Attack : MonoBehaviour
 	public struct SimulatedData
 	{
 		// 変数宣言
-		public List<(float angle, List<GameObject> targets)> attackables;	// 攻撃に含める相手
+		public List<(float angle, List<GameObject> results)> attackables;	// 攻撃に含める相手
 
 
 		// プロパティ定義
@@ -44,7 +45,7 @@ public abstract class Attack : MonoBehaviour
 				// 検査
 				foreach (var _data in attackables)	// 方向単位でのループ
 				{
-					if (_data.targets.Count > 0)	// 攻撃対象を確認
+					if (_data.results.Count > 0)	// 攻撃対象を確認
 					{
 						_result = true;	// 攻撃対象を保証できる
 						break;	// 目的を果たしたのでこれ以降のループは不要
@@ -70,7 +71,7 @@ public abstract class Attack : MonoBehaviour
 	/// <para>攻撃方向の候補から各角度を算出する</para>
 	/// </summary>
 	/// <value>各攻撃方向の角度</value>
-	public float[] AttackableAngles
+	public static float[] AttackableAngles
 	{
 		get
 		{
@@ -109,7 +110,7 @@ public abstract class Attack : MonoBehaviour
 		// 選択
 		if (data.attackables.Count > 0)
 		{
-			data.attackables.Sort((first, second) => second.targets.Count - first.targets.Count);	// 対象の多い順に並べ替え
+			data.attackables.Sort((first, second) => second.results.Count - first.results.Count);	// 対象の多い順に並べ替え
 
 			// 変数宣言
 			Move _move = GetComponent<Move>();	// 移動機能
@@ -122,7 +123,7 @@ public abstract class Attack : MonoBehaviour
 			}
 
 			// 初期化
-			_targets = _selected_data.targets;	// 攻撃対象を設定
+			_targets = _selected_data.results;	// 攻撃対象を設定
 		}
 
 		//TODO:モーション再生
@@ -293,9 +294,9 @@ public abstract class Attack : MonoBehaviour
 
 		// 初期化
 		_result.attackables = new();	// 領域確保
-		if (transform.parent)	// ヌルチェック
+		if (base_transform.parent)	// ヌルチェック
 		{
-			_base_mass = transform.parent.GetComponent<Mass>();	// 基準マスの取得
+			_base_mass = base_transform.parent.GetComponent<Mass>();	// 基準マスの取得
 
 #if UNITY_EDITOR
 			// 保全
@@ -346,6 +347,7 @@ public abstract class Attack : MonoBehaviour
 							_shift.x * _attack_direction.y + _shift.y * _attack_direction.x,
 							_shift.y * _attack_direction.y - _shift.x * _attack_direction.x
 							);	// 対象マスの番号	※鉛直上向きを基準に範囲を回転させている
+
 						// 保全
 						if (_target_idx.x < 0 || _target_idx.x >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1)
 							|| _target_idx.y < 0 || _target_idx.y >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// マップ外のマス
@@ -515,45 +517,54 @@ public abstract class Attack : MonoBehaviour
 		{
 			foreach (Mass _target_mass in _target_data.target_masses)	// 対象マス単位でのループ
 			{
-				for (int _idx = 0; _idx < _target_mass.transform.childCount; _idx++)	// 設置物単位でのループ
+				// 処理分岐
+				if (activity)	// 攻撃する側の演算なので攻撃対象を演算する
 				{
-					// 変数宣言
-					GameObject _target = _target_mass.transform.GetChild(_idx).gameObject;	// 攻撃を受けるオブジェクト
-
-					// フレンドリーファイア
-					if (!_data.FriendryFire)	// 味方討ちを防ぐ
+					for (int _idx = 0; _idx < _target_mass.transform.childCount; _idx++)	// 設置物単位でのループ
 					{
 						// 変数宣言
-						Camp _my_camp = GetComponent<Camp>();	// 自身の陣営
+						GameObject _target = _target_mass.transform.GetChild(_idx).gameObject;	// 攻撃を受けるオブジェクト
 
-						if (_my_camp)	// 陣営所属済
+						// フレンドリーファイア
+						if (!_data.FriendryFire)	// 味方討ちを防ぐ
 						{
 							// 変数宣言
-							Camp _target_camp = _target.GetComponent<Camp>();	// 相手の陣営
+							Camp _my_camp = GetComponent<Camp>();	// 自身の陣営
 
-							// 免除
-							if (_target_camp && _my_camp.Type == _target_camp.Type)	// 同じ陣営に所属しているため候補から外す
+							if (_my_camp)	// 陣営所属済
 							{
-								continue;	// 追加させずに次の項へ
-							}
-						}
-						else	// 無所属
-						{
-	#if UNITY_EDITOR
-							Debug.LogError("所属陣営が存在しません");
-	#endif	// end UNITY_EDITOR
+								// 変数宣言
+								Camp _target_camp = _target.GetComponent<Camp>();	// 相手の陣営
 
-							// 免除
-							if (_target == gameObject)	// 少なくとも自身は同じ陣営として見做せるため候補から外す
-							{
-								continue;	// 追加させずに次の項へ
+								// 免除
+								if (_target_camp && _my_camp.Type == _target_camp.Type)	// 同じ陣営に所属しているため候補から外す
+								{
+									continue;	// 追加させずに次の項へ
+								}
 							}
+							else	// 無所属
+							{
+		#if UNITY_EDITOR
+								Debug.LogError("所属陣営が存在しません");
+		#endif	// end UNITY_EDITOR
+
+								// 免除
+								if (_target == gameObject)	// 少なくとも自身は同じ陣営として見做せるため候補から外す
+								{
+									continue;	// 追加させずに次の項へ
+								}
 						
+							}
 						}
-					}
 
+						// リスト更新
+						_target_data.result_data.targets.Add(_target);	// 攻撃対象として登録
+					}
+				}
+				else	// 攻撃される側の演算なのでそのまま該当マスを演算とする
+				{
 					// リスト更新
-					_target_data.result_data.targets.Add(_target);	// 攻撃対象として登録
+					_target_data.result_data.targets.Add(_target_mass.gameObject);	// 攻撃対象として登録
 				}
 			}
 

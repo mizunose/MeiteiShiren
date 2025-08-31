@@ -22,12 +22,12 @@ using UnityEngine;
 public class ChaseMove : Move
 {
 	// 定数定義
-	private const int _SPLIT_DIRECTION = 8;	// 移動の方向候補数
+	private const int _SPLIT_DIRECTION = 8; // 移動の方向候補数
 
 	// 変数宣言
+	[SerializeField, Tooltip("データ")] private ChaseData _data;
 	private Transform _chase_target;	// 追跡相手の姿勢
 	private Transform _room_out;	// 室内で目指す出口
-	private int _view_range = 1;	// 視界の範囲	//TODO:プロパティ化
 
 
 	/// <summary>
@@ -40,65 +40,45 @@ public class ChaseMove : Move
 		SimulatedData _result = new();	// 演算結果格納用
 		Mass _current_mass = GetCurrentMass();	// 現在のマス
 		Vector2Int _current_mass_idx = Map.PositionToMass(_current_mass.transform.position);	// 現在マスの番号
+		Room _room = _current_mass.transform.parent.GetComponent<Room>();	// 現在の部屋
 
 		// 視界	//TODO:部屋にいるときは視界を部屋中に拡張
-		for (int _y_idx = _current_mass_idx.y - _view_range; _y_idx < _current_mass_idx.y + _view_range + 1; _y_idx++)	// 行単位でのループ
+		if (_room)	// 室内
 		{
-			// 保全
-			if (_y_idx < 0 || _y_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
+			for (int _idx = 0; _idx < _room.transform.childCount; _idx++)	// 部屋の持つオブジェクト単位でのループ
 			{
-				continue;	// マスがないので処理できない
+				// 追跡管理
+				ViewCheckChase(_room.transform.GetChild(_idx).GetComponent<Mass>());	// 視界内の追跡対象を捉える
 			}
-
-			// 処理
-			for (int _x_idx = _current_mass_idx.x - _view_range; _x_idx < _current_mass_idx.x + _view_range + 1; _x_idx++)	// マス単位でのループ
+		}
+		else	// 室外
+		{
+			for (int _y_idx = _current_mass_idx.y - _data.ViewRange; _y_idx < _current_mass_idx.y + _data.ViewRange + 1; _y_idx++)	// 行単位でのループ
 			{
 				// 保全
-				if (_x_idx < 0 || _x_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
+				if (_y_idx < 0 || _y_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
 				{
 					continue;	// マスがないので処理できない
 				}
 
-				// 変数宣言
-				Mass _view_mass = Dungeon.Instance.FloorData.MapData.Masses[_y_idx, _x_idx];	// 移動先のマス番号からマス本体を取得
-				
-				// 追跡対象を認識
-				if (_view_mass)	// ヌルチェック
+				// 処理
+				for (int _x_idx = _current_mass_idx.x - _data.ViewRange; _x_idx < _current_mass_idx.x + _data.ViewRange + 1; _x_idx++)	// マス単位でのループ
 				{
-					for (int _object_idx = 0; _object_idx < _view_mass.transform.childCount; _object_idx++)	// マスが持つオブジェクト単位でのループ
+					// 保全
+					if (_x_idx < 0 || _x_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
 					{
-						// 変数宣言
-						Camp _my_camp = GetComponent<Camp>();	// 自身の陣営
-						GameObject _view_object = _view_mass.transform.GetChild(_object_idx).gameObject;	// 扱うオブジェクト
-						Camp _view_camp = _view_object.GetComponent<Camp>();	// 対象オブジェクトの陣営
-
-						// 追跡条件検査
-						if(_view_camp && (!_my_camp || _my_camp.Type != _view_camp.Type))	// 違う陣営の所属	※無所属はアイテムなどの追跡しないオブジェクトとして考え、そもそも対象としない
-						{
-#if UNITY_EDITOR
-							if (!_my_camp)	// 自身が無所属
-							{
-								Debug.LogError("所属陣営が不明なため無所属として処理します");
-							}
-#endif	// end UNITY_EDITOR
-
-							// 更新
-							if (!_chase_target	// 追跡対象が未設定か
-								|| Vector3.Distance(_view_mass.transform.position, _current_mass.transform.position)
-									< Vector3.Distance(_chase_target.position, _current_mass.transform.position))	// より近い追跡対象を見つけた時
-							{
-								_chase_target = _view_object.transform;	// 追跡対象を切り替える
-							}
-						}
+						continue;	// マスがないので処理できない
 					}
+
+					// 追跡管理
+					ViewCheckChase(Dungeon.Instance.FloorData.MapData.Masses[_y_idx, _x_idx]);	// 視界内の追跡対象を捉える
 				}
 			}
 		}
 
+
 		// 変数宣言
 		Attack _attack = GetComponent<Attack>();	// 攻撃機能
-
-
 
 		// 状態遷移
 		if (_attack && _attack.Simulate().AreThereAttackable)	// 攻撃できる場合はそれを最優先とする
@@ -108,8 +88,56 @@ public class ChaseMove : Move
 		}
 		else if (_chase_target)	// 追跡相手がいる場合はA*探索する
 		{
+			// 変数宣言
+			Transform _goal = null;	// 追跡処理で実際に向かう場所
+
+			// 初期化
+			if (_attack)	// 攻撃機能がある
+			{
+				// 変数宣言
+				var _goals_to_attack = _attack.CalculateAttackableMasses(false, _chase_target, Attack.AttackableAngles);	// 攻撃可能な場所一覧を取得
+
+				// 最短攻撃可能マスを走査
+				foreach (var _attackable in _goals_to_attack.attackables)	// 攻撃方向単位でのループ
+				{
+					foreach (var _target_mass_object in _attackable.results)	// 攻撃可能位置単位でのループ
+					{
+						// 変数宣言
+						Mass _target_mass = _target_mass_object.GetComponent<Mass>();	// 扱うマス
+
+						// 保全
+						if (!_target_mass) // ヌルチェック
+						{
+							// 終了
+							continue;	// マスのオブジェクトを取得できるはずなのでこれは異常
+						}
+
+						// 更新
+						if (!_goal || Vector3.Distance(_current_mass.transform.position, _target_mass.transform.position) < Vector3.Distance(_current_mass.transform.position, _goal.GetComponent<Mass>().transform.position))	// 目標地点をより近くに更新できる
+						{
+							_goal = _target_mass_object.transform;	// 目標を更新
+						}
+					}
+				}
+
+				// 保全
+				if (!_goal)	// ヌルチェック
+				{
+					_goal = _chase_target;	// 対象を代わりに目標とする
+				}
+				else
+				{
+					Debug.Log(_chase_target);
+					Debug.Log(_goal);
+				}
+			}
+			else	// 対象へとまっすぐ目指す
+			{
+				_goal = _chase_target;	// 対象をそのまま目標とする
+			}
+
 			// 更新
-			_result.next_mass = MoveOnMapWithAStar(_chase_target.parent);	// 追跡探索
+			_result.next_mass = MoveOnMapWithAStar(_goal);	// 追跡探索
 
 			// 終了
 			if(!_result.next_mass)	// 探索不可能
@@ -122,7 +150,7 @@ public class ChaseMove : Move
 				return (false, _result);	// 移動できるようになるまで待機する
 			}
 		}
-		else if(_current_mass.transform.parent.GetComponent<Room>())	// 室内なら通路を目指す
+		else if(_room)	// 室内なら通路を目指す
 		{
 			// 更新
 			_result.next_mass = MoveOnRoom();	// 室内探索
@@ -157,6 +185,49 @@ public class ChaseMove : Move
 		// 提供
 		return (true, _result);	// 演算結果
 	}
+
+
+	/// <summary>
+	/// <para>引数のマスから追跡対象を認識し、必要なら切り替える</para>
+	/// </summary>
+	/// <param name="_view_mass">視界にあるマス</param>
+	private void ViewCheckChase(Mass _view_mass)
+	{
+		// 変数宣言
+		Mass _current_mass = GetCurrentMass();	// 現在のマス
+
+		// 追跡対象を認識
+		if (_view_mass)	// ヌルチェック
+		{
+			for (int _object_idx = 0; _object_idx < _view_mass.transform.childCount; _object_idx++)	// マスが持つオブジェクト単位でのループ
+			{
+				// 変数宣言
+				Camp _my_camp = GetComponent<Camp>();	// 自身の陣営
+				GameObject _view_object = _view_mass.transform.GetChild(_object_idx).gameObject;	// 扱うオブジェクト
+				Camp _view_camp = _view_object.GetComponent<Camp>();	// 対象オブジェクトの陣営
+
+				// 追跡条件検査
+				if(_view_camp && (!_my_camp || _my_camp.Type != _view_camp.Type))	// 違う陣営の所属	※無所属はアイテムなどの追跡しないオブジェクトとして考え、そもそも対象としない
+				{
+#if UNITY_EDITOR
+					if (!_my_camp)	// 自身が無所属
+					{
+						Debug.LogError("所属陣営が不明なため無所属として処理します");
+					}
+#endif	// end UNITY_EDITOR
+
+					// 更新
+					if (!_chase_target	// 追跡対象が未設定か
+						|| Vector3.Distance(_view_mass.transform.position, _current_mass.transform.position)
+							< Vector3.Distance(_chase_target.position, _current_mass.transform.position))	// より近い追跡対象を見つけた時
+					{
+						_chase_target = _view_object.transform;	// 追跡対象を切り替える
+					}
+				}
+			}
+		}
+	}
+
 
 
 	/// <summary>
@@ -411,12 +482,14 @@ public class ChaseMove : Move
 				// 周囲マスを参照し、扱っているマスが出口か判定
 				for (int _y_idx = _arround_mass_idx.y - 1; _y_idx < _arround_mass_idx.y + 1 + 1; _y_idx++)	// 行単位でのループ
 				{
+					// 保全
 					if (_y_idx < 0 || _y_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
 					{
 						continue;	// マスがないので処理できない
 					}
 
-					for (int _x_idx = _arround_mass_idx.x - 1; _x_idx < _arround_mass_idx.x + 1 + 1; _x_idx++)
+					// 走査
+					for (int _x_idx = _arround_mass_idx.x - 1; _x_idx < _arround_mass_idx.x + 1 + 1; _x_idx++)	// マス単位でのループ
 					{
 						// 保全
 						if (_x_idx < 0 || _x_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
@@ -427,7 +500,7 @@ public class ChaseMove : Move
 						// 変数宣言
 						Mass _arround_mass = Dungeon.Instance.FloorData.MapData.Masses[_y_idx, _x_idx];	// マス番号からマス本体を取得
 
-						// 
+						// 検査
 						if (_arround_mass && _arround_mass.transform.parent != _room.transform)	// 室外のマス
 						{
 							// 変数宣言
