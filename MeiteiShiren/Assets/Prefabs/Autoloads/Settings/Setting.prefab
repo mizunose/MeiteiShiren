@@ -45,4 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _map_setting: {fileID: 11400000, guid: 42f44daaf2021cc41aa8f855dec6332a, type: 2}
+  _enemy_spawner_setting: {fileID: 11400000, guid: c83e3eaedfaec104fa07f6ecad5376b7, type: 2}
   _move_setting: {fileID: 11400000, guid: cb3a2da12996cee43932139de3df5a1d, type: 2}
+  _world_label_setting: {fileID: 11400000, guid: bee81fa74dc2b104ba1609716ddc940b, type: 2}

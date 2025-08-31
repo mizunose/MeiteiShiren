@@ -21,9 +21,20 @@ using UnityEngine;
 [CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
 class DynamicMap : MapData
 {
+	// 列挙定義
+	public enum MassType	// 種類
+	{
+		GROUND,	// 地面
+		PUBLIC_ROOM,	// 通常部屋
+		PRIVATE_ROOM,	// 隠し部屋
+		SHOP,	// 商店
+		WALL,	// 壁
+		MAX	// 要素数
+	}
+
 	// 定数定義
 	private const string _NAME = "DynamicMap";	// タブ名称
-	private const Mass.TYPE _INITIAL_PACK = Mass.TYPE.WALL;	// 最初にエリアを仮埋めするマス種
+	private const MassType _INITIAL_PACK = MassType.WALL;	// 最初にエリアを仮埋めするマス種
 	private static readonly int[] _MASS_INDICES = {	// マスメッシュの頂点インデックス
 			0, 1, 2,	// 左側三角形
 			1, 3, 2,	// 右側三角形
@@ -47,7 +58,7 @@ class DynamicMap : MapData
 	[SerializeField, Tooltip("空間分割の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _area_split_threshold = 0;
 	[SerializeField, Tooltip("部屋掘削の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _room_sharpen_threshold = 0;
 	[SerializeField, Tooltip("入口設立の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_entrance_threshold = 0;
-	private List<Mass.TYPE[]> _map_info = new List<Mass.TYPE[]>();	// マップの情報
+	private List<MassType[]> _map_info = new List<MassType[]>();	// マップの情報
 	[Header("商店作成")]
 	[SerializeField, Tooltip("商店作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_shop_threshold = 0;
 
@@ -81,14 +92,14 @@ class DynamicMap : MapData
 	public override void Generate()
 	{
 		// 変数宣言
-		Mass.TYPE[][] _area_infos = new Mass.TYPE[_size.y][];	// 生成管理用辞書
+		MassType[][] _area_infos = new MassType[_size.y][];	// 生成管理用辞書
 		bool[][] _road_infos = new bool[_size.y][];	// 通路候補マス(trueで通路にでき、falseで不可)
 
 		// 初期化
 		for(uint _y_idx = 0; _y_idx < _size.y; _y_idx++)	// 行単位でのループ
 		{
 			// 行を作成
-			_area_infos[_y_idx] = new Mass.TYPE[_size.x];	// エリア用
+			_area_infos[_y_idx] = new MassType[_size.x];	// エリア用
 			_road_infos[_y_idx] = new bool[_size.x];	// 通路用
 			
 			// パッキング
@@ -248,7 +259,7 @@ class DynamicMap : MapData
 					}
 					else
 					{
-						_area_infos[_y_idx][_x_idx] = Mass.TYPE.PUBLIC_ROOM;	// マスを部屋に設定
+						_area_infos[_y_idx][_x_idx] = MassType.PUBLIC_ROOM;	// マスを部屋に設定
 					}
 				}
 			}
@@ -369,7 +380,7 @@ class DynamicMap : MapData
 					case Edge.Left:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_idx][_room.room.xMin] == Mass.TYPE.PUBLIC_ROOM)	// 削り取られていないマス
+							if (IsRoomType(_area_infos[_idx][_room.room.xMin]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_room.room.xMin, _idx));	// 入口の候補として優先される
 							}
@@ -384,7 +395,7 @@ class DynamicMap : MapData
 					case Edge.Right:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_idx][_room.room.xMax - 1] == Mass.TYPE.PUBLIC_ROOM)	// 削り取られていないマス
+							if (IsRoomType(_area_infos[_idx][_room.room.xMax - 1]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_room.room.xMax - 1, _idx));	// 入口の候補として優先される
 							}
@@ -399,7 +410,7 @@ class DynamicMap : MapData
 					case Edge.Top:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_room.room.yMin][_idx] == Mass.TYPE.PUBLIC_ROOM)	// 削り取られていないマス
+							if (IsRoomType(_area_infos[_room.room.yMin][_idx]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_idx, _room.room.yMin));	// 入口の候補として優先される
 							}
@@ -414,7 +425,7 @@ class DynamicMap : MapData
 					case Edge.Bottom:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (_area_infos[_room.room.yMax - 1][_idx] == Mass.TYPE.PUBLIC_ROOM)	// 削り取られていないマス
+							if (IsRoomType(_area_infos[_room.room.yMax - 1][_idx]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_idx, _room.room.yMax - 1));	// 入口の候補として優先される
 							}
@@ -444,7 +455,7 @@ class DynamicMap : MapData
 				else if(_lost_masses.Count > 0)	// 壁で埋められ候補がない
 				{
 					_entrance = _lost_masses[UnityEngine.Random.Range(0, _lost_masses.Count)];	// 一か所ランダムで選択する
-					_area_infos[_entrance.y][_entrance.x] = Mass.TYPE.PUBLIC_ROOM;	// ここだけ部屋のままだったことにする
+					_area_infos[_entrance.y][_entrance.x] = MassType.PUBLIC_ROOM;	// ここだけ部屋のままだったことにする
 				}
 #if UNITY_EDITOR
 				else	// 領域自体がない
@@ -463,7 +474,7 @@ class DynamicMap : MapData
 						for (int _idx = _entrance.x - 1; _idx > 0; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
-							_area_infos[_entrance.y][_idx] = Mass.TYPE.GROUND;	// マスを通路に設定
+							_area_infos[_entrance.y][_idx] = MassType.GROUND;	// マスを通路に設定
 
 							// 終了
 							if (_road_infos[_entrance.y][_idx])	// 通路の軌跡上に乗った
@@ -487,7 +498,7 @@ class DynamicMap : MapData
 						for (int _idx = _entrance.x + 1; _idx < _size.x; _idx++)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
-							_area_infos[_entrance.y][_idx] = Mass.TYPE.GROUND;	// マスを通路に設定
+							_area_infos[_entrance.y][_idx] = MassType.GROUND;	// マスを通路に設定
 
 							// 終了
 							if (_road_infos[_entrance.y][_idx])	// 通路の軌跡上に乗った
@@ -510,7 +521,7 @@ class DynamicMap : MapData
 						for (int _idx = _entrance.y - 1; _idx > 0; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
-							_area_infos[_idx][_entrance.x] = Mass.TYPE.GROUND;	// マスを通路に設定
+							_area_infos[_idx][_entrance.x] = MassType.GROUND;	// マスを通路に設定
 
 							// 終了
 							if (_road_infos[_idx][_entrance.x])	// 通路の軌跡上に乗った
@@ -533,7 +544,7 @@ class DynamicMap : MapData
 						for (int _idx = _entrance.y + 1; _idx < _size.y; _idx++)	// 入口につながる通路(部屋の外)のマス単位でのループ
 						{
 							// 階層の情報を更新
-							_area_infos[_idx][_entrance.x] = Mass.TYPE.GROUND;	// マスを通路に設定
+							_area_infos[_idx][_entrance.x] = MassType.GROUND;	// マスを通路に設定
 
 							// 終了
 							if (_road_infos[_idx][_entrance.x])	// 通路の軌跡上に乗った
@@ -681,7 +692,7 @@ class DynamicMap : MapData
 						// 終了
 						break;	// 接続完了
 					}
-					if (_area_infos[_searcher.y][_searcher.x] == Mass.TYPE.GROUND)	// 通路と接続
+					if (_area_infos[_searcher.y][_searcher.x] == MassType.GROUND)	// 通路と接続
 					{
 						// 終了
 						break;	// 接続完了
@@ -700,7 +711,7 @@ class DynamicMap : MapData
 						_searcher -= _junctions[_junction_idx].stride;	// 逆方向に進めば戻ることになる
 
 						// 階層の情報を更新
-						_area_infos[_searcher.y][_searcher.x] = Mass.TYPE.GROUND;	// マスを通路に設定
+						_area_infos[_searcher.y][_searcher.x] = MassType.GROUND;	// マスを通路に設定
 					}
 				}
 			}
@@ -754,7 +765,7 @@ class DynamicMap : MapData
 				// 探索可能領域を反映
 				for(int _x_idx = 0; _x_idx < _size.x; _x_idx++)	// マス単位でのループ
 				{
-					if (_area_infos[_y_idx][_x_idx] == Mass.TYPE.GROUND)	// 通路マス
+					if (_area_infos[_y_idx][_x_idx] == MassType.GROUND)	// 通路マス
 					{
 						_search_map[_y_idx][_x_idx] = true;	// 通路があるなら探索可能
 					}
@@ -880,10 +891,10 @@ class DynamicMap : MapData
 					{
 						for (int _x_idx = _room.xMin; _x_idx < _room.xMax; _x_idx++)	// マス単位でのループ
 						{
-							if (_area_infos[_y_idx][_x_idx] == Mass.TYPE.PUBLIC_ROOM)	// 通常部屋のマス
+							if (_area_infos[_y_idx][_x_idx] == MassType.PUBLIC_ROOM)	// 通常部屋のマス
 							{
 								// 階層の情報を更新
-								_area_infos[_y_idx][_x_idx] = Mass.TYPE.PRIVATE_ROOM;	// 通常部屋を隠し部屋に変換する
+								_area_infos[_y_idx][_x_idx] = MassType.PRIVATE_ROOM;	// 通常部屋を隠し部屋に変換する
 							}
 						}
 					}
@@ -906,10 +917,10 @@ class DynamicMap : MapData
 			{
 				for (int _x_idx = _shop_area.xMin; _x_idx < _shop_area.xMax; _x_idx++)	// マス単位でのループ
 				{
-					if (_area_infos[_y_idx][_x_idx] == Mass.TYPE.PUBLIC_ROOM)	// 通常部屋のマス
+					if (IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
 					{
 						// 階層の情報を更新
-						_area_infos[_y_idx][_x_idx] = Mass.TYPE.SHOP;	// 通常部屋を商店に変換する
+						_area_infos[_y_idx][_x_idx] = MassType.SHOP;	// 部屋を商店に変換する
 					}
 				}
 			}
@@ -925,7 +936,7 @@ class DynamicMap : MapData
 			{
 				for (int _x_idx = _room.xMin; _x_idx < _room.xMax; ++_x_idx)	// マス単位でのループ
 				{
-					if (_area_infos[_y_idx][_x_idx] == Mass.TYPE.PUBLIC_ROOM)	// 通常部屋のマス
+					if (_area_infos[_y_idx][_x_idx] == MassType.PUBLIC_ROOM)	// 通常部屋のマス
 					{
 						_main_spwan_masses.Add(new Vector2Int(_x_idx, _y_idx));	// マスの情報を登録
 					}
@@ -959,10 +970,10 @@ class DynamicMap : MapData
 		foreach (var _area_line_info in _area_infos)	// 生成空間の行単位でのループ
 		{
 			// 変数宣言
-			Mass.TYPE[] _map_line = new Mass.TYPE[_size.x + 2 * _arround_wall];	// マップの行
+			MassType[] _map_line = new MassType[_size.x + 2 * _arround_wall];	// マップの行
 			
 			// 初期化
-			Array.Fill(_map_line, Mass.TYPE.WALL);	// 壁で埋めておく
+			Array.Fill(_map_line, MassType.WALL);	// 壁で埋めておく
 
 			// 生成情報を登録
 			for (int _area_info_idx = 0; _area_info_idx < _area_line_info.Length; _area_info_idx++)	// 生成空間のマス単位でのループ
@@ -976,10 +987,10 @@ class DynamicMap : MapData
 		for (int _idx = 0; _idx < _arround_wall; _idx++)	// 上下面の壁行単位でのループ
 		{
 			// 変数宣言
-			Mass.TYPE[] _wall_line = new Mass.TYPE[_size.x + 2 * _arround_wall];	// 壁の行
+			MassType[] _wall_line = new MassType[_size.x + 2 * _arround_wall];	// 壁の行
 
 			// 初期化
-			Array.Fill(_wall_line, Mass.TYPE.WALL);	// 壁として設定
+			Array.Fill(_wall_line, MassType.WALL);	// 壁として設定
 
 			// マップに登録する
 			_map_info.Insert(0, _wall_line);	// 初頭に追加
@@ -987,7 +998,7 @@ class DynamicMap : MapData
 		}
 
 		// 初期化
-		MapMasses = new Mass[MapSize.y, MapSize.x];	// マス管理のリサイズ
+		Masses = new Mass[MapSize.y, MapSize.x];	// マス管理のリサイズ
 
 		// マス作成
 		for (int _y_idx = 0;  _y_idx < _map_info.Count; _y_idx++)	// 行単位でのループ
@@ -998,27 +1009,27 @@ class DynamicMap : MapData
 				switch (_map_info[_y_idx][_x_idx])	// マスの種類によって分岐
 				{
 					// 通路
-					case Mass.TYPE.GROUND:
+					case MassType.GROUND:
 						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
 						break;	// 分岐処理完了
 
 					// 通常部屋
-					case Mass.TYPE.PUBLIC_ROOM:
+					case MassType.PUBLIC_ROOM:
 						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
 						break;	// 分岐処理完了
 
 					// 隠し部屋
-					case Mass.TYPE.PRIVATE_ROOM:
+					case MassType.PRIVATE_ROOM:
 						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
 						break;	// 分岐処理完了
 
 					// 商店
-					case Mass.TYPE.SHOP:
+					case MassType.SHOP:
 						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
 						break;	// 分岐処理完了
 
 					// 壁
-					case Mass.TYPE.WALL:
+					case MassType.WALL:
 						break;	// 分岐処理完了
 
 					// その他
@@ -1031,13 +1042,75 @@ class DynamicMap : MapData
 			}
 		}
 
+		// 連続区域のインスタンス作成
+		for (int _contact_idx = 0; _contact_idx < _room_contacts.Count; _contact_idx++)	// 連続区域単位でのループ
+		{
+			// 変数宣言
+			GameObject _contact_object = new GameObject();	// 接続部屋のインスタンス
+
+			// 初期化
+			_contact_object.transform.SetParent(Dungeon.Instance.Map.transform, false);	// マップの子に登録
+			if (_contact_idx == 0)	// 主部分
+			{
+				MainContact = _contact_object;	// 主部分を意味
+			}
+
+#if UNITY_EDITOR
+			// 変数宣言
+			string _contact_object_name_base;	// オブジェクト名のベース
+
+			// 初期化
+			if (_contact_idx == 0)	// 主部分
+			{
+				_contact_object_name_base = "PublicSpace";	// 主部分を意味
+			}
+			else	// 副部分
+			{
+				_contact_object_name_base = "PrivateSpace";	// 副部分を意味
+			}
+			_contact_object.name = _contact_object_name_base + "_" + _contact_idx;	// デバッグ時にはわかりやすいように命名しておく
+#endif	// end UNITY_EDITOR
+
+			// 部屋のインスタンス作成
+			for (int _room_idx = 0; _room_idx < _room_contacts[_contact_idx].Count; _room_idx++) // 部屋単位でのループ
+			{
+				// 変数宣言
+				GameObject _room_object = new GameObject();	// 接続部屋のインスタンス
+				
+				// 初期化
+				_room_object.AddComponent<Room>();	// 部屋の機能作成
+	#if UNITY_EDITOR
+				_room_object.name = "Room";	// デバッグ時にはわかりやすいように命名しておく
+	#endif	// end UNITY_EDITOR
+
+				// マスの親子付け
+				for (int _y_idx = _room_contacts[_contact_idx][_room_idx].yMin; _y_idx < _room_contacts[_contact_idx][_room_idx].yMax; _y_idx++)	// 行単位でのループ
+				{
+					for (int _x_idx = _room_contacts[_contact_idx][_room_idx].xMin; _x_idx < _room_contacts[_contact_idx][_room_idx].xMax; _x_idx++)	// マス単位でのループ
+					{
+						if (IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
+						{
+							// 変数宣言
+							Vector2Int _position_on_map = PositionAreaToMap(new Vector2Int(_x_idx, _y_idx));	// マップ上での位置
+
+							// 初期化
+							Masses[_position_on_map.y, _position_on_map.x].transform.SetParent(_room_object.transform, false);	// 部屋にマスを持たせる
+						}
+					}
+				}
+
+				// 部屋の親子付け
+				_room_object.transform.SetParent(_contact_object.transform, false);	// 連続区域に部屋を持たせる
+			}
+		}
+
 		// プレイヤー作成	//TODO:チーム配置
-		Dungeon.Instance.Player.transform.SetParent(MapMasses[_player_position.y, _player_position.x].transform, false);	// 対象マスに管理させる
+		Dungeon.Instance.Player.transform.SetParent(Masses[_player_position.y, _player_position.x].transform, false);	// 対象マスに管理させる
 
 		// テクスチャ作成
-		MapTexture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成
-		MapTexture.filterMode = FilterMode.Point;	// ぼかさない(ドット表現)
-		MapTexture.wrapMode = TextureWrapMode.Clamp;	// 繰り返さない
+		Texture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成
+		Texture.filterMode = FilterMode.Point;	// ぼかさない(ドット表現)
+		Texture.wrapMode = TextureWrapMode.Clamp;	// 繰り返さない
 
 		// 変数宣言
 		 Color[] pixels = new Color[MapSize.x * MapSize.y];	// カラーバッファ
@@ -1050,27 +1123,27 @@ class DynamicMap : MapData
 				switch (_map_info[_y_idx][_x_idx])	// マスの種類によって分岐
 				{
 					// 通路
-					case Mass.TYPE.GROUND:
+					case MassType.GROUND:
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.6f, 0.95f, 0.9f, 1.0f);	//TODO:ミニマップの修正
 						break;	// 分岐処理完了
 
 					// 通常部屋
-					case Mass.TYPE.PUBLIC_ROOM:
+					case MassType.PUBLIC_ROOM:
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.6f, 0.95f, 0.9f, 1.0f);
 						break;	// 分岐処理完了
 
 					// 隠し部屋
-					case Mass.TYPE.PRIVATE_ROOM:
+					case MassType.PRIVATE_ROOM:
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.9f, 0.9f, 0.5f, 1.0f);
 						break;	// 分岐処理完了
 
 					// 商店
-					case Mass.TYPE.SHOP:
+					case MassType.SHOP:
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(1.0f, 0.2f, 0.2f, 1.0f);
 						break;	// 分岐処理完了
 
 					// 壁
-					case Mass.TYPE.WALL:
+					case MassType.WALL:
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.1f, 0.0f, 0.5f, 1.0f);
 						break;	// 分岐処理完了
 
@@ -1083,8 +1156,8 @@ class DynamicMap : MapData
 				}
 			}
 		}
-		MapTexture.SetPixels(pixels);	// カラーバッファ登録
-		MapTexture.Apply();	// 登録した情報を確定
+		Texture.SetPixels(pixels);	// カラーバッファ登録
+		Texture.Apply();	// 登録した情報を確定
 	}
 
 
@@ -1122,9 +1195,22 @@ class DynamicMap : MapData
 
 
 	/// <summary>
+	/// <para>マスの種類が部屋に分類できるかを検証し返す</para>
+	/// </summary>
+	/// <param name="target">見分ける対象</param>
+	/// <returns>マスを部屋と見做せるときtrue, そうでなければfalse</returns>
+	private bool IsRoomType(MassType target)
+	{
+		// 提供
+		return target == MassType.PUBLIC_ROOM || target == MassType.PRIVATE_ROOM || target == MassType.SHOP;	// 部屋に分類できるマス種か
+	}
+
+
+	/// <summary>
 	/// <para>マスをインスタンスとして作成</para>
 	/// </summary>
 	/// <param name="position">生成位置</param>
+	/// <returns>作成したマスの姿勢情報</returns>
 	private void MakeMass(Vector2Int position)
 	{
 		// 変数宣言
@@ -1150,8 +1236,7 @@ class DynamicMap : MapData
 		var _mass = _object.AddComponent<Mass>();	// マスの機能作成
 
 		// 初期化
-		_mass.type = _map_info[position.y][position.x];	// 種類を登録
-		MapMasses[position.y, position.x] = _mass;	// 作成したマスを登録
+		Masses[position.y, position.x] = _mass;	// 作成したマスを登録
 
 		// 変数宣言
 		Mesh _mesh = new Mesh();	//メッシュ本体

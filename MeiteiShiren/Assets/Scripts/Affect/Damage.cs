@@ -124,31 +124,42 @@ public class Damage : Affect
 			// 補正
 			float _corrected_damage = (BaseDamage + _all_base_correction) * _all_correction_ratio;	// ダメージ補正を反映
 
-			// ダメージを与える
-			if (_killable || _hit_point.HP - CulcDamage(_corrected_damage, _hit_point.Data.Defence) > 0)	// 致死性がある・もしくはそもそも殺せていない
+			// ダメージ計算
+			int _final_damage = CalculateDamage(_corrected_damage, _hit_point.Data.Defence);	// ダメージ値を算出
+
+			// ダメージ補正
+			if (!_killable && _hit_point.HP - _final_damage < 0)	// 本来ならこのダメージ処理で死ぬが、非致死性ダメージとして扱う
 			{
-				_hit_point.HP -= CulcDamage(_corrected_damage, _hit_point.Data.Defence);	// 通常のダメージ処理
+				_final_damage = _hit_point.HP - 1;	// 1残すダメージに補正する
 			}
-			else if(_hit_point.HP > 0)	// 本来ならこのダメージ処理で死ぬが、非致死性ダメージとして扱う
-			{
-				_hit_point.HP = 1;	// 非致死性効果で1耐えさせる
-			}
+
+			// ダメージ処理
+			_hit_point.HP -= _final_damage;	// ダメージを与える
+
+			// 変数宣言
+			GameObject _print_object = new();	// ダメージ表示用インスタンス
+			WorldLabel _printer = _print_object.AddComponent<WorldLabel>();	// ダメージ表示機能
+
+			// 初期化
+			_printer.SetValue($"{_final_damage}", opponent.transform);	// ダメージ表示
+			_printer.transform.SetParent(opponent.transform, false);	// 親子付け
 		}
 	}
-	
+
+
 	/// <summary>
 	/// <para>ダメージ処理に必要な情報をすべて揃え、演算</para>
 	/// </summary>
 	/// <param name="damage_value">与えるダメージ値</param>
 	/// <param name="defence">ダメージ抵抗値</param>
 	/// <returns>最終ダメージ</returns>
-	private int CulcDamage(float damage_value, float defence)
+	private int CalculateDamage(float damage_value, float defence)
 	{
 		// 変数宣言
 		int _result = 0;	// 演算結果格納用
 
 		// ダメージ計算
-		if (_ignore_defence)
+		if (_ignore_defence)	// 防御無視
 		{
 			_result = (int)(damage_value);	// 最終ダメージを求める
 		}

@@ -29,7 +29,9 @@ public class Settings : MonoSingleton<Settings>
 	// 変数宣言
 	[Header("ダンジョン")]
 	[SerializeField, Tooltip("マップのプロパティ")] private MapSetting _map_setting;
+	[SerializeField, Tooltip("敵生成のプロパティ")] private EnemySpawnerSetting _enemy_spawner_setting;
 	[SerializeField, Tooltip("移動のプロパティ")] private MoveSetting _move_setting;
+	[SerializeField, Tooltip("ワールド空間ラベルのプロパティ")] private WorldLabelSetting _world_label_setting;
 
 	// プロパティ定義
 
@@ -53,9 +55,28 @@ public class Settings : MonoSingleton<Settings>
 	}
 
 	/// <summary>
+	/// <para>敵生成のプロパティ</para>
+	/// </summary>
+	/// <value><see cref="_enemy_spawner_setting"/></value>
+	public EnemySpawnerSetting EnemySpawner
+	{
+		get
+		{
+			// インスタンス確保
+			if (!_enemy_spawner_setting)	// ヌルチェック
+			{
+				_enemy_spawner_setting = ScriptableObject.CreateInstance<EnemySpawnerSetting>();	// 規定値で作成
+			}
+
+			// 提供
+			return _enemy_spawner_setting;	// 敵生成のプロパティ一覧
+		}
+	}
+
+	/// <summary>
 	/// <para>移動のプロパティ</para>
 	/// </summary>
-	/// <value><see cref="_map_setting"/></value>
+	/// <value><see cref="_move_setting"/></value>
 	public MoveSetting Move
 	{
 		get
@@ -68,6 +89,25 @@ public class Settings : MonoSingleton<Settings>
 
 			// 提供
 			return _move_setting;	// 移動のプロパティ一覧
+		}
+	}
+
+	/// <summary>
+	/// <para>ワールド空間ラベルのプロパティ</para>
+	/// </summary>
+	/// <value><see cref="_world_label_setting"/></value>
+	public WorldLabelSetting WorldLabel
+	{
+		get
+		{
+			// インスタンス確保
+			if (!_world_label_setting)	// ヌルチェック
+			{
+				_world_label_setting = ScriptableObject.CreateInstance<WorldLabelSetting>();	// 規定値で作成
+			}
+
+			// 提供
+			return _world_label_setting;	// 移動のプロパティ一覧
 		}
 	}
 }

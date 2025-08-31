@@ -37,7 +37,7 @@ public abstract class MapData : ScriptableObject
 	/// <para>外部には読み込み専用なマップ情報</para>
 	/// </summary>
 	/// <value>マップ情報を格納したテクスチャ</value>
-	public Texture2D MapTexture { get; protected set; }
+	public Texture2D Texture { get; protected set; }
 
 	/// <summary>
 	/// <para>マップ全体のサイズ</para>
@@ -49,7 +49,13 @@ public abstract class MapData : ScriptableObject
 	/// <para>マップのマス</para>
 	/// </summary>
 	/// <value>周囲の壁も含めたマップ全体のマス</value>
-	public Mass[,] MapMasses { get; protected set; }
+	public Mass[,] Masses { get; protected set; }
+
+	/// <summary>
+	/// <para>メイン領域</para>
+	/// </summary>
+	/// <value>主部分の連続領域</value>
+	public GameObject MainContact { get; protected set; }
 
 	/// <summary>
 	/// <para>アンカーに対する相対位置</para>

@@ -15,9 +15,9 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "fire",
+                    "name": "Attack",
                     "type": "Button",
-                    "id": "0ea43076-251f-4849-aeb5-7a5c4842d942",
+                    "id": "860c5a8a-659e-4b71-92fa-37a64b76300c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -82,12 +82,12 @@
                 },
                 {
                     "name": "",
-                    "id": "376e6303-7cfb-40bd-b855-f77193ae70a9",
-                    "path": "<Keyboard>/1",
-                    "interactions": "",
+                    "id": "bf2ed597-6b78-4941-960f-9ac4132ad89f",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "Press(behavior=1)",
                     "processors": "",
                     "groups": "",
-                    "action": "fire",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
