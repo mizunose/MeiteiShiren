@@ -32,7 +32,7 @@ public abstract class Attack : MonoBehaviour
 	/// <para>攻撃方向の候補から各角度を算出する</para>
 	/// </summary>
 	/// <value>各攻撃方向の角度</value>
-	private float[] AttackableAngles
+	public float[] AttackableAngles
 	{
 		get
 		{
@@ -51,22 +51,11 @@ public abstract class Attack : MonoBehaviour
 	}
 
 
-	//TODO:敵は複数方向、プレイヤーは単一方向で演算
 	/// <summary>
 	/// <para>試算処理</para>
 	/// </summary>
 	/// <returns>試算結果</returns>
-	public List<GameObject> Simulate()
-	{
-		// 変数宣言
-		List<GameObject> _result = new();	// 演算結果格納用
-
-		// 算出
-		CalculateAttackableMasses(true, transform, AttackableAngles, ref _result);	// 攻撃可能マスの演算
-
-		// 提供
-		return _result;	// 演算結果
-	}
+	public abstract List<GameObject> Simulate();
 
 
 	/// <summary>
@@ -237,7 +226,7 @@ public abstract class Attack : MonoBehaviour
 	/// <param name="base_transform">計算基準の姿勢情報</param>
 	/// <param name="angles">攻撃方向</param>
 	/// <param name="result_masses">算出したマスを格納する領域</param>
-	private void CalculateAttackableMasses(in bool activity, in Transform base_transform, in float[] angles, ref List<GameObject> result_masses)
+	public void CalculateAttackableMasses(in bool activity, in Transform base_transform, in float[] angles, ref List<GameObject> result_masses)
 	{
 		// 変数宣言
 		Mass _base_mass = null;	// 基準のマス
@@ -289,8 +278,8 @@ public abstract class Attack : MonoBehaviour
 						// 変数宣言
 						Vector2Int _attack_direction = CalculateAttackDirection(_angle);	// 攻撃方向
 						Vector2Int _target_idx = _base_idx + (activity ? 1 : -1) * new Vector2Int(
-							_shift.x * _attack_direction.x - _shift.y * _attack_direction.y,
-							_shift.x * _attack_direction.y + _shift.y * _attack_direction.x
+							_shift.x * _attack_direction.y + _shift.y * _attack_direction.x,
+							_shift.y * _attack_direction.y - _shift.x * _attack_direction.x
 							);	// 対象マスの番号	※鉛直上向きを基準に範囲を回転させている
 						// 保全
 						if (_target_idx.x < 0 || _target_idx.x >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1)
