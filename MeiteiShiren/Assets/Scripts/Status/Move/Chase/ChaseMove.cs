@@ -125,11 +125,6 @@ public class ChaseMove : Move
 				{
 					_goal = _chase_target;	// 対象を代わりに目標とする
 				}
-				else
-				{
-					Debug.Log(_chase_target);
-					Debug.Log(_goal);
-				}
 			}
 			else	// 対象へとまっすぐ目指す
 			{
@@ -143,7 +138,7 @@ public class ChaseMove : Move
 			if(!_result.next_mass)	// 探索不可能
 			{
 				_chase_target = null;	// 追跡出来なくなったので解放
-				return Simulate();	// 追跡できなくなったので改めて他の移動処理をする
+				return (false, _result);	// 追跡できなくなった	※改めて他の移動処理をしようとするとまた同じ追跡対象を視認して無限ループする恐れあり
 			}
 			else if(_result.next_mass == transform)	// 移動していない
 			{
