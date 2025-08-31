@@ -309,8 +309,8 @@ public class ChaseMove : Move
 				// 終了
 				if (_nodes[_node_idx.y, _node_idx.x].movables.Count == 0)	// 経路を構築できない
 				{
-					// 一つ戻り経路を選択しなおす
-					_node_idx -= _nodes[_node_idx.y, _node_idx.x].shift_mass;	// 
+					// 1つ戻り経路を選択しなおす
+					_node_idx -= _nodes[_node_idx.y, _node_idx.x].shift_mass;	// 移動前に戻る
 					_search_depth--;	// 1つ戻る
 					if (_search_depth < 0)	// 探索開始時点から経路が成立しない
 					{
@@ -342,13 +342,6 @@ public class ChaseMove : Move
 			{
 				_node_idx = _next_idx;	// 次経路を指す
 			}
-		}
-
-		if (_route.Count == 0)
-		{
-			Debug.Log(_node_idx);
-			Debug.Log(_goal_idx);
-			Debug.Log(_current_mass_idx);
 		}
 
 		// 経路に沿って移動先を提供
@@ -456,6 +449,13 @@ public class ChaseMove : Move
 						}
 					}
 				}
+			}
+
+			// 保全
+			if ( _gateways.Count == 0)	// 出口がない
+			{
+				// 終了
+				return null;	// 移動先を求められない
 			}
 
 			// 目標地点を選択
