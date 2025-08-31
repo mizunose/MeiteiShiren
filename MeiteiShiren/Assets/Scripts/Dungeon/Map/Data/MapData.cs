@@ -37,7 +37,7 @@ public abstract class MapData : ScriptableObject
 	/// <para>外部には読み込み専用なマップ情報</para>
 	/// </summary>
 	/// <value>マップ情報を格納したテクスチャ</value>
-	public Texture2D Texture { get; protected set; }
+	public Texture2D MiniMapTexture { get; protected set; }
 
 	/// <summary>
 	/// <para>マップ全体のサイズ</para>
@@ -58,30 +58,22 @@ public abstract class MapData : ScriptableObject
 	public GameObject MainContact { get; protected set; }
 
 	/// <summary>
+	/// <para>マスが適用するマテリアル</para>
+	/// </summary>
+	/// <value><see cref="_ground_texture"/></value>
+	public Material GroundTexture => _ground_texture;
+
+	/// <summary>
 	/// <para>アンカーに対する相対位置</para>
 	/// </summary>
 	/// <value><see cref="_anchor_position"/></value>
-	public Vector2 AnchorPosition
-	{
-		get
-		{
-			// 提供
-			return _anchor_position;	// 左上からの相対位置
-		}
-	}
+	public Vector2 AnchorPosition => _anchor_position;
 	
 	/// <summary>
-	/// <para>ミニマップのサイズ</para>
+	/// <para>ミニマップの描画サイズ</para>
 	/// </summary>
 	/// <value><see cref="_anchor_position"/></value>
-	public Vector2 MiniMapSize
-	{
-		get
-		{
-			// 提供
-			return _minimap_size;	// ミニマップを表示するオブジェクトの描画サイズ
-		}
-	}
+	public Vector2 MiniMapSize => _minimap_size;
 
 
 	/// <summary>

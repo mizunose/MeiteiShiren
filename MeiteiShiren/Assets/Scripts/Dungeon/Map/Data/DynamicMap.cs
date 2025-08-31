@@ -35,16 +35,6 @@ class DynamicMap : MapData
 	// 定数定義
 	private const string _NAME = "DynamicMap";	// タブ名称
 	private const MassType _INITIAL_PACK = MassType.WALL;	// 最初にエリアを仮埋めするマス種
-	private static readonly int[] _MASS_INDICES = {	// マスメッシュの頂点インデックス
-			0, 1, 2,	// 左側三角形
-			1, 3, 2,	// 右側三角形
-		};
-	private static readonly Vector2[] _MASS_UVS = {	// マスメッシュのテクスチャ座標
-			new Vector2(0.0f, 0.0f),	// 左上
-			new Vector2(1.0f, 0.0f),	// 右上
-			new Vector2(0.0f, 1.0f),	// 左下
-			new Vector2(1.0f, 1.0f),	// 右下
-		};
 	private const int _RATIO_RAND_RANGE_MAX = 100;	// 空間分割の乱数幅
 	private int _ROAD_WIDTH = 1;	// 道の幅
 
@@ -1108,9 +1098,9 @@ class DynamicMap : MapData
 		Dungeon.Instance.Player.transform.SetParent(Masses[_player_position.y, _player_position.x].transform, false);	// 対象マスに管理させる
 
 		// テクスチャ作成
-		Texture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成
-		Texture.filterMode = FilterMode.Point;	// ぼかさない(ドット表現)
-		Texture.wrapMode = TextureWrapMode.Clamp;	// 繰り返さない
+		MiniMapTexture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成
+		MiniMapTexture.filterMode = FilterMode.Point;	// ぼかさない(ドット表現)
+		MiniMapTexture.wrapMode = TextureWrapMode.Clamp;	// 繰り返さない
 
 		// 変数宣言
 		 Color[] pixels = new Color[MapSize.x * MapSize.y];	// カラーバッファ
@@ -1156,8 +1146,8 @@ class DynamicMap : MapData
 				}
 			}
 		}
-		Texture.SetPixels(pixels);	// カラーバッファ登録
-		Texture.Apply();	// 登録した情報を確定
+		MiniMapTexture.SetPixels(pixels);	// カラーバッファ登録
+		MiniMapTexture.Apply();	// 登録した情報を確定
 	}
 
 
@@ -1214,19 +1204,9 @@ class DynamicMap : MapData
 	private void MakeMass(Vector2Int position)
 	{
 		// 変数宣言
-		Vector3[] _mass_vertices = {	// マスメッシュの頂点情報
-			new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 左上
-			new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 右上
-			new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 左下
-			new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 右下
-		};
-
-		// 変数宣言
 		GameObject _object = new GameObject();	// マスのインスタンス
-		var _mesh_filter = _object.AddComponent<MeshFilter>();	// メッシュ管理機能
 
 		// 初期化
-		_object.AddComponent<MeshRenderer>().material = _ground_texture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
 		_object.transform.SetParent(Dungeon.Instance.Map.transform, false);	// マップの子に登録
 #if UNITY_EDITOR
 		_object.name = "Mass_" + position.x + "_" + position.y;	// デバッグ時にはわかりやすいように命名しておく
@@ -1237,16 +1217,6 @@ class DynamicMap : MapData
 
 		// 初期化
 		Masses[position.y, position.x] = _mass;	// 作成したマスを登録
-
-		// 変数宣言
-		Mesh _mesh = new Mesh();	//メッシュ本体
-
-		// メッシュ作成
 		_object.transform.position = new Vector3(position.x, 0.0f, position.y) * Settings.Instance.Map.MassSize;	// 生成位置を設定
-		_mesh.vertices = _mass_vertices;	// メッシュの頂点情報を設定
-		_mesh.triangles = _MASS_INDICES;	// メッシュの頂点インデックスを設定
-		_mesh.RecalculateNormals();	// 法線を再計算
-		_mesh.uv = _MASS_UVS;	// テクスチャ座標を設定
-		_mesh_filter.sharedMesh = _mesh;	// 作成したメッシュを登録
 	}
 }

@@ -72,7 +72,7 @@ public class Map : MonoBehaviour
 		var _image = _image_object.AddComponent<Image>();	// 画像表示機能
 
 		// 画像読み込み
-		_image.material.SetTexture("_MainTex", _data.Texture);	// テクスチャ登録
+		_image.material.SetTexture("_MainTex", _data.MiniMapTexture);	// テクスチャ登録
 		var _color = _image.color;	// 構造体の取り出し(CS1612エラーの回避)
 		_color.a = Settings.Instance.Map.Alpha;	// 表示透明度を変更
 		_image.color = _color;	// 変更を反映
