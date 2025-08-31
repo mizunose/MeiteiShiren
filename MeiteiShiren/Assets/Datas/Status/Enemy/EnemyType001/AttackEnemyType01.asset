@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac6fa57ff6046e46ae29e69576494a1, type: 3}
+  m_Name: AttackEnemyType01
+  m_EditorClassIdentifier: 
+  _fiendry_fire: 0
+  _range: {fileID: 11400000, guid: 3e99b02da3359f84eb0e99040cbfea07, type: 2}
+  _affects:
+  - {fileID: 11400000, guid: 798b00d18dd1e7d43a37f543ae96ab05, type: 2}
