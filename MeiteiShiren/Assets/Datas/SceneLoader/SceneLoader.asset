@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dea3dbd8b7abab4c9ef830aef7c0e2e, type: 3}
   m_Name: SceneLoader
   m_EditorClassIdentifier: 
-  _first_scene: {fileID: 0}
+  _first_scene: {fileID: 11400000, guid: 7ef3d6445e53cd5499b39d16369454c6, type: 2}
+  _first_transitions:
+    _out_data: {fileID: 0}
+    _wait_data: {fileID: 0}
+    _in_data: {fileID: 0}

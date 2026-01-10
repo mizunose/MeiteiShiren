@@ -36,7 +36,7 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 	protected override sealed void Start()
 	{
 		// 初期化
-		BootChangeScene(_data.FirstScene, _data.FirstTransition);	// 初期シーンを展開
+		BootChangeScene(_data.FirstScene, _data.FirstTransitions);	// 初期シーンを展開
 	}
 
 
@@ -56,6 +56,7 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 	/// </summary>
 	/// <param name="next_scene">遷移先のシーン</param>
 	/// <param name="transitions">遷移演出データ</param>
+	/// <returns>遅延処理用のインターフェース体</returns>
 	private IEnumerator ChangeScene(SceneData next_scene, TransitionDatas transitions)
 	{
 		//TODO:新旧シーンを止めておく
@@ -120,6 +121,7 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 	/// </summary>
 	/// <param name="next_scene">展開するシーン</param>
 	/// <param name="transitions">遷移演出データ</param>
+	/// <returns>遅延処理用のインターフェース体</returns>
 	private IEnumerator OpenScene(SceneData next_scene, TransitionDatas transitions)
 	{
 		//TODO:新旧シーンを止めておく
@@ -169,6 +171,7 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 	/// <para>シーン閉鎖処理(過去シーンに回帰する)</para>
 	/// </summary>
 	/// <param name="transitions">遷移演出データ</param>
+	/// <returns>遅延処理用のインターフェース体</returns>
 	private IEnumerator CloseScene(TransitionDatas transitions)
 	{
 		// 保全

@@ -25,22 +25,25 @@ public abstract class MonoSingleton<MonoType> : VirtualizeMono where MonoType : 
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>インスタンスプロパティ</para>
-	/// </summary>
 	/// <value><see cref="m_Instance"/></value>
 	public static MonoType Instance	// 継承先オブジェクトのインスタンス
 	{
 		get
 		{
+			// 保全
 			if (m_Instance == null)	// ヌルチェック
 			{
 				GameObject _GameObject = new GameObject();	// インスタンス作成
 				m_Instance = _GameObject.AddComponent<MonoType>();	// 自身のコンポーネント登録
 			}
+
+			// 提供
 			return m_Instance;	// インスタンス提供
 		}
 	}
+
+	/// <value><see cref="インスタンスのヌル検証"/></value>
+	public static bool NullCheck => m_Instance != null;
 
 
 	/// <summary>

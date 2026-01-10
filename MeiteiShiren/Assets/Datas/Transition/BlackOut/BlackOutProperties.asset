@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea4105c639c4bd148b41dec6f9b01bc9, type: 3}
   m_Name: BlackOutProperties
   m_EditorClassIdentifier: 
-  _supported_shader: {fileID: 0}
+  _supported_shader: {fileID: 4800000, guid: f931d0aa504231148b4a0964633640e7, type: 3}
   _curtain_color: {r: 0, g: 0, b: 0, a: 1}

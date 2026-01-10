@@ -47,6 +47,7 @@ public class Map : MonoBehaviour
 		// 初期化
 		_canvas_object.name = "MapCanvas";	// デバッグ時にはわかりやすいように命名しておく
 #endif	// end UNITY_EDITOR
+		_canvas_object.transform.SetParent(transform, false);	// 自身の子に登録
 
 		// 変数宣言
 		Canvas _canvas = _canvas_object.AddComponent<Canvas>();	// キャンバス機能

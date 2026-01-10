@@ -13,7 +13,7 @@ using UnityEngine;
 
 // クラス定義
 /// <summary>
-/// マップを構成するマス。子に管理物(乗っているもの)を持つ想定。また、親が構成物(マップや部屋など)である想定。
+/// <para>階段マス</para>
 /// </summary>
 public class Stair : Mass
 {
@@ -61,5 +61,6 @@ public class Stair : Mass
 	public override void Boot()
 	{
 		//TODO:階層移動の選択UIを起動する
+		Dungeon.Instance.BootSwitchFloor();
 	}
 }

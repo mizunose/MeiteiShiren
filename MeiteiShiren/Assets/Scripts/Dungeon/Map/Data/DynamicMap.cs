@@ -937,7 +937,7 @@ class DynamicMap : MapData
 
 		// 変数宣言
 		int _player_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// プレイヤー生成位置の番号
-		Vector2Int _player_position = _main_spwan_masses[_player_spawn_idx];	// マップ上のプレイヤー生成位置
+		Vector2Int _player_position = _main_spwan_masses[_player_spawn_idx];	// プレイヤー生成マス
 
 		// プレイヤー位置予約
 		_player_position = PositionAreaToMap(_player_position);	// マップ上の位置に変換
@@ -945,9 +945,13 @@ class DynamicMap : MapData
 
 		// 変数宣言
 		int _goal_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// 階段位置の番号
+		Vector2Int _goal_position = PositionAreaToMap(_main_spwan_masses[_goal_spawn_idx]);	// 階段生成位置
 
 		//TODO:階段作成
-		Vector2Int _goal_position = PositionAreaToMap(_main_spwan_masses[_goal_spawn_idx]);	// 階段生成
+		foreach (var main_spawn_mass in _main_spwan_masses)
+		{
+			_area_infos[main_spawn_mass.y][main_spawn_mass.x] = MassType.STAIR;
+		}
 		_main_spwan_masses.RemoveAt(_goal_spawn_idx);	// 階段生成に使うマスなので他の生成に使わない
 
 
@@ -1099,6 +1103,11 @@ class DynamicMap : MapData
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.1f, 0.0f, 0.5f, 1.0f);
 						break;	// 分岐処理完了
 
+					// 階段
+					case MassType.STAIR:
+						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.5f, 0.0f, 0.5f, 1.0f);
+						break;	// 分岐処理完了
+
 					// その他
 					default:
 #if UNITY_EDITOR
@@ -1195,6 +1204,8 @@ class DynamicMap : MapData
 
 					// 階段
 					case MassType.STAIR:
+						_mass = _mass_object.AddComponent<Stair>();	// マスの機能作成
+						break;
 
 					// 壁
 					case MassType.WALL:
@@ -1204,7 +1215,7 @@ class DynamicMap : MapData
 
 					// その他
 					default:
-						_mass = _mass_object.AddComponent<Stair>();	// マスの機能作成
+						_mass = _mass_object.AddComponent<Mass>();	// マスの機能作成
 						break;	// 分岐処理完了
 				}
 

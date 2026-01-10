@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: BlackOutIn
   m_EditorClassIdentifier: 
   _transition_time: 1
-  _properties_data: {fileID: 0}
+  _properties_data: {fileID: 11400000, guid: caba0e0c0571f49488433de06147c139, type: 2}
