@@ -10,7 +10,6 @@
 
 // 名前空間宣言
 using UnityEngine;
-using UnityEngine.UIElements;
 
 // クラス定義
 /// <summary>
@@ -37,6 +36,7 @@ public class Mass : VirtualizeMono
 		};
 
 	// 変数宣言
+	private Transform _targeted = null;	// 1ターン前に効果発動した相手
 	//private Trap _trap = null;	// 付与されている罠
 
 
@@ -50,6 +50,9 @@ public class Mass : VirtualizeMono
 
 		// 初期化
 		Visualize();	// 視覚化
+
+		// イベント接続
+		Dungeon.Instance.TurnFlow.OnMassAction += TurnedAction;	// 行動指示時処理を接続
 	}
 
 
@@ -69,5 +72,53 @@ public class Mass : VirtualizeMono
 		_mesh.RecalculateNormals();	// 法線を再計算
 		_mesh.uv = _UVS;	// テクスチャ座標を設定
 		_mesh_filter.sharedMesh = _mesh;	// 作成したメッシュを登録
+	}
+
+
+	/// <summary>
+	/// <para>ターン制行動</para>
+	/// </summary>
+	private void TurnedAction()
+	{
+		// 変数宣言
+		bool _is_targeted_reaved = true;	// 処理した相手が離れたか
+
+		// プレイヤーに対する処理
+		for (int _child_idx = 0; _child_idx < transform.childCount; _child_idx++)	// 子オブジェクト単位でのループ
+		{
+			// 変数宣言
+			var _child = transform.GetChild(_child_idx);	// 扱う子オブジェクト
+
+			// 検査
+			if (_child && _child != _targeted)	// 未処理
+			{
+				if (_child == Dungeon.Instance.Player.transform)	// プレイヤーが乗った
+				{
+					Boot();	// 搭乗時は自動で起動する
+					_targeted = _child;	// 処理した相手を記録
+					_is_targeted_reaved = false;	// 相手が乗った
+				}
+			}
+			else	// 処理済み
+			{
+				// 初期化
+				_is_targeted_reaved = false;	// 相手はまだ居る
+			}
+		}
+
+		// リセット
+		if (_is_targeted_reaved)	// 処理済みの相手が離れた
+		{
+			_targeted = null;	// 未処理とする
+		}
+	}
+
+
+	/// <summary>
+	/// <para>機能を起動</para>
+	/// </summary>
+	public virtual void Boot()
+	{
+		//TODO:アイテムが乗っているならインベントリに入れる。ただしインベントリが満タンなら選択UIを起動する
 	}
 }

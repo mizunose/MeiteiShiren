@@ -62,6 +62,7 @@ public class DungeonTurnState : MonoBehaviour
 	}
 
 	// イベント定義
+	public event Action OnMassAction;	// マスの効果イベント
 	public event Action OnTurnChanged;	// ターン変更時のイベント
 
 	// 変数宣言
@@ -131,6 +132,10 @@ public class DungeonTurnState : MonoBehaviour
 		// 通常フロー
 		yield return AttackAll();	// 攻撃処理
 		yield return MoveAll(false);	// 移動処理
+		if (OnMassAction != null)	// ヌルチェック
+		{
+			OnMassAction.Invoke();	// マスの処理
+		}
 
 		// ターン終了
 		IngameInputManager.Instance.Player.TrendEnable();	// プレイヤーの干渉権を復権させる
