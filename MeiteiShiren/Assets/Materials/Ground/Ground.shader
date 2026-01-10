@@ -2,25 +2,28 @@
 <Ground.shader>
 
 -author
-・mizunose
+	mizunose
 
 -about
-・uv座標を表示するグラデーションシェーダー
+	uv座標を表示するグラデーションシェーダー
 
 -remarks
-・地面に使用する想定なのでキャストシャドウは付けていません
+	地面に使用する想定なのでキャストシャドウは付けていません
 =====*/
 
 // シェーダー
 Shader "Custom/Ground"	// シェーダー名
 {
-	Properties	// プロパティ定義
+	// プロパティ定義
+	Properties
 	{
 		[Header(Shadow)]
 		_shadow_texture("Texture", 2D) = "white" {}
 		_shadow_brightness("Brightness", Range(0.0, 1.0)) = 0.1
 	}
-	SubShader	// 実装部分
+
+	// 実装部分
+	SubShader
 	{
 		// 設定
  		Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }	// 非透過表示

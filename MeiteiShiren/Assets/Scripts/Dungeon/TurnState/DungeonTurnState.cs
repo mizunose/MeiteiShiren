@@ -8,12 +8,13 @@
 	ターン管理
 =====*/
 
-// クラス定義
+// 名前空間宣言
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// クラス定義
 /// <summary>
 /// <para>ダンジョンにおけるターン管理</para>
 /// </summary>
