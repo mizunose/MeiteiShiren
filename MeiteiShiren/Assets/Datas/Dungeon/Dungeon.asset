@@ -19,6 +19,20 @@ MonoBehaviour:
     _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
   - _map_data: {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
     _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
+  - _map_data: {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
+    _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
+  - _map_data: {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
+    _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
+  - _map_data: {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
+    _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
+  - _map_data: {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
+    _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
+  - _map_data: {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
+    _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
+  - _map_data: {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
+    _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
+  - _map_data: {fileID: 11400000, guid: 1fb0069e413f88b4dbfc8862b4c8461e, type: 2}
+    _enemy_spawn_data: {fileID: 11400000, guid: 5bae5f566f6fb2f468244ae774318d7c, type: 2}
   _player: {fileID: 5498470843638692480, guid: 38fec33e53fed48468f57e6e52915822, type: 3}
   _floor_transitions:
     _out_data: {fileID: 11400000, guid: 8fa362b5db054de45989649343b52973, type: 2}
