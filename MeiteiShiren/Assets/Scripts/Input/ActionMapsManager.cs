@@ -1,7 +1,6 @@
 ﻿/*=====
 <ActionMapsManager.cs>
 
-
 -author
 	mizunose
 
@@ -13,6 +12,9 @@
 using UnityEngine.InputSystem;
 
 // クラス定義
+/// <summary>
+/// <para>InputActionMapsの管理</para>
+/// </summary>
 
 public abstract class ActionMapsManager<T> : MonoSingleton<T> where T : ActionMapsManager<T>
 {

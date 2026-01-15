@@ -47,7 +47,7 @@ public class InputMove : Move
 
 		// 変数宣言
 		Vector2Int _currect_mass_idx = Map.PositionToMass(_current_mass.transform.position);	// 現在マスの番号
-		Vector2 _input = IngameInputManager.Instance.Player.Move.ReadValue<Vector2>() * Settings.Instance.Map.MassSize;	// 入力値
+		Vector2 _input = IngameInputManager.Instance.Player.Move.BaseOne.ReadValue<Vector2>() * Settings.Instance.Map.MassSize;	// 入力値
 		Vector3 _world_moved = _current_mass.transform.position;	// 移動先のワールド座標
 
 		// 初期化
@@ -142,7 +142,7 @@ public class InputMove : Move
 		while (true)
 		{
 			// 入力処理
-			if (IngameInputManager.Instance.Player.Move.IsPressed())	// 移動入力中
+			if (IngameInputManager.Instance.Player.Move.BaseOne.IsPressed())	// 移動入力中
 			{
 				// 試行(入力値を使用するため入力管理よりも先行)
 				var _simulate_data = Simulate();	// 移動のデータ試算を行う
