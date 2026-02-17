@@ -92,15 +92,6 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
             ""id"": ""e611fcb9-5310-4029-b014-73ca814829ed"",
             ""actions"": [
                 {
-                    ""name"": ""VerticalMove"",
-                    ""type"": ""Value"",
-                    ""id"": ""a4beff48-648f-4898-923a-afd6a37d2a06"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
                     ""name"": ""Decide"",
                     ""type"": ""Button"",
                     ""id"": ""3452bb8f-287a-4839-b59d-33bae322ba8d"",
@@ -108,42 +99,27 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=1)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Up"",
+                    ""type"": ""Button"",
+                    ""id"": ""0998b2bb-0b68-4dad-b158-d5a73b094d9d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=1)"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Down"",
+                    ""type"": ""Button"",
+                    ""id"": ""1d7e6e1d-0b5d-49d0-8b80-19503b163768"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=1)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""0c533d2f-0768-4b20-becc-9ad2a66cbb8c"",
-                    ""path"": ""1DAxis"",
-                    ""interactions"": ""Press(behavior=1)"",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""VerticalMove"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Negative"",
-                    ""id"": ""c56895c7-9fde-40c5-9ee6-a21ccbf84eb4"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""VerticalMove"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Positive"",
-                    ""id"": ""8aae5e91-c27a-4f2a-ab7f-b4258fb162d3"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""VerticalMove"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
                 {
                     ""name"": """",
                     ""id"": ""19280cb9-5469-44cd-931b-59b88c9aa0e3"",
@@ -154,6 +130,50 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
                     ""action"": ""Decide"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""52527a64-3650-4d50-84f6-1de71de3cde7"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3ca132c1-f303-4d53-808b-9809f8d9b187"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd40e94c-1607-4755-93f9-312b3b4ace71"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f9628b35-c2c4-430e-b96d-5e4d54fe74cd"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -162,8 +182,9 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
 }");
         // DropDown
         m_DropDown = asset.FindActionMap("DropDown", throwIfNotFound: true);
-        m_DropDown_VerticalMove = m_DropDown.FindAction("VerticalMove", throwIfNotFound: true);
         m_DropDown_Decide = m_DropDown.FindAction("Decide", throwIfNotFound: true);
+        m_DropDown_Up = m_DropDown.FindAction("Up", throwIfNotFound: true);
+        m_DropDown_Down = m_DropDown.FindAction("Down", throwIfNotFound: true);
     }
 
     ~@UIInput()
@@ -244,8 +265,9 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
     // DropDown
     private readonly InputActionMap m_DropDown;
     private List<IDropDownActions> m_DropDownActionsCallbackInterfaces = new List<IDropDownActions>();
-    private readonly InputAction m_DropDown_VerticalMove;
     private readonly InputAction m_DropDown_Decide;
+    private readonly InputAction m_DropDown_Up;
+    private readonly InputAction m_DropDown_Down;
     /// <summary>
     /// Provides access to input actions defined in input action map "DropDown".
     /// </summary>
@@ -258,13 +280,17 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
         /// </summary>
         public DropDownActions(@UIInput wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "DropDown/VerticalMove".
-        /// </summary>
-        public InputAction @VerticalMove => m_Wrapper.m_DropDown_VerticalMove;
-        /// <summary>
         /// Provides access to the underlying input action "DropDown/Decide".
         /// </summary>
         public InputAction @Decide => m_Wrapper.m_DropDown_Decide;
+        /// <summary>
+        /// Provides access to the underlying input action "DropDown/Up".
+        /// </summary>
+        public InputAction @Up => m_Wrapper.m_DropDown_Up;
+        /// <summary>
+        /// Provides access to the underlying input action "DropDown/Down".
+        /// </summary>
+        public InputAction @Down => m_Wrapper.m_DropDown_Down;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -291,12 +317,15 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_DropDownActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_DropDownActionsCallbackInterfaces.Add(instance);
-            @VerticalMove.started += instance.OnVerticalMove;
-            @VerticalMove.performed += instance.OnVerticalMove;
-            @VerticalMove.canceled += instance.OnVerticalMove;
             @Decide.started += instance.OnDecide;
             @Decide.performed += instance.OnDecide;
             @Decide.canceled += instance.OnDecide;
+            @Up.started += instance.OnUp;
+            @Up.performed += instance.OnUp;
+            @Up.canceled += instance.OnUp;
+            @Down.started += instance.OnDown;
+            @Down.performed += instance.OnDown;
+            @Down.canceled += instance.OnDown;
         }
 
         /// <summary>
@@ -308,12 +337,15 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
         /// <seealso cref="DropDownActions" />
         private void UnregisterCallbacks(IDropDownActions instance)
         {
-            @VerticalMove.started -= instance.OnVerticalMove;
-            @VerticalMove.performed -= instance.OnVerticalMove;
-            @VerticalMove.canceled -= instance.OnVerticalMove;
             @Decide.started -= instance.OnDecide;
             @Decide.performed -= instance.OnDecide;
             @Decide.canceled -= instance.OnDecide;
+            @Up.started -= instance.OnUp;
+            @Up.performed -= instance.OnUp;
+            @Up.canceled -= instance.OnUp;
+            @Down.started -= instance.OnDown;
+            @Down.performed -= instance.OnDown;
+            @Down.canceled -= instance.OnDown;
         }
 
         /// <summary>
@@ -355,18 +387,25 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
     public interface IDropDownActions
     {
         /// <summary>
-        /// Method invoked when associated input action "VerticalMove" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnVerticalMove(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "Decide" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDecide(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Up" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUp(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Down" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDown(InputAction.CallbackContext context);
     }
 }

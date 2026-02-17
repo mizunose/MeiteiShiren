@@ -9,6 +9,8 @@
 =====*/
 
 // 名前空間宣言
+using System;
+using UnityEditor;
 using UnityEngine;
 
 // クラス定義

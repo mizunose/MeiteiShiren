@@ -24,7 +24,8 @@ public class UIInputManager : ActionMapsManager<UIInputManager>
 	{
 		//	変数宣言
 		UIInputManager _parent;	// 親クラスの実体
-		InputActionManager _vertical_move;	// 垂直移動入力受付インスタンス
+		InputActionManager _up;	// 上入力受付インスタンス
+		InputActionManager _down;	// 下入力受付インスタンス
 		InputActionManager _decide;	// 決定入力受付インスタンス
 
 		// プロパティ定義
@@ -32,8 +33,11 @@ public class UIInputManager : ActionMapsManager<UIInputManager>
 		/// <value>管理しているInputMap</value>
 		protected override InputActionMap Target => _parent.Maps.DropDown;
 
-		/// <value><see cref="_vertical_move"/></value>
-		public InputActionManager VerticalMove => _vertical_move;
+		/// <value><see cref="_up"/></value>
+		public InputActionManager Up => _up;
+
+		/// <value><see cref="_down"/></value>
+		public InputActionManager Down => _down;
 
 		/// <value><see cref="_decide"/></value>
 		public InputActionManager Decide => _decide;
@@ -47,7 +51,8 @@ public class UIInputManager : ActionMapsManager<UIInputManager>
 		{
 			// 初期化
 			_parent = parent;	// 親クラスのインスタンスを登録
-			_vertical_move = new InputActionManager(_parent.Maps.DropDown.VerticalMove);	// 垂直移動入力受付を生成
+			_up = new InputActionManager(_parent.Maps.DropDown.Up);	// 上入力受付を生成
+			_down = new InputActionManager(_parent.Maps.DropDown.Down);	// 下入力受付を生成
 			_decide = new InputActionManager(_parent.Maps.DropDown.Decide);	// 決定入力受付を生成
 		}
 	}
