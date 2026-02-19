@@ -36,7 +36,6 @@ public abstract class DropDown : VirtualizeMono
 	// 変数宣言
 	[Header("ステータス")]
 	private int _selected_index;	// 選択番号
-	//private List<TextMeshProUGUI> _text_labels = new();	// テキスト
 	private List<ChoiseUI> _text_labels = new();	// テキスト
 
 	// プロパティ定義
@@ -66,38 +65,17 @@ public abstract class DropDown : VirtualizeMono
 		// テキスト表示
 		foreach (var choice in _Choices)	// 選択候補単位でのループ
 		{
-//			// 変数宣言
-//			GameObject _text_object = new();	// テキストのインスタンス
-//			var _text_label = _text_object.AddComponent<TextMeshProUGUI>();	// テキスト表示機能
+			// 変数宣言
+			ChoiseUI _text_object = Instantiate(_Data.ChoiseUI);	// テキスト作成
 
-//			// 初期化
-//			_text_labels.Add(_text_label);	// リスト登録
-//			_text_object.transform.SetParent(transform, false);	// 親子付け
-//			if (_data.Font)	// ヌルチェック
-//			{
-//				_text_label.font = _data.Font;	// フォント種
-//			}
-//#if UNITY_EDITOR
-//			else
-//			{
-//				Debug.LogError("表示フォントを設定してください");
-//			}
-//#endif	// end UNITY_EDITOR
-//			_text_label.fontSize = _data.FontSize;	// フォントの大きさ
-//			_text_label.alignment = TextAlignmentOptions.Center;	// 中央揃え
-//			_text_label.text = choice.text;	// 表示文
-//#if UNITY_EDITOR
-//			_text_object.name = "DropDownText";	// デバッグ時にはわかりやすいように命名しておく
-//#endif	// end UNITY_EDITOR
-
-			ChoiseUI _text_object = Instantiate(_Data.ChoiseUI);
+			// 初期化
 			_text_labels.Add(_text_object);	// リスト登録
 			_text_object.transform.SetParent(transform, false);	// 親子付け
-			_text_object.Print(choice.text);
+			_text_object.Print(choice.text);	// 表示文字設定
 		}
 
-		// 初期化
-		//_text_labels[_selected_index].color = Color.red;
+		// 初期カーソル
+		_text_labels[0].Select();	// カーソル位置を選択
 	}
 
 
@@ -120,8 +98,8 @@ public abstract class DropDown : VirtualizeMono
 		if (UIInputManager.Instance.DropDown.Decide.BaseOne.triggered)	// 決定の入力があった
 		{
 			// 決定
-			//_text_labels[_selected_index].color = Color.white;
 			_Choices[_selected_index].event_data.Invoke();	// 採択を通知
+			IngameInputManager.Instance.TrendEnable();	// インゲーム入力を復権させる
 		}
 	}
 
@@ -133,8 +111,8 @@ public abstract class DropDown : VirtualizeMono
 	private void MoveCursor(bool is_positive)
 	{
 		// 変数宣言
-		var _past_text = _text_labels[_selected_index];
-		//_past_text.color = Color.white;
+		var _past_select = _text_labels[_selected_index];	// カーソル移動前の選択物
+
 		// カーソル移動
 		if (is_positive)	// 上移動の入力
 		{
@@ -158,9 +136,9 @@ public abstract class DropDown : VirtualizeMono
 				_selected_index = 0;	//最上に選択を切り替え
 			}
 		}
-		_past_text.Unselect();
-		_text_labels[_selected_index].Select();
-		//_text_labels[_selected_index].color = Color.red;
-		//Destroy(this.gameObject);	// 自壊
+
+		// 選択状態更新
+		_past_select.Unselect();	// 旧選択状態を解除
+		_text_labels[_selected_index].Select();	// 新選択状態を設定
 	}
 }

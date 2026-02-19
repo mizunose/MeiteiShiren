@@ -19,7 +19,5 @@ MonoBehaviour:
   _choices:
   - text: 1tume
     event_data: {fileID: 0}
-  - text: "\u554F\u3044"
-    event_data: {fileID: 0}
-  - text: "\u308F\u3060\u3061"
+  - text: "\u3044\u3044\u3048"
     event_data: {fileID: 0}

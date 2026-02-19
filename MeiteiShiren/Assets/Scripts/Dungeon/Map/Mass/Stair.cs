@@ -37,6 +37,23 @@ public class Stair : Mass
 			new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 右下
 		};
 
+	// 変数宣言
+	private YesNoDropDown _confirm_drop_down;
+
+
+	/// <summary>
+	/// <para>無効時処理</para>
+	/// </summary>
+	protected override sealed void OnDisable()
+	{
+		// イベント接続解除
+		if (_confirm_drop_down) // ヌルチェック
+		{
+			_confirm_drop_down.YesEvent.signal -= ConfirmedBootYes;
+			_confirm_drop_down.NoEvent.signal -= ConfirmedBootNo;
+		}
+	}
+
 
 	/// <summary>
 	/// <para>視覚化処理</para>
@@ -62,7 +79,39 @@ public class Stair : Mass
 	/// </summary>
 	public override void Boot()
 	{
-		//TODO:階層移動の選択UIを起動する
-		Dungeon.Instance.BootSwitchFloor();
+		// 変数宣言
+		_confirm_drop_down = Instantiate(Dungeon.Instance.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
+
+		// イベント接続
+		_confirm_drop_down.YesEvent.signal += ConfirmedBootYes;	// 「はい」選択時の処理
+		_confirm_drop_down.NoEvent.signal += ConfirmedBootNo;	// 「いいえ」選択時の処理
+	}
+
+
+	/// <summary>
+	/// <para>起動確認で何かを選択</para>
+	/// </summary>
+	private void ConfirmedBoot()
+	{
+		Destroy(_confirm_drop_down.gameObject);	// 確認UIを削除
+	}
+
+
+	/// <summary>
+	/// <para>起動確認で「はい」を選択</para>
+	/// </summary>
+	private void ConfirmedBootYes()
+	{
+		ConfirmedBoot();	// 選択時処理
+		Dungeon.Instance.BootSwitchFloor();	// 階層移動を実行
+	}
+
+
+	/// <summary>
+	/// <para>起動確認で「いいえ」を選択</para>
+	/// </summary>
+	private void ConfirmedBootNo()
+	{
+		ConfirmedBoot();	// 選択時処理
 	}
 }
