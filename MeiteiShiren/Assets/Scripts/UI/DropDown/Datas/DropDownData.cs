@@ -24,18 +24,8 @@ public abstract class DropDownData : ScriptableObject
 	[SerializeField, Tooltip("キャンバス")] private PublicCanvasData _canvas;
 	[SerializeField, Tooltip("選択UI")] private ChoiseUI _choise_ui;
 
-	[Header("テキスト")]
-	[SerializeField, Tooltip("フォント")] private TMP_FontAsset _font = null;
-	[SerializeField, Tooltip("フォントサイズ"), Min(0.0f)] private float _font_size = 38.0f;
-
 
 	// プロパティ定義
-
-	/// <value><see cref="_font"/></value>
-	public TMP_FontAsset Font => _font;
-
-	/// <value><see cref="_font_size"/></value>
-	public float FontSize => _font_size;
 
 	/// <value><see cref="_choise_ui"/></value>
 	public ChoiseUI ChoiseUI => _choise_ui;

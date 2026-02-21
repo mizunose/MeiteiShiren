@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*
+<ChoiseUI.cs>
+
+-author
+	mizunose
+
+-about
+	選択肢のUIを定義
+*/
+
+// 名前空間宣言
 using TMPro;
 using UnityEngine;
 
@@ -10,6 +20,7 @@ using UnityEngine;
 public abstract class ChoiseUI : MonoBehaviour
 {
 	// 変数宣言
+	[Header("関連リンク")]
 	[SerializeField, Tooltip("テキスト表示領域")] protected TextMeshProUGUI _text_label;
 
 	

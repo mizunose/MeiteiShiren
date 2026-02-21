@@ -9,8 +9,6 @@
 =====*/
 
 // 名前空間宣言
-using System;
-using UnityEditor;
 using UnityEngine;
 
 // クラス定義
@@ -38,7 +36,22 @@ public class Stair : Mass
 		};
 
 	// 変数宣言
-	private YesNoDropDown _confirm_drop_down;
+	private YesNoDropDown _confirm_drop_down = null;	// 確認用に生成するドロップダウン
+	private SystemSpeechBubble _confirm_message_box = null;	// 確認用に生成するメッセージボックス
+
+
+	/// <summary>
+	/// <para>有効時処理</para>
+	/// </summary>
+	protected override sealed void OnEnable()
+	{
+		// イベント接続
+		if (_confirm_drop_down) // ヌルチェック
+		{
+			_confirm_drop_down.YesEvent.signal += ConfirmedBootYes;	// 「はい」選択時の処理を接続
+			_confirm_drop_down.NoEvent.signal += ConfirmedBootNo;	// 「いいえ」選択時の処理を接続
+		}
+	}
 
 
 	/// <summary>
@@ -49,8 +62,8 @@ public class Stair : Mass
 		// イベント接続解除
 		if (_confirm_drop_down) // ヌルチェック
 		{
-			_confirm_drop_down.YesEvent.signal -= ConfirmedBootYes;
-			_confirm_drop_down.NoEvent.signal -= ConfirmedBootNo;
+			_confirm_drop_down.YesEvent.signal -= ConfirmedBootYes;	// 「はい」選択時の処理を解除
+			_confirm_drop_down.NoEvent.signal -= ConfirmedBootNo;	// 「いいえ」選択時の処理を解除
 		}
 	}
 
@@ -79,8 +92,12 @@ public class Stair : Mass
 	/// </summary>
 	public override void Boot()
 	{
-		// 変数宣言
+		// 生成
 		_confirm_drop_down = Instantiate(Dungeon.Instance.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
+		_confirm_message_box = Instantiate(Dungeon.Instance.FloorData.MapData.StairData.ConfirmMessageBox);	// 選択UIのインスタンス生成
+
+		// 初期化
+		_confirm_message_box.SetValue(Dungeon.Instance.FloorData.MapData.StairData.ConfirmText);	// 表示テキスト設定
 
 		// イベント接続
 		_confirm_drop_down.YesEvent.signal += ConfirmedBootYes;	// 「はい」選択時の処理
@@ -93,7 +110,9 @@ public class Stair : Mass
 	/// </summary>
 	private void ConfirmedBoot()
 	{
-		Destroy(_confirm_drop_down.gameObject);	// 確認UIを削除
+		// 確認UIを削除
+		Destroy(_confirm_message_box.gameObject);	// 吹き出しを削除
+		Destroy(_confirm_drop_down.gameObject);	// 選択肢を削除
 	}
 
 

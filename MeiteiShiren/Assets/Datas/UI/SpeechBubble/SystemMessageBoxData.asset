@@ -9,7 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb23d0b74b7006643b8893bcb8a0e046, type: 3}
-  m_Name: PublicCanvasData
+  m_Script: {fileID: 11500000, guid: 72e78243437b1364591d4b5b9d143dcb, type: 3}
+  m_Name: SystemMessageBoxData
   m_EditorClassIdentifier: 
-  _virtual_size: {x: 1920, y: 1080}
+  _canvas_data: {fileID: 11400000, guid: aa70c45b5a19ea640a5697e43595d978, type: 2}
+  _left_margin_rate: 0
+  _right_margin_rate: 0
+  _top_margin_rate: 0.7
+  _bottom_margin_rate: 0

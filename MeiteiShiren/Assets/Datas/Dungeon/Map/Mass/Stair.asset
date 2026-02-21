@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43846568667dfed4ba45df41730544cd, type: 3}
   m_Name: Stair
   m_EditorClassIdentifier: 
+  _confirm_text: "\u79FB\u52D5\u3057\u307E\u3059\u304B\uFF1F"
+  _confirm_message_box: {fileID: 2553376930402502831, guid: ba4b89944e816df4290ef44a651c3ebb, type: 3}
   _confirm_drop_down: {fileID: 7402385081217021782, guid: 114f11ac1a399e44793e414bb7655396, type: 3}

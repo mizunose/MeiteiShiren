@@ -1,5 +1,14 @@
-﻿using System;
-using TMPro;
+﻿/*
+<SimpleChoiseUI.cs>
+
+-author
+	mizunose
+
+-about
+	簡素な選択肢UIを実装
+*/
+
+// 名前空間宣言
 using UnityEngine;
 
 // クラス定義
@@ -9,22 +18,10 @@ using UnityEngine;
 [RequireComponent(typeof(RectTransform))]
 public class SimpleChoiseUI : ChoiseUI
 {
-	// 構造体定義
-	/// <summary>
-	/// <para>選択状態によって変わりうるデータ</para>
-	/// </summary>
-	[Serializable]
-	private struct SimpleChoiseData
-	{
-		// 変数宣言
-		public Color text_color;	// テキスト表示色
-		public float font_size;	// フォントサイズ
-	}
-
 	// 変数宣言
-	private SimpleChoiseData _normal_data;
-	[SerializeField, Tooltip("選択時のデータ")] private SimpleChoiseData _selected_data;
-	[SerializeField, Tooltip("決定時のデータ")] private SimpleChoiseData _decided_data;
+	[Header("関連リンク")]
+	[SerializeField, Tooltip("データ")] private SimpleChoiseUIData _data;
+	private SimpleChoiseUIData.Changeables _normal_state;	// 通常状態でのデータ退避領域
 
 
 	/// <summary>
@@ -33,8 +30,8 @@ public class SimpleChoiseUI : ChoiseUI
 	private void Awake()
 	{
 		// 初期化
-		_normal_data.text_color = _text_label.color;
-		_normal_data.font_size = _text_label.fontSize;
+		_normal_state.text_color = _text_label.color;	// 色情報を保存
+		_normal_state.font_size = _text_label.fontSize;	// フォントサイズを保存
 	}
 
 
@@ -43,8 +40,9 @@ public class SimpleChoiseUI : ChoiseUI
 	/// </summary>
 	public override void Select()
 	{
-		_text_label.color = _selected_data.text_color;
-		_text_label.fontSize = _selected_data.font_size;
+		// 状態変化
+		_text_label.color = _data.SelectedState.text_color;	// 対応色に変更
+		_text_label.fontSize = _data.SelectedState.font_size;	// 対応サイズに変更
 	}
 
 
@@ -53,8 +51,9 @@ public class SimpleChoiseUI : ChoiseUI
 	/// </summary>
 	public override void Unselect()
 	{
-		_text_label.color = _normal_data.text_color;
-		_text_label.fontSize = _normal_data.font_size;
+		// 状態変化
+		_text_label.color = _normal_state.text_color;	// 対応色に変更
+		_text_label.fontSize = _normal_state.font_size;	// 対応サイズに変更
 	}
 
 
@@ -63,8 +62,8 @@ public class SimpleChoiseUI : ChoiseUI
 	/// </summary>
 	public override void Decide()
 	{
-		
-		_text_label.color = _decided_data.text_color;
-		_text_label.fontSize = _decided_data.font_size;
+		// 状態変化
+		_text_label.color = _data.DecidedState.text_color;	// 対応色に変更
+		_text_label.fontSize = _data.DecidedState.font_size;	// 対応サイズに変更
 	}
 }

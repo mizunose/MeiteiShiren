@@ -22,6 +22,7 @@ public class PublicCanvasData : ScriptableObject
 
 	// 変数宣言
 	[Header("ステータス")]
+	[SerializeField, Tooltip("基準となるスクリーンサイズ")] private Vector2 _virtual_size = new Vector2(1920.0f, 1080.0f);
 	private Canvas _canvas_instance = null;	// キャンバス
 
 	// プロパティ定義
@@ -45,7 +46,7 @@ public class PublicCanvasData : ScriptableObject
 				_canvas_instance.additionalShaderChannels |= AdditionalCanvasShaderChannels.Normal;	// シェーダーセマンティクス：法線
 				_canvas_instance.additionalShaderChannels |= AdditionalCanvasShaderChannels.Tangent;	// シェーダーセマンティクス：接線
 			#if UNITY_EDITOR
-					_canvas_object.name = "PublicCanvas";	// デバッグ時にはわかりやすいように命名しておく
+				_canvas_object.name = "PublicCanvas";	// デバッグ時にはわかりやすいように命名しておく
 			#endif	// end UNITY_EDITOR
 
 				// 変数宣言
@@ -53,11 +54,14 @@ public class PublicCanvasData : ScriptableObject
 
 				// 初期化
 				_scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;	// スクリーンサイズ参照のフィッティング
-				_scaler.referenceResolution = new (Screen.width, Screen.height);	// スクリーンサイズを登録
+				_scaler.referenceResolution = _virtual_size;	// スクリーンサイズを登録
 			}
 
 			// 提供
 			return _canvas_instance;	// インスタンス提供
 		}
 	}
+
+	/// <value>基準となるスクリーンサイズ</value>
+	public Vector2 VirtualSize => _virtual_size;
 }

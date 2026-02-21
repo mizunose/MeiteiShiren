@@ -18,7 +18,6 @@ public class FreeStyleDropDownData : DropDownData
 	// 定数定義
 	private const string _NAME = "FreeStyleDropDown";	// アセット名
 
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("選択肢")] private DropDown.SelectableInformation[] _choices;
