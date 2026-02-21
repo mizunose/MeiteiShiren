@@ -27,61 +27,36 @@ public abstract class MapData : ScriptableObject
 	[Header("生成物の情報")]
 	[SerializeField, Tooltip("地面のテクスチャ")] protected Material _ground_texture;
 	[SerializeField, Tooltip("壁のモデル")] protected GameObject _wall_model;
+	[SerializeField, Tooltip("階段のデータ")] private StairData _stair_data;
 	[Header("ミニマップ")]
 	[SerializeField, Tooltip("アンカー(左上)に対する位置")] protected Vector2 _anchor_position = new Vector2(220, -220);
 	[SerializeField, Tooltip("ミニマップ表示サイズ")] protected Vector2 _minimap_size = new Vector2(400, 400);
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>外部には読み込み専用なマップ情報</para>
-	/// </summary>
 	/// <value>マップ情報を格納したテクスチャ</value>
-	public Texture2D Texture { get; protected set; }
+	public Texture2D MiniMapTexture { get; protected set; }
 
-	/// <summary>
-	/// <para>マップ全体のサイズ</para>
-	/// </summary>
 	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
 	public abstract Vector2Int MapSize{ get; }
 
-	/// <summary>
-	/// <para>マップのマス</para>
-	/// </summary>
 	/// <value>周囲の壁も含めたマップ全体のマス</value>
 	public Mass[,] Masses { get; protected set; }
 
-	/// <summary>
-	/// <para>メイン領域</para>
-	/// </summary>
 	/// <value>主部分の連続領域</value>
 	public GameObject MainContact { get; protected set; }
 
-	/// <summary>
-	/// <para>アンカーに対する相対位置</para>
-	/// </summary>
+	/// <value><see cref="_ground_texture"/></value>
+	public Material GroundTexture => _ground_texture;
+
+	/// <value><see cref="_stair_data"/></value>
+	public StairData StairData => _stair_data;
+
 	/// <value><see cref="_anchor_position"/></value>
-	public Vector2 AnchorPosition
-	{
-		get
-		{
-			// 提供
-			return _anchor_position;	// 左上からの相対位置
-		}
-	}
+	public Vector2 AnchorPosition => _anchor_position;
 	
-	/// <summary>
-	/// <para>ミニマップのサイズ</para>
-	/// </summary>
 	/// <value><see cref="_anchor_position"/></value>
-	public Vector2 MiniMapSize
-	{
-		get
-		{
-			// 提供
-			return _minimap_size;	// ミニマップを表示するオブジェクトの描画サイズ
-		}
-	}
+	public Vector2 MiniMapSize => _minimap_size;
 
 
 	/// <summary>

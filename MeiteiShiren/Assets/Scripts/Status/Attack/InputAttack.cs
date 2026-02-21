@@ -44,7 +44,7 @@ public class InputAttack : Attack
 		while (true)
 		{
 			// 入力処理
-			if (IngameInputManager.Instance.Player.Attack.triggered)	// 攻撃入力中
+			if (IngameInputManager.Instance.Player.Attack.BaseOne.triggered)	// 攻撃入力中
 			{
 				// 入力管理
 				IngameInputManager.Instance.Player.TrendDisable();	// 入力系の処理なのでモーション中は干渉権を無効化する

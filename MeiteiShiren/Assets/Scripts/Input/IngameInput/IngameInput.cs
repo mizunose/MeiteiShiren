@@ -219,6 +219,15 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cursor"",
+                    ""type"": ""Value"",
+                    ""id"": ""6d00e010-b43c-4a87-b017-8a1aba277bda"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -232,6 +241,61 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
                     ""action"": ""fire"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""a37e1b9b-69c9-4b4b-ac4a-31b630673031"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cursor"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""b841fdf3-c238-4006-aea6-781b26268f71"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""850b64d5-e970-492b-b5b3-29495f056d89"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""02356d85-f537-41a0-ba57-539874a0ae60"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""87f7b36f-7927-40b0-93ac-b36237fd7711"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -248,6 +312,7 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_fire = m_UI.FindAction("fire", throwIfNotFound: true);
+        m_UI_Cursor = m_UI.FindAction("Cursor", throwIfNotFound: true);
     }
 
     ~@IngameInput()
@@ -534,6 +599,7 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
     private readonly InputAction m_UI_fire;
+    private readonly InputAction m_UI_Cursor;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -549,6 +615,10 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/fire".
         /// </summary>
         public InputAction @fire => m_Wrapper.m_UI_fire;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/Cursor".
+        /// </summary>
+        public InputAction @Cursor => m_Wrapper.m_UI_Cursor;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -578,6 +648,9 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
             @fire.started += instance.OnFire;
             @fire.performed += instance.OnFire;
             @fire.canceled += instance.OnFire;
+            @Cursor.started += instance.OnCursor;
+            @Cursor.performed += instance.OnCursor;
+            @Cursor.canceled += instance.OnCursor;
         }
 
         /// <summary>
@@ -592,6 +665,9 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
             @fire.started -= instance.OnFire;
             @fire.performed -= instance.OnFire;
             @fire.canceled -= instance.OnFire;
+            @Cursor.started -= instance.OnCursor;
+            @Cursor.performed -= instance.OnCursor;
+            @Cursor.canceled -= instance.OnCursor;
         }
 
         /// <summary>
@@ -676,5 +752,12 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnFire(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Cursor" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCursor(InputAction.CallbackContext context);
     }
 }

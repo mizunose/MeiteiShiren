@@ -8,12 +8,13 @@
 	ターン管理
 =====*/
 
-// クラス定義
+// 名前空間宣言
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// クラス定義
 /// <summary>
 /// <para>ダンジョンにおけるターン管理</para>
 /// </summary>
@@ -62,6 +63,7 @@ public class DungeonTurnState : MonoBehaviour
 	}
 
 	// イベント定義
+	public event Action OnMassAction;	// マスの効果イベント
 	public event Action OnTurnChanged;	// ターン変更時のイベント
 
 	// 変数宣言
@@ -75,10 +77,44 @@ public class DungeonTurnState : MonoBehaviour
 	{
 		// 入力管理
 		IngameInputManager.Instance.Player.TrendEnable();	// プレイヤーの干渉権を有効化
+	}
 
+
+	/// <summary>
+	/// <para>破棄時処理</para>
+	/// </summary>
+	private void OnDestroy()
+	{
+		// 入力管理
+		if (IngameInputManager.NullCheck)	// ヌルチェック
+		{
+			IngameInputManager.Instance.Player.TrendDisable();	// プレイヤーの干渉権を終了
+		}
+	}
+
+
+	/// <summary>
+	/// <para>有効時処理</para>
+	/// </summary>
+	private void OnEnable()
+	{
 		// イベント接続
 		Dungeon.Instance.Player.GetComponent<InputMove>().OnMoveStarted += OnMoveStarted;	// プレイヤー移動時処理を接続
 		Dungeon.Instance.Player.GetComponent<InputAttack>().OnAttacked += OnAttacked;	// プレイヤー攻撃時処理を接続
+	}
+
+
+	/// <summary>
+	/// <para>有効時処理</para>
+	/// </summary>
+	private void OnDisable()
+	{
+		// イベント解除
+		if (Dungeon.NullCheck)	// ヌルチェック
+		{
+			Dungeon.Instance.Player.GetComponent<InputMove>().OnMoveStarted -= OnMoveStarted;	// プレイヤー移動時処理を解除
+			Dungeon.Instance.Player.GetComponent<InputAttack>().OnAttacked -= OnAttacked;	// プレイヤー攻撃時処理を解除
+		}
 	}
 
 
@@ -131,6 +167,10 @@ public class DungeonTurnState : MonoBehaviour
 		// 通常フロー
 		yield return AttackAll();	// 攻撃処理
 		yield return MoveAll(false);	// 移動処理
+		if (OnMassAction != null)	// ヌルチェック
+		{
+			OnMassAction.Invoke();	// マスの処理
+		}
 
 		// ターン終了
 		IngameInputManager.Instance.Player.TrendEnable();	// プレイヤーの干渉権を復権させる
@@ -226,16 +266,6 @@ public class DungeonTurnState : MonoBehaviour
 
 		// 終了
 		yield break;	// 処理完了
-	}
-
-
-	/// <summary>
-	/// <para>破棄時処理</para>
-	/// </summary>
-	private void OnDestroy()
-	{
-		// 入力管理
-		//IngameInputManager.Instance.Player.TrendDisable();	// プレイヤーの干渉権を終了	// 先にこれが削除されてしまい、ここで再生成されエラーとなるので対策が必要
 	}
 
 

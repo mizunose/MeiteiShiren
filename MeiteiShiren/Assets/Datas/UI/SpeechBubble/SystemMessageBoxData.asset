@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72e78243437b1364591d4b5b9d143dcb, type: 3}
+  m_Name: SystemMessageBoxData
+  m_EditorClassIdentifier: 
+  _canvas_data: {fileID: 11400000, guid: aa70c45b5a19ea640a5697e43595d978, type: 2}
+  _left_margin_rate: 0
+  _right_margin_rate: 0
+  _top_margin_rate: 0.7
+  _bottom_margin_rate: 0

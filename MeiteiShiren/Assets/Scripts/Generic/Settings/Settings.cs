@@ -107,7 +107,7 @@ public class Settings : MonoSingleton<Settings>
 			}
 
 			// 提供
-			return _world_label_setting;	// 移動のプロパティ一覧
+			return _world_label_setting;	// ワールド空間ラベルのプロパティ一覧
 		}
 	}
 }

@@ -53,18 +53,24 @@ public class DungeonData : ScriptableObject
 	[Header("ステータス")]
 	[SerializeField, Tooltip("階層")] private FloorData[] _floor_datas;
 	[SerializeField, Tooltip("操作キャラ")] private GameObject _player;	//TODO:チーム配置
+	[SerializeField, Tooltip("階層移動演出")] private TransitionDatas _floor_transitions;
+	[SerializeField, Tooltip("クリア後のシーン")]private SceneData _next_scene = null;
+	[SerializeField, Tooltip("クリア時のトランジション")]private TransitionDatas _cleared_transitions = null;
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>階層データ</para>
-	/// </summary>
 	/// <value><see cref="_floor_datas"/></value>
 	public FloorData[] FloorDatas => _floor_datas;
 
-	/// <summary>
-	/// <para>操作キャラ</para>
-	/// </summary>
 	/// <value><see cref="_player"/></value>
 	public GameObject Player => _player;
+
+	/// <value><see cref="_floor_transitions"/></value>
+	public TransitionDatas FloorTransitions => _floor_transitions;
+
+	/// <value><see cref="_next_scene"/></value>
+	public SceneData NextScene => _next_scene;
+
+	/// <value><see cref="_cleared_transitions"/></value>
+	public TransitionDatas ClearedTransitions => _cleared_transitions;
 }

@@ -11,7 +11,6 @@
 // 名前空間宣言
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 // クラス定義
@@ -28,23 +27,22 @@ class DynamicMap : MapData
 		PUBLIC_ROOM,	// 通常部屋
 		PRIVATE_ROOM,	// 隠し部屋
 		SHOP,	// 商店
+		STAIR,	// 階段
 		WALL,	// 壁
+		MAX	// 要素数
+	}
+	public enum Edge	// 辺
+	{
+		TOP,	// 上辺
+		BOTTOM,	// 下辺
+		LEFT,	// 左辺
+		RIGHT,	// 右辺
 		MAX	// 要素数
 	}
 
 	// 定数定義
 	private const string _NAME = "DynamicMap";	// タブ名称
 	private const MassType _INITIAL_PACK = MassType.WALL;	// 最初にエリアを仮埋めするマス種
-	private static readonly int[] _MASS_INDICES = {	// マスメッシュの頂点インデックス
-			0, 1, 2,	// 左側三角形
-			1, 3, 2,	// 右側三角形
-		};
-	private static readonly Vector2[] _MASS_UVS = {	// マスメッシュのテクスチャ座標
-			new Vector2(0.0f, 0.0f),	// 左上
-			new Vector2(1.0f, 0.0f),	// 右上
-			new Vector2(0.0f, 1.0f),	// 左下
-			new Vector2(1.0f, 1.0f),	// 右下
-		};
 	private const int _RATIO_RAND_RANGE_MAX = 100;	// 空間分割の乱数幅
 	private int _ROAD_WIDTH = 1;	// 道の幅
 
@@ -58,7 +56,6 @@ class DynamicMap : MapData
 	[SerializeField, Tooltip("空間分割の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _area_split_threshold = 0;
 	[SerializeField, Tooltip("部屋掘削の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _room_sharpen_threshold = 0;
 	[SerializeField, Tooltip("入口設立の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_entrance_threshold = 0;
-	private List<MassType[]> _map_info = new List<MassType[]>();	// マップの情報
 	[Header("商店作成")]
 	[SerializeField, Tooltip("商店作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_shop_threshold = 0;
 
@@ -68,14 +65,7 @@ class DynamicMap : MapData
 	/// <para>マップ全体のサイズ</para>
 	/// </summary>
 	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
-	public override Vector2Int MapSize
-	{
-		get
-		{
-			// 提供
-			return _size + Vector2Int.one * _arround_wall * 2;	// 周囲の壁も含めたサイズ
-		}
-	}
+	public override Vector2Int MapSize => _size + Vector2Int.one * _arround_wall * 2;
 
 
 	/// <summary>
@@ -92,6 +82,7 @@ class DynamicMap : MapData
 	public override void Generate()
 	{
 		// 変数宣言
+		List<MassType[]> _map_info = new List<MassType[]>();	// マップの情報
 		MassType[][] _area_infos = new MassType[_size.y][];	// 生成管理用辞書
 		bool[][] _road_infos = new bool[_size.y][];	// 通路候補マス(trueで通路にでき、falseで不可)
 
@@ -352,17 +343,17 @@ class DynamicMap : MapData
 		foreach (var _room in _rooms)
 		{
 			// 変数宣言
-			List<Edge> _edges = new List<Edge>{ Edge.Right, Edge.Bottom };	// 辺の選択肢
+			List<Edge> _edges = new List<Edge>{ Edge.RIGHT, Edge.BOTTOM };	// 辺の選択肢
 			List<(Vector2Int position, Vector2Int normal)> _entrances = new();	// 確定した入口格納用
 
 			// 初期化
 			if (_room.parent_area.xMin > 0 || _room.parent_area.xMin - _room.room.xMin > _room_margin + _ROAD_WIDTH)	// 左隣にエリアがあるか、エリアの左端に通路を設置しても必要なゆとりを保てる
 			{
-				_edges.Add(Edge.Left);	// 左辺を選択肢に含める
+				_edges.Add(Edge.LEFT);	// 左辺を選択肢に含める
 			}
 			if (_room.parent_area.yMin > 0 || _room.parent_area.yMin - _room.room.yMin > _room_margin + _ROAD_WIDTH)	// 上隣にエリアがあるか、エリアの上端に通路を設置しても必要なゆとりを保てる
 			{
-				_edges.Add(Edge.Top);	// 上辺を選択肢に含める
+				_edges.Add(Edge.TOP);	// 上辺を選択肢に含める
 			}
 			
 			// 部屋の入り口を作成
@@ -377,7 +368,7 @@ class DynamicMap : MapData
 				switch (_edges[edge_idx])	// 選択された辺によって分岐
 				{
 					// 左辺
-					case Edge.Left:
+					case Edge.LEFT:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
 							if (IsRoomType(_area_infos[_idx][_room.room.xMin]))	// 削り取られていないマス
@@ -392,7 +383,7 @@ class DynamicMap : MapData
 						break;	// 分岐処理完了
 
 					// 右辺
-					case Edge.Right:
+					case Edge.RIGHT:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
 							if (IsRoomType(_area_infos[_idx][_room.room.xMax - 1]))	// 削り取られていないマス
@@ -407,7 +398,7 @@ class DynamicMap : MapData
 						break;	// 分岐処理完了
 
 					// 上辺
-					case Edge.Top:
+					case Edge.TOP:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
 							if (IsRoomType(_area_infos[_room.room.yMin][_idx]))	// 削り取られていないマス
@@ -422,7 +413,7 @@ class DynamicMap : MapData
 						break;	// 分岐処理完了
 
 					// 下辺
-					case Edge.Bottom:
+					case Edge.BOTTOM:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
 							if (IsRoomType(_area_infos[_room.room.yMax - 1][_idx]))	// 削り取られていないマス
@@ -436,9 +427,9 @@ class DynamicMap : MapData
 						}
 						break;	// 分岐処理完了
 
+#if UNITY_EDITOR
 					// その他
 					default:
-#if UNITY_EDITOR
 						Debug.LogError("非想定の辺が選択されました");
 						break;	// 分岐処理完了
 #endif	// end UNITY_EDITOR
@@ -468,7 +459,7 @@ class DynamicMap : MapData
 				switch (_edges[edge_idx])	// 選択された辺によって分岐
 				{
 					// 左辺
-					case Edge.Left:
+					case Edge.LEFT:
 
 						// 通路生成
 						for (int _idx = _entrance.x - 1; _idx > 0; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
@@ -492,7 +483,7 @@ class DynamicMap : MapData
 						break;	// 分岐処理完了
 
 					// 右辺
-					case Edge.Right:
+					case Edge.RIGHT:
 
 						// 通路生成
 						for (int _idx = _entrance.x + 1; _idx < _size.x; _idx++)	// 入口につながる通路(部屋の外)のマス単位でのループ
@@ -515,7 +506,7 @@ class DynamicMap : MapData
 						break;	// 分岐処理完了
 
 					// 上辺
-					case Edge.Top:
+					case Edge.TOP:
 
 						// 通路生成
 						for (int _idx = _entrance.y - 1; _idx > 0; _idx--)	// 入口につながる通路(部屋の外)のマス単位でのループ
@@ -538,7 +529,7 @@ class DynamicMap : MapData
 						break;	// 分岐処理完了
 
 					// 下辺
-					case Edge.Bottom:
+					case Edge.BOTTOM:
 
 						// 通路生成
 						for (int _idx = _entrance.y + 1; _idx < _size.y; _idx++)	// 入口につながる通路(部屋の外)のマス単位でのループ
@@ -560,9 +551,9 @@ class DynamicMap : MapData
 						// 終了
 						break;	// 分岐処理完了
 
+#if UNITY_EDITOR
 					// その他
 					default:
-#if UNITY_EDITOR
 						Debug.LogError("法線方向の演算に失敗しました");
 						break;	// 分岐処理完了
 #endif	// end UNITY_EDITOR
@@ -946,24 +937,24 @@ class DynamicMap : MapData
 
 		// 変数宣言
 		int _player_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// プレイヤー生成位置の番号
-		Vector2Int _player_position = _main_spwan_masses[_player_spawn_idx];	// マップ上のプレイヤー生成位置
+		Vector2Int _player_position = PositionAreaToMap(_main_spwan_masses[_player_spawn_idx]);	// プレイヤー生成マス
 
 		// プレイヤー位置予約
-		_player_position = PositionAreaToMap(_player_position);	// マップ上の位置に変換
 		_main_spwan_masses.RemoveAt(_player_spawn_idx);	// プレイヤー生成に使うマスなので他の生成に使わない
 
 		// 変数宣言
 		int _goal_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// 階段位置の番号
+		Vector2Int _goal_position = PositionAreaToMap(_main_spwan_masses[_goal_spawn_idx]);	// 階段生成位置
 
-		//TODO:階段作成
-		Vector2Int _goal_position = PositionAreaToMap(_main_spwan_masses[_goal_spawn_idx]);	// 階段生成
+		// 階段作成
+		_area_infos[_goal_position.y][_goal_position.x] = MassType.STAIR;	// マスを階段に変換
 		_main_spwan_masses.RemoveAt(_goal_spawn_idx);	// 階段生成に使うマスなので他の生成に使わない
 
 
-		// 罠作成
+		//TODO:罠作成
 
 
-		// アイテム作成
+		//TODO:アイテム作成
 
 
 		// 作成した階層の情報をマップの情報に変換する
@@ -1001,46 +992,7 @@ class DynamicMap : MapData
 		Masses = new Mass[MapSize.y, MapSize.x];	// マス管理のリサイズ
 
 		// マス作成
-		for (int _y_idx = 0;  _y_idx < _map_info.Count; _y_idx++)	// 行単位でのループ
-		{
-			for (int _x_idx = 0;  _x_idx < _map_info[_y_idx].Length; _x_idx++)	// マス単位でのループ
-			{
-				// マスの生成
-				switch (_map_info[_y_idx][_x_idx])	// マスの種類によって分岐
-				{
-					// 通路
-					case MassType.GROUND:
-						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
-						break;	// 分岐処理完了
-
-					// 通常部屋
-					case MassType.PUBLIC_ROOM:
-						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
-						break;	// 分岐処理完了
-
-					// 隠し部屋
-					case MassType.PRIVATE_ROOM:
-						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
-						break;	// 分岐処理完了
-
-					// 商店
-					case MassType.SHOP:
-						MakeMass(new Vector2Int(_x_idx, _y_idx));	// マス作成
-						break;	// 分岐処理完了
-
-					// 壁
-					case MassType.WALL:
-						break;	// 分岐処理完了
-
-					// その他
-					default:
-#if UNITY_EDITOR
-						Debug.LogError("マスへの対応が定義されていません");
-#endif	// end UNITY_EDITOR
-						break;	// 分岐処理完了
-				}
-			}
-		}
+		MakeMass(_map_info);
 
 		// 連続区域のインスタンス作成
 		for (int _contact_idx = 0; _contact_idx < _room_contacts.Count; _contact_idx++)	// 連続区域単位でのループ
@@ -1108,9 +1060,9 @@ class DynamicMap : MapData
 		Dungeon.Instance.Player.transform.SetParent(Masses[_player_position.y, _player_position.x].transform, false);	// 対象マスに管理させる
 
 		// テクスチャ作成
-		Texture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成
-		Texture.filterMode = FilterMode.Point;	// ぼかさない(ドット表現)
-		Texture.wrapMode = TextureWrapMode.Clamp;	// 繰り返さない
+		MiniMapTexture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成
+		MiniMapTexture.filterMode = FilterMode.Point;	// ぼかさない(ドット表現)
+		MiniMapTexture.wrapMode = TextureWrapMode.Clamp;	// 繰り返さない
 
 		// 変数宣言
 		 Color[] pixels = new Color[MapSize.x * MapSize.y];	// カラーバッファ
@@ -1147,6 +1099,11 @@ class DynamicMap : MapData
 						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.1f, 0.0f, 0.5f, 1.0f);
 						break;	// 分岐処理完了
 
+					// 階段
+					case MassType.STAIR:
+						pixels[_y_idx * MapSize.x + _x_idx] = new Color(0.5f, 0.0f, 0.5f, 1.0f);
+						break;	// 分岐処理完了
+
 					// その他
 					default:
 #if UNITY_EDITOR
@@ -1156,8 +1113,8 @@ class DynamicMap : MapData
 				}
 			}
 		}
-		Texture.SetPixels(pixels);	// カラーバッファ登録
-		Texture.Apply();	// 登録した情報を確定
+		MiniMapTexture.SetPixels(pixels);	// カラーバッファ登録
+		MiniMapTexture.Apply();	// 登録した情報を確定
 	}
 
 
@@ -1209,44 +1166,59 @@ class DynamicMap : MapData
 	/// <summary>
 	/// <para>マスをインスタンスとして作成</para>
 	/// </summary>
-	/// <param name="position">生成位置</param>
-	/// <returns>作成したマスの姿勢情報</returns>
-	private void MakeMass(Vector2Int position)
+	/// <param name="_map_info">マップの構成マス情報</param>
+	private void MakeMass(List<MassType[]> _map_info)
 	{
-		// 変数宣言
-		Vector3[] _mass_vertices = {	// マスメッシュの頂点情報
-			new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 左上
-			new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 右上
-			new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 左下
-			new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 右下
-		};
+		// 生成
+		for (int _y_idx = 0;  _y_idx < _map_info.Count; _y_idx++)	// 行単位でのループ
+		{
+			for (int _x_idx = 0;  _x_idx < _map_info[_y_idx].Length; _x_idx++)	// マス単位でのループ
+			{
+				//TODO:壁を作成
+				if (_map_info[_y_idx][_x_idx] == MassType.WALL)	// 一時的に壁は作らないでおく
+				{
+					continue;
+				}
 
-		// 変数宣言
-		GameObject _object = new GameObject();	// マスのインスタンス
-		var _mesh_filter = _object.AddComponent<MeshFilter>();	// メッシュ管理機能
+				// 変数宣言
+				GameObject _mass_object = new GameObject();	// マスのインスタンス
+				Mass _mass = null;	// マスの機能
 
-		// 初期化
-		_object.AddComponent<MeshRenderer>().material = _ground_texture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
-		_object.transform.SetParent(Dungeon.Instance.Map.transform, false);	// マップの子に登録
-#if UNITY_EDITOR
-		_object.name = "Mass_" + position.x + "_" + position.y;	// デバッグ時にはわかりやすいように命名しておく
-#endif	// end UNITY_EDITOR
+				// 初期化
+				_mass_object.transform.SetParent(Dungeon.Instance.Map.transform, false);	// マップの子に登録
+		#if UNITY_EDITOR
+				_mass_object.name = "Mass_" + _x_idx + "_" + _y_idx;	// デバッグ時にはわかりやすいように命名しておく
+		#endif	// end UNITY_EDITOR
 
-		// 変数宣言
-		var _mass = _object.AddComponent<Mass>();	// マスの機能作成
+				// マスの生成
+				switch (_map_info[_y_idx][_x_idx])	// マスの種類によって分岐
+				{
+					// 商店
+					case MassType.SHOP:
+						_mass = _mass_object.AddComponent<Mass>();	// マスの機能作成	//TODO:商店マスとして生成
+						break;	// 分岐処理完了
 
-		// 初期化
-		Masses[position.y, position.x] = _mass;	// 作成したマスを登録
+					// 階段
+					case MassType.STAIR:
+						_mass = _mass_object.AddComponent<Stair>();	// マスの機能作成
+						break;
 
-		// 変数宣言
-		Mesh _mesh = new Mesh();	//メッシュ本体
+					// 壁
+					case MassType.WALL:
+						_mass = _mass_object.AddComponent<Mass>();	// マスの機能作成
+						//TODO:壁の設置
+						break;	// 分岐処理完了
 
-		// メッシュ作成
-		_object.transform.position = new Vector3(position.x, 0.0f, position.y) * Settings.Instance.Map.MassSize;	// 生成位置を設定
-		_mesh.vertices = _mass_vertices;	// メッシュの頂点情報を設定
-		_mesh.triangles = _MASS_INDICES;	// メッシュの頂点インデックスを設定
-		_mesh.RecalculateNormals();	// 法線を再計算
-		_mesh.uv = _MASS_UVS;	// テクスチャ座標を設定
-		_mesh_filter.sharedMesh = _mesh;	// 作成したメッシュを登録
+					// その他
+					default:
+						_mass = _mass_object.AddComponent<Mass>();	// マスの機能作成
+						break;	// 分岐処理完了
+				}
+
+				// 初期化
+				Masses[_y_idx, _x_idx] = _mass;	// 作成したマスを登録
+				_mass_object.transform.position = new Vector3(_x_idx, 0.0f, _y_idx) * Settings.Instance.Map.MassSize;	// 生成位置を設定
+			}
+		}
 	}
 }

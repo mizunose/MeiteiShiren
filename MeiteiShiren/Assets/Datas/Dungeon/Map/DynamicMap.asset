@@ -14,12 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _size: {x: 80, y: 60}
   _ground_texture: {fileID: 2100000, guid: 276c0b36c6f4f674a88564ea0ffb957e, type: 2}
-  _wall_model:
-    model: {fileID: 0}
-    center: {x: 0, y: 0, z: 0}
-  _player:
-    model: {fileID: 5498470843638692480, guid: 38fec33e53fed48468f57e6e52915822, type: 3}
-    center: {x: 0, y: 0.5, z: 0}
+  _wall_model: {fileID: 0}
+  _stair_data: {fileID: 11400000, guid: 831193da61e876b4cb1320704a6ea06d, type: 2}
+  _anchor_position: {x: 220, y: -220}
+  _minimap_size: {x: 400, y: 400}
   _min_rooms: 18
   _smallest_room: {x: 5, y: 5}
   _area_split_base: {x: 3, y: 3}
