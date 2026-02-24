@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>攻撃データ</para>
 /// </summary>
-[CreateAssetMenu(menuName = Settings.STATUS_MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public class ChaseData : ScriptableObject
+public class ChaseData : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "Chase";	// タブ名称
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("視界の範囲"), Min(0)] private int _view_range = 1;

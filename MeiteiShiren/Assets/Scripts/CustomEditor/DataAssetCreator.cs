@@ -306,7 +306,7 @@ public class DataAssetCreator : EditorWindow
 	/// <summary>
 	/// <para>ウィンドウ展開</para>
 	/// </summary>
-	[MenuItem("Assets/Create/DataAsset")]
+	[MenuItem("Assets/Create/Data Asset")]
 	public static void OpenWindow()
 	{
 		// ウィンドウ表示

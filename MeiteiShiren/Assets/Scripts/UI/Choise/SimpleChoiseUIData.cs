@@ -16,8 +16,7 @@ using UnityEngine;
 /// <summary>
 /// <para>簡素な選択肢UIのデータ</para>
 /// </summary>
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME)]
-public class SimpleChoiseUIData : ScriptableObject
+public class SimpleChoiseUIData : CreatableData
 {
 	// 構造体定義
 	/// <summary>
@@ -30,9 +29,6 @@ public class SimpleChoiseUIData : ScriptableObject
 		public Color text_color;	// テキスト表示色
 		public float font_size;	// フォントサイズ
 	}
-	
-	// 定数定義
-	private const string _NAME = "SimpleChoiseUI";	// タブ名称
 
 	// 変数宣言
 	[SerializeField, Tooltip("選択時のデータ")] private Changeables _selected_state;

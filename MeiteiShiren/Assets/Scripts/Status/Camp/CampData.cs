@@ -15,8 +15,7 @@ using UnityEngine;
 /// <summary>
 /// <para>攻撃データ</para>
 /// </summary>
-[CreateAssetMenu(menuName = Settings.STATUS_MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public class CampData : ScriptableObject
+public class CampData : CreatableData
 {
 	// 列挙定義
 	public enum CampType	// 陣営の種類
@@ -24,9 +23,6 @@ public class CampData : ScriptableObject
 		Comrade,	// 味方陣営(プレイヤー陣営)
 		Enemy,	// 敵陣営
 	}
-
-	// 定数定義
-	private const string _NAME = "Camp";	// タブ名称
 
 	// 変数宣言
 	[Header("ステータス")]

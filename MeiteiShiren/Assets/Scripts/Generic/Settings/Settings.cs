@@ -22,10 +22,6 @@ using UnityEngine;
 /// </summary>
 public class Settings : MonoSingleton<Settings>
 {	
-	// 定数定義
-	public const string SETTING_MENU_TAB_NAME = "Settings/";	// プロパティメニュータブ名
-	public const string STATUS_MENU_TAB_NAME = "Status/";	// ステータスメニュータブ名
-
 	// 変数宣言
 	[Header("ダンジョン")]
 	[SerializeField, Tooltip("マップのプロパティ")] private MapSetting _map_setting;

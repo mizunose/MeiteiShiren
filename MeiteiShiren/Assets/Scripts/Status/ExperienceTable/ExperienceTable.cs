@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>経験値テーブル</para>
 /// </summary>
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME)]
-public class ExperienceTable : ScriptableObject
+public class ExperienceTable : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "ExperienceTable";	// タブ名称
-
 	// 変数宣言
 	[SerializeField, Tooltip("次レベルまでの経験値")] private uint[] _table;
 

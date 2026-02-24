@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>体力データ</para>
 /// </summary>
-[CreateAssetMenu(menuName = Settings.STATUS_MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public class HitPointData : ScriptableObject
+public class HitPointData : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "HitPoint";	// タブ名称
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("最大体力"), Min(HitPoint.MIN_GUARANTEE_MAX_VALUE)] private int _max_hp = HitPoint.MIN_GUARANTEE_MAX_VALUE;

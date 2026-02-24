@@ -20,8 +20,7 @@ using UnityEngine;
 /// <summary>
 /// <para>マス範囲</para>
 /// </summary>
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME)]
-public class MassRange : ScriptableObject
+public class MassRange : CreatableData
 {
 	// 列挙定義
 	public enum RangeType	// 範囲の種類
@@ -31,9 +30,6 @@ public class MassRange : ScriptableObject
 		ROOM,	// 部屋全体
 		WORLD,	// マップ全体
 	}
-
-	// 定数定義
-	private const string _NAME = "MassRange";	// タブ名称
 
 	// 変数変更
 	[SerializeField, Tooltip("種類")] private RangeType _type;

@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>移動のプロパティ値</para>
 /// </summary>
-[CreateAssetMenu(menuName = Settings.SETTING_MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public class WorldLabelSetting : ScriptableObject
+public class WorldLabelSetting : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "WorldLabelSetting";   // タブ名称
-
 	// 変数宣言
 	[Header("テキスト")]
 	[SerializeField, Tooltip("フォント")] private TMP_FontAsset _font = null;

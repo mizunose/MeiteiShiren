@@ -10,15 +10,10 @@
 
 // 名前空間宣言
 using System;
-using UnityEngine;
 
 // クラス定義
-[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME + "Data")]
 public class NoneArgumentEventData : EventData
 {
-	// 定数定義
-	private const string _NAME = "NoneArgumentEvent";	// アセット名
-
 	// イベント定義
 	public event Action signal;	// 扱うイベント
 

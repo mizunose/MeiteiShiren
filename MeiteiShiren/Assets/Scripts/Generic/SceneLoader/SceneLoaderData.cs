@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>シーン切替データ</para>
 /// </summary>
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME)]
-public class SceneLoaderData : ScriptableObject
+public class SceneLoaderData : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "SceneLoader";	// タブ名称
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("最初のシーン")]private SceneData _first_scene = null;

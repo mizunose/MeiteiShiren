@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>マップのプロパティ値</para>
 /// </summary>
-[CreateAssetMenu(menuName = Settings.SETTING_MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public class EnemySpawnerSetting : ScriptableObject
+public class EnemySpawnerSetting : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "EnemySpawnerSetting";	// タブ名称
-
 	// 変数宣言
 	[SerializeField, Tooltip("生成ターン周期")] private uint _cycle_interval = 1;
 	[SerializeField, Tooltip("最大生成数"), Min(0)] private uint _max_spawn = 0;

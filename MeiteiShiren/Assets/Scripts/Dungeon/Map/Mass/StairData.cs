@@ -12,12 +12,8 @@
 using UnityEngine;
 
 // クラス定義
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME)]
-public class StairData : ScriptableObject
+public class StairData : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "Stair";	// タブ名称
-
 	// 変数宣言
 	[Header("処理前確認")]
 	[SerializeField, Tooltip("表示メッセージ")] private string _confirm_text;

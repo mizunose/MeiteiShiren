@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>マップのプロパティ値</para>
 /// </summary>
-[CreateAssetMenu(menuName = Settings.SETTING_MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public class MapSetting : ScriptableObject
+public class MapSetting : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "MapSetting";	// タブ名称
-
 	// 変数宣言
 	[SerializeField, Tooltip("1マスあたりの大きさ")] private float _mass_size = 1.0f;
 	[SerializeField, Tooltip("ミニマップ表示透明度"), Range(0.0f, 1.0f)] private float _alpha = 0.21f;

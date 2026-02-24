@@ -16,8 +16,7 @@ using UnityEngine;
 /// <summary>
 /// <para>ダンジョンデータ</para>
 /// </summary>
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME)]
-public class DungeonData : ScriptableObject
+public class DungeonData : CreatableData
 {
 	// 構造体定義
 	/// <summary>
@@ -45,9 +44,6 @@ public class DungeonData : ScriptableObject
 		/// <value><see cref="_enemy_spawn_data"/></value>
 		public EnemySpawnData EnemySpawnData => _enemy_spawn_data;
 	}
-
-	// 定数定義
-	private const string _NAME = "Dungeon";	// タブ名称
 
 	// 変数宣言
 	[Header("ステータス")]

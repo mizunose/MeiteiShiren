@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>空腹/満腹 データ</para>
 /// </summary>
-[CreateAssetMenu(menuName = Settings.STATUS_MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public class HungerData : ScriptableObject
+public class HungerData : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "Hunger";	// タブ名称
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("腹が減るターン数"), Min(1)] private uint _keep_fulling = 1;

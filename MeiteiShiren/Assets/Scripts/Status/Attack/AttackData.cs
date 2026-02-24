@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>攻撃データ</para>
 /// </summary>
-[CreateAssetMenu(menuName = Settings.STATUS_MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public class AttackData : ScriptableObject
+public class AttackData : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "Attack";	// タブ名称
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("味方討ち")] private bool _fiendry_fire = false;	// trueで味方も攻撃に含める

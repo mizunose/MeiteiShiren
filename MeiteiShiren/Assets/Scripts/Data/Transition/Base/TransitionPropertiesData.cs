@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>トランジションプロパティデータ</para>
 /// </summary>
-//[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public abstract class TransitionPropertiesData : ScriptableObject
+public abstract class TransitionPropertiesData : CreatableData
 {
-	// 定数定義
-	protected const string _MENU_TAB_NAME = TransitionData.TRANSITION_MENU_TAB_NAME + "Properties/";	// アセットメニュー名
-
 	// 変数宣言
 	[SerializeField, Tooltip("対応シェーダー")] private Shader _supported_shader;
 

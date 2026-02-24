@@ -12,16 +12,8 @@
 using UnityEngine;
 
 // クラス定義
-/// <summary>
-/// <para>効果</para>
-/// </summary>
-//[CreateAssetMenu(menuName = _MENU_TAB_NAME + "AffectName", fileName = "AffectName")]	と子クラスは記述
-public abstract class Affect : ScriptableObject
+public abstract class Affect : CreatableData
 {
-	// 定数定義
-	protected const string _MENU_TAB_NAME = "Affect/";	// 共通メニュータブ名
-
-
 	/// <summary>
 	/// <para>各効果発動の呼び出し共通化のための抽象関数</para>
 	/// </summary>

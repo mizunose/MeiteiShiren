@@ -18,10 +18,9 @@ using UnityEngine.UI;
 /// <summary>
 /// <para>トランジションデータ</para>
 /// </summary>
-public abstract class TransitionData : ScriptableObject
+public abstract class TransitionData : CreatableData
 {
 	// 定数定義
-	public const string TRANSITION_MENU_TAB_NAME = "Transition/";	// アセットメニュー名	
 #if UNITY_EDITOR
 	private const string _CANVAS_NAME = "TransitionCanvas";	// 作成するキャンバスの名前
 	private const string _IMAGE_NAME = "TransitionImage";	// 作成する画像の名前

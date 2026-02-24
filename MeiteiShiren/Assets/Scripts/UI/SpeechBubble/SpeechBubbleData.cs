@@ -12,12 +12,8 @@
 using UnityEngine;
 
 // クラス定義
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME)]
-public class SpeechBubbleData : ScriptableObject
+public class SpeechBubbleData : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "SpeechBubble";	// タブ名称
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("キャンバス情報")] private PublicCanvasData _canvas_data;

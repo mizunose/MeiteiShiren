@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>マップデータの抽象クラス</para>
 /// </summary>
-//[CreateAssetMenu(menuName = _MENU_TAB_NAME + "MapName", fileName = "MapName")]	と子クラスは記述
-public abstract class MapData : ScriptableObject
+public abstract class MapData : CreatableData
 {
-	// 定数定義
-	protected const string _MENU_TAB_NAME = "MapData/";	// 共通メニュータブ名
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("サイズ"), Min(1)] protected Vector2Int _size = new Vector2Int(1, 1);

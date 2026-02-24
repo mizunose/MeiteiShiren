@@ -12,12 +12,8 @@
 using UnityEngine;
 
 // クラス定義
-[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
 public class ColorOutOutData : TransitionOutData
 {
-	// 定数定義
-	private const string _NAME = "ColorOutOut";	// アセット名
-
 	// 変数宣言
 	[SerializeField, Tooltip("プロパティデータ")] protected ColorOutPropertiesData _properties_data;
 

@@ -16,12 +16,8 @@ using UnityEngine;
 /// <summary>
 /// <para>敵生成データ</para>
 /// </summary>
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME)]
-public class EnemySpawnData : ScriptableObject
+public class EnemySpawnData : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "EnemySpawnData";	// タブ名称
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("生成対象")] private GameObject[] _enemies;

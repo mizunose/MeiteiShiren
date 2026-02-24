@@ -17,7 +17,6 @@ using UnityEngine;
 /// <summary>
 /// <para>自動生成マップデータ</para>
 /// </summary>
-[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
 class DynamicMap : MapData
 {
 	// 列挙定義
@@ -41,7 +40,6 @@ class DynamicMap : MapData
 	}
 
 	// 定数定義
-	private const string _NAME = "DynamicMap";	// タブ名称
 	private const MassType _INITIAL_PACK = MassType.WALL;	// 最初にエリアを仮埋めするマス種
 	private const int _RATIO_RAND_RANGE_MAX = 100;	// 空間分割の乱数幅
 	private int _ROAD_WIDTH = 1;	// 道の幅

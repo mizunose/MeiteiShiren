@@ -16,13 +16,8 @@ using UnityEngine;
 /// <summary>
 /// <para>トランジション待機部データ</para>
 /// </summary>
-//[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
 public abstract class TransitionWaitData : TransitionData
 {
-	// 定数定義
-	protected const string _MENU_TAB_NAME = TransitionData.TRANSITION_MENU_TAB_NAME + "Wait/";	// アセットメニュー名
-
-
 	/// <summary>
 	/// <para>遷移処理の演出部</para>
 	/// </summary>
@@ -31,7 +26,7 @@ public abstract class TransitionWaitData : TransitionData
 	protected sealed override IEnumerator _Performance(Material material)
 	{
 		// 更新
-		while (true)
+		while (true)	// ループ
 		{
 			// 演出
 			_Wait(material);	// 演出処理

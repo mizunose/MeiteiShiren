@@ -12,14 +12,9 @@
 using UnityEngine;
 
 // クラス定義
-/// <summary>
-/// <para>ダメージ効果</para>
-/// </summary>
-[CreateAssetMenu(menuName = _MENU_TAB_NAME + _AFFECT_NAME, fileName = _AFFECT_NAME)]
 public class Damage : Affect
 {
 	// 定数定義
-	private const string _AFFECT_NAME = "Damage";	// 効果名
 	private const int _MIN_DAMAGE = 1;	// 最低保証ダメージ
 
 	// 変数宣言

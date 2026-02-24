@@ -12,11 +12,9 @@
 using UnityEngine;
 
 // クラス定義
-[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
 public class ColorOutPropertiesData : TransitionPropertiesData
 {
 	// 定数定義
-	private const string _NAME = "ColorOutProperties";	// アセット名
 	public static readonly int _CURTAIN_COLOR_ID = Shader.PropertyToID("curtain_color");	// 塗りつぶし色パラメータID
 	public static readonly int _DRAW_ALPHA_ID = Shader.PropertyToID("draw_alpha");	// 描画不透明度パラメータID
 

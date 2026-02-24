@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>固定生成マップデータ</para>
 /// </summary>
-[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
 class StaticMap : MapData
 {
-	// 定数定義
-	private const string _NAME = "StaticMap";	// タブ名称
-	
 	// プロパティ定義
 
 	/// <summary>

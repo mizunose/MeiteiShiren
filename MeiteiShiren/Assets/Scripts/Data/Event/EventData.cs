@@ -12,9 +12,6 @@
 using UnityEngine;
 
 // クラス定義
-//[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME + "Data")]
-public abstract class EventData : ScriptableObject
+public abstract class EventData : CreatableData
 {
-	// 定数定義
-	protected const string _MENU_TAB_NAME = "Event/";	// アセットメニュー名
 }

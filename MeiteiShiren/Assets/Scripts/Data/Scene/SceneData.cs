@@ -15,12 +15,8 @@ using UnityEngine;
 /// <summary>
 /// <para>シーンデータ</para>
 /// </summary>
-[CreateAssetMenu(menuName = "Datas/" + _NAME, fileName = _NAME)]
-public class SceneData : ScriptableObject
+public class SceneData :  CreatableData
 {
-	// 定数定義
-	private const string _NAME = "Scene";	// タブ名称
-	
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("配置物")] private GameObject[] _setups;

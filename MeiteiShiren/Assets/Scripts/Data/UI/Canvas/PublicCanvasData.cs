@@ -14,12 +14,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // クラス定義
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME + "Data")]
-public class PublicCanvasData : ScriptableObject
+public class PublicCanvasData : CreatableData
 {
-	// 定数定義
-	protected const string _NAME = "PublicCanvas";	// アセット名
-
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("基準となるスクリーンサイズ")] private Vector2 _virtual_size = new Vector2(1920.0f, 1080.0f);
