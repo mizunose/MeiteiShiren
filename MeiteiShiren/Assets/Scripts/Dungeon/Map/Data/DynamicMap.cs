@@ -17,7 +17,7 @@ using UnityEngine;
 /// <summary>
 /// <para>自動生成マップデータ</para>
 /// </summary>
-class DynamicMap : MapData
+public class DynamicMap : MapData
 {
 	// 列挙定義
 	public enum MassType	// 種類

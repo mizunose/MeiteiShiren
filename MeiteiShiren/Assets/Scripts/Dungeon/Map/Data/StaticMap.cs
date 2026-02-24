@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// <para>固定生成マップデータ</para>
 /// </summary>
-class StaticMap : MapData
+public class StaticMap : MapData
 {
 	// プロパティ定義
 
