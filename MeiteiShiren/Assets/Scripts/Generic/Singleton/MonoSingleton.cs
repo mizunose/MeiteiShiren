@@ -51,7 +51,7 @@ public abstract class MonoSingleton<MonoType> : VirtualizeMono where MonoType : 
 #if UNITY_EDITOR
 	/// <value>生成インスタンスに付ける名前</value>
 	protected abstract string InstanceName { get; }
-#endif	// !UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 
 	/// <summary>

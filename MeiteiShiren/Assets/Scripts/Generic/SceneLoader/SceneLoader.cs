@@ -20,9 +20,9 @@ using UnityEngine;
 public class SceneLoader : MonoSingleton<SceneLoader>
 {
 	// 定数定義
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 	private const string _INSTANCE_NAME = "SceneLoader";	// 自動生成された時のインスタンス名
-	#endif	// end UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 	// 変数宣言
 	[SerializeField, Tooltip("データ")]private SceneLoaderData _data = null;
@@ -32,9 +32,9 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 	// プロパティ定義
 
 	#if UNITY_EDITOR
-	/// <value><see cref="_INSTANCE_NAME"/></value>
+/// <value><see cref="_INSTANCE_NAME"/></value>
 	protected override string InstanceName => _INSTANCE_NAME;
-	#endif	// !UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 	/// <value><see cref="_current_scene"/></value>
 	public GameObject CurrentScene => _current_scene;
@@ -187,9 +187,9 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 		// 保全
 		if (_breadcrumb_list.Count < 1)	// 戻るシーンがない
 		{
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			Debug.LogError("展開されていない状態でシーンが閉じられています");
-			#endif	// end UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 			// 終了
 			yield break;	// 処理できないので中断する

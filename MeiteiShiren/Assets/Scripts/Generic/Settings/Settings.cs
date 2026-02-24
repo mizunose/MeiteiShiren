@@ -34,10 +34,10 @@ public class Settings : MonoSingleton<Settings>
 
 	// プロパティ定義
 
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 	/// <value><see cref="_INSTANCE_NAME"/></value>
 	protected override string InstanceName => _INSTANCE_NAME;
-	#endif	// !UNITY_EDITOR
+#endif	// !UNITY_EDITOR
 
 	/// <summary>
 	/// <para>マップのプロパティ</para>

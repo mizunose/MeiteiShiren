@@ -109,12 +109,12 @@ public class DataAssetCreator : EditorWindow
 						_data_dictionary.Add(_parent_type, parent_node);	// 辞書に追加
 						_data_dictionary[_parent_type.GetGenericTypeDefinition()].children.Add(parent_node);	// 派生を子クラスとして表現
 					}
-					#if UNITY_EDITOR
+#if UNITY_EDITOR
 					else	// 正体不明
 					{
 						Debug.LogError("想定されない型が検出されました。");
 					}
-					#endif	// !UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 				}
 
 				// 更新

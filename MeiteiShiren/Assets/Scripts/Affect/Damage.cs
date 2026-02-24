@@ -94,7 +94,7 @@ public class Damage : Affect
 		{
 #if UNITY_EDITOR
 			Debug.Log("Œø‰Ê”­“®‘ÎÛ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
-#endif	// !UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 			return;	// ˆ—’†’f
 		}
 

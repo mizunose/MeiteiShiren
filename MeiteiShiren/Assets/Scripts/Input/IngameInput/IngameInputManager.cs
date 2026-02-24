@@ -62,10 +62,10 @@ public class IngameInputManager : ActionMapsManager<IngameInputManager>
 
 	// プロパティ定義
 
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 	/// <value><see cref="_INSTANCE_NAME"/></value>
 	protected override string InstanceName => _INSTANCE_NAME;
-	#endif	// !UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 	/// <value>有効状態管理対象</value>
 	protected override IInputActionCollection2 Target => _maps;

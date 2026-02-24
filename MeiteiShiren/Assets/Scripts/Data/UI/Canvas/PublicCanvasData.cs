@@ -41,9 +41,9 @@ public class PublicCanvasData : CreatableData
 				_canvas_instance.additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord1;	// シェーダーセマンティクス：テクスチャ座標
 				_canvas_instance.additionalShaderChannels |= AdditionalCanvasShaderChannels.Normal;	// シェーダーセマンティクス：法線
 				_canvas_instance.additionalShaderChannels |= AdditionalCanvasShaderChannels.Tangent;	// シェーダーセマンティクス：接線
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 				_canvas_object.name = "PublicCanvas";	// デバッグ時にはわかりやすいように命名しておく
-			#endif	// end UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 				// 変数宣言
 				var _scaler = _canvas_instance.AddComponent<CanvasScaler>();	// UIのスケール制御

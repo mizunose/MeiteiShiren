@@ -1029,9 +1029,9 @@ public class DynamicMap : MapData
 				
 				// 初期化
 				_room_object.AddComponent<Room>();	// 部屋の機能作成
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 				_room_object.name = "Room";	// デバッグ時にはわかりやすいように命名しておく
-	#endif	// end UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 				// マスの親子付け
 				for (int _y_idx = _room_contacts[_contact_idx][_room_idx].yMin; _y_idx < _room_contacts[_contact_idx][_room_idx].yMax; _y_idx++)	// 行単位でのループ
@@ -1184,9 +1184,9 @@ public class DynamicMap : MapData
 
 				// 初期化
 				_mass_object.transform.SetParent(Dungeon.Instance.Map.transform, false);	// マップの子に登録
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 				_mass_object.name = "Mass_" + _x_idx + "_" + _y_idx;	// デバッグ時にはわかりやすいように命名しておく
-		#endif	// end UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 				// マスの生成
 				switch (_map_info[_y_idx][_x_idx])	// マスの種類によって分岐

@@ -544,9 +544,9 @@ public abstract class Attack : MonoBehaviour
 							}
 							else	// 無所属
 							{
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 								Debug.LogError("所属陣営が存在しません");
-		#endif	// end UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 								// 免除
 								if (_target == gameObject)	// 少なくとも自身は同じ陣営として見做せるため候補から外す
