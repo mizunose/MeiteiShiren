@@ -17,6 +17,11 @@ using UnityEngine;
 /// </summary>
 public class SceneData :  CreatableData
 {
+	// 定数定義
+#if UNITY_EDITOR
+	private const string _SCENE_NAME = "Scene";	// 自動生成された時のインスタンス名
+#endif	// end UNITY_EDITOR
+
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("配置物")] private GameObject[] _setups;
@@ -38,6 +43,11 @@ public class SceneData :  CreatableData
 	{
 		// 変数宣言
 		GameObject _scene = new GameObject();	// シーン本体
+
+		// 初期化
+#if UNITY_EDITOR
+		_scene.name = _SCENE_NAME;	// 命名
+#endif	// end UNITY_EDITOR
 
 		// 配置
 		foreach (var setup in _setups)	// 配置物単位でのループ

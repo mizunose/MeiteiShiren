@@ -19,12 +19,22 @@ using UnityEngine;
 /// </summary>
 public class SceneLoader : MonoSingleton<SceneLoader>
 {
+	// 定数定義
+	#if UNITY_EDITOR
+	private const string _INSTANCE_NAME = "SceneLoader";	// 自動生成された時のインスタンス名
+	#endif	// end UNITY_EDITOR
+
 	// 変数宣言
 	[SerializeField, Tooltip("データ")]private SceneLoaderData _data = null;
 	private GameObject _current_scene = null;	// 現在のシーン
 	private List<GameObject> _breadcrumb_list = new();	// 保留シーンのパンくずリスト
 
 	// プロパティ定義
+
+	#if UNITY_EDITOR
+	/// <value><see cref="_INSTANCE_NAME"/></value>
+	protected override string InstanceName => _INSTANCE_NAME;
+	#endif	// !UNITY_EDITOR
 
 	/// <value><see cref="_current_scene"/></value>
 	public GameObject CurrentScene => _current_scene;

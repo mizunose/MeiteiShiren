@@ -53,11 +53,19 @@ public class IngameInputManager : ActionMapsManager<IngameInputManager>
 		}
 	}
 
+	// 定数定義
+	private const string _INSTANCE_NAME = "IngameInput";	// 自動生成された時のインスタンス名
+
 	// 変数宣言
 	private IngameInput _maps;	// 管理対象マップを所持するインスタンス
 	private IngamePlayerInput _player;	// プレイヤー入力の管理インスタンス
 
 	// プロパティ定義
+
+	#if UNITY_EDITOR
+	/// <value><see cref="_INSTANCE_NAME"/></value>
+	protected override string InstanceName => _INSTANCE_NAME;
+	#endif	// !UNITY_EDITOR
 
 	/// <value>有効状態管理対象</value>
 	protected override IInputActionCollection2 Target => _maps;

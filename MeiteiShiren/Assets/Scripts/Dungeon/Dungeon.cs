@@ -18,6 +18,9 @@ using System.Collections;
 /// </summary>
 public class Dungeon : MonoSingleton<Dungeon>
 {
+	// 定数定義
+	private const string _INSTANCE_NAME = "Dungeon";	// 自動生成された時のインスタンス名
+
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("データ")] private DungeonData _data;
@@ -25,6 +28,11 @@ public class Dungeon : MonoSingleton<Dungeon>
 	private EnemySpawner _enemy_spawner;	//敵生成機
 
 	// プロパティ定義
+
+	#if UNITY_EDITOR
+	/// <value><see cref="_INSTANCE_NAME"/></value>
+	protected override string InstanceName => _INSTANCE_NAME;
+	#endif	// !UNITY_EDITOR
 
 	/// <summary>
 	/// <para>マップ本体</para>

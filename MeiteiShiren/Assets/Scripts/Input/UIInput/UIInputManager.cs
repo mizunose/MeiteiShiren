@@ -57,11 +57,19 @@ public class UIInputManager : ActionMapsManager<UIInputManager>
 		}
 	}
 
+	// 定数定義
+	private const string _INSTANCE_NAME = "UIInput";	// 自動生成された時のインスタンス名
+
 	// 変数宣言
 	private UIInput _maps;	// 管理対象マップを所持するインスタンス
 	private UIDropDownInput _drop_down;	// ドロップダウン入力の管理インスタンス
 
 	// プロパティ定義
+
+	#if UNITY_EDITOR
+	/// <value><see cref="_INSTANCE_NAME"/></value>
+	protected override string InstanceName => _INSTANCE_NAME;
+	#endif	// !UNITY_EDITOR
 
 	/// <value>有効状態管理対象</value>
 	protected override IInputActionCollection2 Target => _maps;

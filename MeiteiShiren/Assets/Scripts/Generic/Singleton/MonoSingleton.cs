@@ -35,6 +35,9 @@ public abstract class MonoSingleton<MonoType> : VirtualizeMono where MonoType : 
 			{
 				GameObject _GameObject = new GameObject();	// インスタンス作成
 				_instance = _GameObject.AddComponent<MonoType>();	// 自身のコンポーネント登録
+#if UNITY_EDITOR
+				_instance.gameObject.name = _instance.InstanceName;	// 命名
+#endif	// end UNITY_EDITOR
 			}
 
 			// 提供
@@ -44,6 +47,11 @@ public abstract class MonoSingleton<MonoType> : VirtualizeMono where MonoType : 
 
 	/// <value><see cref="インスタンスのヌル検証"/></value>
 	public static bool NullCheck => _instance != null;
+
+#if UNITY_EDITOR
+	/// <value>生成インスタンスに付ける名前</value>
+	protected abstract string InstanceName { get; }
+#endif	// !UNITY_EDITOR
 
 
 	/// <summary>
