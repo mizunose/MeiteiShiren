@@ -23,9 +23,6 @@ public class ChaseData : CreatableData
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>所属陣営</para>
-	/// </summary>
 	/// <value><see cref="_view_range"/></value>
 	public int ViewRange => _view_range;
 }

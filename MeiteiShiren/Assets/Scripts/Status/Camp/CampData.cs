@@ -30,9 +30,6 @@ public class CampData : CreatableData
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>所属陣営</para>
-	/// </summary>
 	/// <value><see cref="_type"/></value>
 	public CampType Type => _type;
 }

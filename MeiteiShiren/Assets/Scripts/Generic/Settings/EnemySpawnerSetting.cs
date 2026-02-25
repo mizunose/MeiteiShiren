@@ -23,15 +23,9 @@ public class EnemySpawnerSetting : CreatableData
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>生成処理の間隔ターン数</para>
-	/// </summary>
 	/// <value><see cref="_cycle_interval"/></value>
 	public float CycleInterval => _cycle_interval;
 
-	/// <summary>
-	/// <para>最大生成数</para>
-	/// </summary>
 	/// <value><see cref="_max_spawn"/></value>
 	public uint MaxSpawn => _max_spawn;
 }	

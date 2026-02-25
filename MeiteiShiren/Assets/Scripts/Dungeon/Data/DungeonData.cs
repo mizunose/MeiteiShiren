@@ -32,15 +32,9 @@ public class DungeonData : CreatableData
 
 		// プロパティ定義
 
-		/// <summary>
-		/// <para>マップデータ</para>
-		/// </summary>
 		/// <value><see cref="_map_data"/></value>
 		public MapData MapData =>_map_data;
 
-		/// <summary>
-		/// <para>敵生成データ</para>
-		/// </summary>
 		/// <value><see cref="_enemy_spawn_data"/></value>
 		public EnemySpawnData EnemySpawnData => _enemy_spawn_data;
 	}

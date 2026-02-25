@@ -27,59 +27,14 @@ public class Damage : Affect
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>基礎ダメージ</para>
-	/// </summary>
 	/// <value><see cref="_value"/></value>
-	public float BaseDamage	// 無補正ダメージ値
-	{
-		get
-		{
-			// 提供
-			return _value;	// 計算前の基礎ダメージを提供
-		}
-		set
-		{
-			// 更新
-			_value = value;	// 計算前の基礎ダメージを更新
-		}
-	}
+	public float BaseDamage => _value;
 
-	/// <summary>
-	/// <para>無敵貫通フラグ</para>
-	/// </summary>
 	/// <value><see cref="_ignore_invincible"/></value>
-	public bool IgnoreInvincible
-	{
-		get
-		{
-			// 提供
-			return _ignore_invincible;	// 無敵貫通フラグを提供
-		}
-		set
-		{
-			// 更新
-			_ignore_invincible = value;	// フラグ値更新
-		}
-	}
+	public bool IgnoreInvincible => _ignore_invincible;
 
-	/// <summary>
-	/// <para>致死性フラグ</para>
-	/// </summary>
 	/// <value><see cref="_killable"/></value>
-	public bool Killable
-	{
-		get
-		{
-			// 提供
-			return _killable;	// 致死性フラグを提供
-		}
-		set
-		{
-			// 更新
-			_killable = value;	// フラグ値更新
-		}
-	}
+	public bool Killable => _killable;
 
 
 	/// <summary>

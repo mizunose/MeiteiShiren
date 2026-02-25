@@ -36,9 +36,6 @@ public class DungeonTurnState : MonoBehaviour
 	{
 		// プロパティ定義
 
-		/// <summary>
-		/// <para>行動権</para>
-		/// </summary>
 		/// <value>ターン内での行動可否(trueで可能, falseで不可能)</value>
 		public bool Chance { get; set;} = false;
 

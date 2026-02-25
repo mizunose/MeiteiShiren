@@ -24,29 +24,9 @@ public class HungerData : CreatableData
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>腹が減るターン数</para>
-	/// </summary>
 	/// <value><see cref="_keep_fulling"/></value>
-	public uint KeepFulling
-	{
-		get
-		{
-			// 提供
-			return _keep_fulling;	// 腹が減るターン数
-		}
-	}
+	public uint KeepFulling => _keep_fulling;
 
-	/// <summary>
-	/// <para>空腹時効果</para>
-	/// </summary>
 	/// <value><see cref="_affect"/></value>
-	public Affect Affect
-	{
-		get
-		{
-			// 提供
-			return _affect;	// 空腹時に発動する効果
-		}
-	}
+	public Affect Affect => _affect;
 }

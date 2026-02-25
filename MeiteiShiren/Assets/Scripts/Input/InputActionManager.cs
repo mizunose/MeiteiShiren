@@ -25,7 +25,7 @@ public class InputActionManager
 
 	// プロパティ定義
 
-	/// <value>_base_one</value>
+	/// <value><see cref="_base_one"/></value>
 	public InputAction BaseOne => _base_one;
 
 

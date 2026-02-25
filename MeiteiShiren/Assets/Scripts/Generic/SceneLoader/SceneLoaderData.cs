@@ -22,7 +22,7 @@ public class SceneLoaderData : CreatableData
 	[SerializeField, Tooltip("最初のシーン")]private SceneData _first_scene = null;
 	[SerializeField, Tooltip("最初のトランジション")]private TransitionDatas _first_transitions = null;
 
-	//プロパティ定義
+	// プロパティ定義
 
 	/// <value><see cref="_first_scene"/></value>
 	public SceneData FirstScene => _first_scene;

@@ -28,9 +28,6 @@ public class SceneData :  CreatableData
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>配置物</para>
-	/// </summary>
 	/// <value><see cref="_setups"/></value>
 	public GameObject[] Setups => _setups;
 

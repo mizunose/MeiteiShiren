@@ -30,9 +30,6 @@ public class Level : MonoBehaviour
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>経験値</para>
-	/// </summary>
 	/// <value>次レベルまでに積み立てる経験値</value>
 	public uint Experience
 	{
@@ -83,10 +80,7 @@ public class Level : MonoBehaviour
 		}
 	}
 
-	/// <summary>
-	/// <para>レベル値</para>
-	/// </summary>
-	/// <value>内部で上下するレベル</value>
+	/// <value>レベル値</value>
 	public uint Value { get; private set; } = _INITIAL_LEVEL;
 
 

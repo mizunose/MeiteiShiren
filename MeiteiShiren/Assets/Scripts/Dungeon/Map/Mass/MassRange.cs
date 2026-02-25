@@ -22,55 +22,7 @@ using UnityEngine;
 /// </summary>
 public class MassRange : CreatableData
 {
-	// 列挙定義
-	public enum RangeType	// 範囲の種類
-	{
-		RANGED,	// 限定範囲
-		FRONT_LINE,	// 直線範囲
-		ROOM,	// 部屋全体
-		WORLD,	// マップ全体
-	}
-
-	// 変数変更
-	[SerializeField, Tooltip("種類")] private RangeType _type;
-	[HideInInspector, SerializeField, Tooltip("範囲 ※優先度順")] private List<Vector2Int> _range;
-
-	// プロパティ定義
-
-	/// <summary>
-	/// <para>範囲の種類</para>
-	/// </summary>
-	/// <value><see cref="_type"/></value>
-	public RangeType Type
-	{
-		get
-		{
-			// 提供
-			return _type;	// 範囲の扱い
-		}
-	}
-
-	/// <summary>
-	/// <para>範囲に該当するマス</para>
-	/// </summary>
-	/// <value><see cref="_range"/></value>
-	public List<Vector2Int> Range
-	{
-		get
-		{
-			// 提供
-			if (Type == RangeType.RANGED)	// 一覧表記が必要
-			{
-				return _range;	// 範囲に含まれるマスの一覧
-			}
-			else	// 一覧表記を使用しない
-			{
-				return null;	// データは無いものとして扱える
-			}
-		}
-	}
-
-#if UNITY_EDITOR
+	#if UNITY_EDITOR
 	// クラス定義
 	/// <summary>
 	/// <para>マス範囲のインスペクタ表示拡張</para>
@@ -317,6 +269,41 @@ public class MassRange : CreatableData
 		}
 	}
 #endif	// end UNITY_EDITOR
+
+	// 列挙定義
+	public enum RangeType	// 範囲の種類
+	{
+		RANGED,	// 限定範囲
+		FRONT_LINE,	// 直線範囲
+		ROOM,	// 部屋全体
+		WORLD,	// マップ全体
+	}
+
+	// 変数変更
+	[SerializeField, Tooltip("種類")] private RangeType _type;
+	[HideInInspector, SerializeField, Tooltip("範囲 ※優先度順")] private List<Vector2Int> _range;
+
+	// プロパティ定義
+
+	/// <value><see cref="_type"/></value>
+	public RangeType Type => _type;
+
+	/// <value><see cref="_range"/></value>
+	public List<Vector2Int> Range
+	{
+		get
+		{
+			// 提供
+			if (Type == RangeType.RANGED)	// 一覧表記が必要
+			{
+				return _range;	// 範囲に含まれるマスの一覧
+			}
+			else	// 一覧表記を使用しない
+			{
+				return null;	// データは無いものとして扱える
+			}
+		}
+	}
 
 
 #if UNITY_EDITOR

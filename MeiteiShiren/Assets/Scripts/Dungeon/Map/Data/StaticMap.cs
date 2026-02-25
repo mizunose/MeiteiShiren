@@ -19,20 +19,10 @@ public class StaticMap : MapData
 {
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>マップ全体のサイズ</para>
-	/// </summary>
 	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
-	public override Vector2Int MapSize
-	{
-		get
-		{
-			// 提供
-			return _size;	// 仮置き
-		}
-	}
+	public override Vector2Int MapSize　=> _size;
 
-	
+
 	/// <summary>
 	/// <para>マップ生成処理</para>
 	/// </summary>

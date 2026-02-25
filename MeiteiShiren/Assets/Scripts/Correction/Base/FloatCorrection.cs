@@ -29,39 +29,9 @@ public abstract class FloatCorrection : MonoBehaviour
 	
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>基礎補正</para>
-	/// </summary>
 	/// <value><see cref="_base_correction"/></value>
-	public float BaseCorrection
-	{
-		get
-		{
-			// 提供
-			return _base_correction;	// 基礎値補正を提供
-		}
-		set
-		{
-			// 更新
-			_base_correction = value;	// 基礎値補正を更新
-		}
-	}
+	public float BaseCorrection => _base_correction;
 
-	/// <summary>
-	/// <para>倍率補正</para>
-	/// </summary>
 	/// <value><see cref="_correction_ratio"/></value>
-	public float CorrectionRatio
-	{
-		get
-		{
-			// 提供
-			return _correction_ratio;	// 補正倍率を提供
-		}
-		set
-		{
-			// 更新
-			_correction_ratio = value;	// 補正倍率を更新
-		}
-	}
+	public float CorrectionRatio => _correction_ratio;
 }

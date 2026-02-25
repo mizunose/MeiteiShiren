@@ -29,11 +29,8 @@ public abstract class Attack : MonoBehaviour
 		// 変数宣言
 		public List<(float angle, List<GameObject> results)> attackables;	// 攻撃に含める相手
 
-
 		// プロパティ定義
-		/// <summary>
-		/// <para>データの中にオブジェクトが1つでも含めれているかを調べる</para>
-		/// </summary>
+
 		/// <value>有効な攻撃ならtrue, そうでなければfalse</value>
 		public bool AreThereAttackable
 		{
@@ -67,9 +64,6 @@ public abstract class Attack : MonoBehaviour
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>攻撃方向の候補から各角度を算出する</para>
-	/// </summary>
 	/// <value>各攻撃方向の角度</value>
 	public static float[] AttackableAngles
 	{
@@ -89,10 +83,6 @@ public abstract class Attack : MonoBehaviour
 		}
 	}
 
-
-	/// <summary>
-	/// <para>試算処理</para>
-	/// </summary>
 	/// <returns>試算結果</returns>
 	public abstract SimulatedData Simulate();
 

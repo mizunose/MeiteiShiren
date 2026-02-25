@@ -24,9 +24,6 @@ public abstract class InputMapManager
 
 	// プロパティ定義
 	
-	/// <summary>
-	/// <para>扱う対象のInputMap</para>
-	/// </summary>
 	/// <value>子クラスで管理するInputMap</value>
 	protected abstract InputActionMap Target { get; }
 

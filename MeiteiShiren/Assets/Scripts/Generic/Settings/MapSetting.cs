@@ -23,29 +23,9 @@ public class MapSetting : CreatableData
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>マスの大きさ</para>
-	/// </summary>
 	/// <value><see cref="_mass_size"/></value>
-	public float MassSize
-	{
-		get
-		{
-			// 提供
-			return _mass_size;	// マスの大きさ
-		}
-	}
+	public float MassSize => _mass_size;
 
-	/// <summary>
-	/// <para>ミニマップ透明度</para>
-	/// </summary>
 	/// <value><see cref="_alpha"/></value>
-	public float Alpha
-	{
-		get
-		{
-			// 提供
-			return _alpha;	// ミニマップの透明度
-		}
-	}
-}	
+	public float Alpha => _alpha;
+}

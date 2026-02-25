@@ -59,9 +59,6 @@ public class DynamicMap : MapData
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>マップ全体のサイズ</para>
-	/// </summary>
 	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
 	public override Vector2Int MapSize => _size + Vector2Int.one * _arround_wall * 2;
 

@@ -33,51 +33,27 @@ public class WorldLabelSetting : CreatableData
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>フォント</para>
-	/// </summary>
 	/// <value><see cref="_font"/></value>
 	public TMP_FontAsset Font => _font;
 
-	/// <summary>
-	/// <para>フォントサイズ</para>
-	/// </summary>
 	/// <value><see cref="_font_size"/></value>
 	public float FontSize => _font_size;
 
-	/// <summary>
-	/// <para>固定補正値</para>
-	/// </summary>
 	/// <value><see cref="_default_shift"/></value>
 	public Vector3 DefaultShift => _default_shift;
 
-	/// <summary>
-	/// <para>表示時間</para>
-	/// </summary>
 	/// <value><see cref="_print_time"/></value>
 	public float PrintTime => _print_time;
 
-	/// <summary>
-	/// <para>振幅</para>
-	/// </summary>
 	/// <value><see cref="_amplitude"/></value>
 	public float Amplitude => _amplitude;
 
-	/// <summary>
-	/// <para>振動数</para>
-	/// </summary>
 	/// <value><see cref="_frequency"/></value>
 	public float Frequency => _frequency;
 
-	/// <summary>
-	/// <para>消滅時間</para>
-	/// </summary>
 	/// <value><see cref="_disappear_time"/></value>
 	public float DisappearTime => _disappear_time;
 
-	/// <summary>
-	/// <para>浮遊速度</para>
-	/// </summary>
 	/// <value><see cref="_rise_spead"/></value>
 	public float RiseSpeed => _rise_spead;
 }

@@ -22,8 +22,6 @@ public class MoveSetting : CreatableData
 
 	// プロパティ定義
 
-	/// <para>移動にかける時間</para>
-	/// </summary>
 	/// <value>補正済みの移動にかける時間</value>
 	public float Spend => _spend * _spend_ratio;
 }

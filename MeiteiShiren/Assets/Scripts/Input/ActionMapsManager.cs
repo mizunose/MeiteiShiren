@@ -23,9 +23,6 @@ public abstract class ActionMapsManager<T> : MonoSingleton<T> where T : ActionMa
 
 	// プロパティ定義
 	
-	/// <summary>
-	/// <para>扱う対象のInputMap</para>
-	/// </summary>
 	/// <value>子クラスで管理するInputMap</value>
 	protected abstract IInputActionCollection2 Target { get; }
 

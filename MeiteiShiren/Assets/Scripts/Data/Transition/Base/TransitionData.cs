@@ -27,6 +27,8 @@ public abstract class TransitionData : CreatableData
 #endif	// end UNITY_EDITOR
 
 	// プロパティ定義
+
+	/// <value>トランジションの値</value>
 	protected abstract TransitionPropertiesData _PropertiesData { get; }
 
 

@@ -21,16 +21,7 @@ public class ExperienceTable : CreatableData
 	[SerializeField, Tooltip("次レベルまでの経験値")] private uint[] _table;
 
 	// プロパティ定義
-	/// <summary>
-	/// <para>レベルごとの必要経験値</para>
-	/// </summary>
+
 	/// <value><see cref="_table"/></value>
-	public uint[] Table
-	{
-		get
-		{
-			// 提供
-			return _table;	// レベルごとのレベルアップ用経験値量
-		}
-	}
+	public uint[] Table => _table;
 }
