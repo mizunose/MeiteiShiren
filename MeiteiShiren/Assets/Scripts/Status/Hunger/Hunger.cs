@@ -24,6 +24,12 @@ public class Hunger : MonoBehaviour
 	private uint _turn_count = 0;	// ターンのカウント
 	[SerializeField, Tooltip("データ")] private HungerData _data;
 
+	// プロパティ定義
+
+	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
+	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
+
 	/// <summary>
 	/// <para>初期化処理</para>
 	/// </summary>
@@ -33,7 +39,7 @@ public class Hunger : MonoBehaviour
 		_value = 10;	//TODO:ダンジョン突入時は100、それ以外は探索データを用いて初期化
 
 		// イベント接続
-		Dungeon.Instance.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン変更時処理を接続
+		DungeonScene.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン変更時処理を接続
 	}
 
 

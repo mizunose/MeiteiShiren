@@ -27,8 +27,8 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 
 	// 変数宣言
 	[SerializeField, Tooltip("データ")]private SceneLoaderData _data = null;
-	private GameObject _current_scene = null;	// 現在のシーン
-	private List<GameObject> _breadcrumb_list = new();	// 保留シーンのパンくずリスト
+	private Scene _current_scene = null;	// 現在のシーン
+	private List<Scene> _breadcrumb_list = new();	// 保留シーンのパンくずリスト
 
 	// プロパティ定義
 
@@ -38,7 +38,7 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 #endif	// end UNITY_EDITOR
 
 	/// <value><see cref="_current_scene"/></value>
-	public GameObject CurrentScene => _current_scene;
+	public Scene CurrentScene => _current_scene;
 
 
 	/// <summary>
@@ -197,7 +197,7 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 		}
 
 		// 変数宣言
-		GameObject _back_scene = _breadcrumb_list[_breadcrumb_list.Count - 1];	// シーン展開前のシーンを取得
+		Scene _back_scene = _breadcrumb_list[_breadcrumb_list.Count - 1];	// シーン展開前のシーンを取得
 
 		//TODO:新旧シーンを止めておく
 		

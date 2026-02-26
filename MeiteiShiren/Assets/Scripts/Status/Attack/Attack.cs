@@ -87,6 +87,9 @@ public abstract class Attack : MonoBehaviour
 	/// <returns>試算結果</returns>
 	public abstract SimulatedData Simulate();
 
+	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
+	protected Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
 
 	/// <summary>
 	/// <para>攻撃モーション処理</para>
@@ -340,14 +343,14 @@ public abstract class Attack : MonoBehaviour
 							);	// 対象マスの番号	※鉛直上向きを基準に範囲を回転させている
 
 						// 保全
-						if (_target_idx.x < 0 || _target_idx.x >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1)
-							|| _target_idx.y < 0 || _target_idx.y >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// マップ外のマス
+						if (_target_idx.x < 0 || _target_idx.x >= DungeonScene.FloorData.MapData.Masses.GetLength(1)
+							|| _target_idx.y < 0 || _target_idx.y >= DungeonScene.FloorData.MapData.Masses.GetLength(0))	// マップ外のマス
 						{
 							continue;	// マスとして処理できないので次の処理へ移る
 						}
 
 						// 変数宣言
-						Mass _target_mass = Dungeon.Instance.FloorData.MapData.Masses[_target_idx.y, _target_idx.x];	// 対象となるマス本体を取得
+						Mass _target_mass = DungeonScene.FloorData.MapData.Masses[_target_idx.y, _target_idx.x];	// 対象となるマス本体を取得
 
 						// 保全
 						if (!_target_mass)	// ヌルチェック
@@ -387,14 +390,14 @@ public abstract class Attack : MonoBehaviour
 							_target_idx += (activity ? 1 : -1) * CalculateAttackDirection(_angle);	// 移動して走査
 
 							// 終了条件
-							if (_target_idx.x < 0 || _target_idx.x >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1)
-								|| _target_idx.y < 0 || _target_idx.y >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// マップ外のマス
+							if (_target_idx.x < 0 || _target_idx.x >= DungeonScene.FloorData.MapData.Masses.GetLength(1)
+								|| _target_idx.y < 0 || _target_idx.y >= DungeonScene.FloorData.MapData.Masses.GetLength(0))	// マップ外のマス
 							{
 								break;	// マップ外へ進出させない
 							}
 
 							// 変数宣言
-							Mass _target_mass = Dungeon.Instance.FloorData.MapData.Masses[_target_idx.y, _target_idx.x];	// 対象となるマス本体を取得
+							Mass _target_mass = DungeonScene.FloorData.MapData.Masses[_target_idx.y, _target_idx.x];	// 対象となるマス本体を取得
 
 							// 終了条件
 							if (!_target_mass)	// ヌルチェック
@@ -447,14 +450,14 @@ public abstract class Attack : MonoBehaviour
 						Vector2Int _target_idx = _base_idx + (activity ? 1 : -1) * CalculateAttackDirection(_angle);	// 対象マスの番号
 
 						// 保全
-						if (_target_idx.x < 0 || _target_idx.x >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1)
-							|| _target_idx.y < 0 || _target_idx.y >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// マップ外のマス
+						if (_target_idx.x < 0 || _target_idx.x >= DungeonScene.FloorData.MapData.Masses.GetLength(1)
+							|| _target_idx.y < 0 || _target_idx.y >= DungeonScene.FloorData.MapData.Masses.GetLength(0))	// マップ外のマス
 						{
 							break;	// マップ外へ進出させない
 						}
 
 						// 変数宣言
-						Mass _target_mass = Dungeon.Instance.FloorData.MapData.Masses[_target_idx.y, _target_idx.x];	// 対象となるマス本体を取得
+						Mass _target_mass = DungeonScene.FloorData.MapData.Masses[_target_idx.y, _target_idx.x];	// 対象となるマス本体を取得
 					
 						// リスト更新
 						if (_target_mass)	// ヌルチェック
@@ -478,7 +481,7 @@ public abstract class Attack : MonoBehaviour
 				((float angle, List<GameObject> targets) result_data, List<Mass> target_masses) _target_data = ((transform.eulerAngles.y, new()), new());	// 範囲格納場所
 
 				// 攻撃処理
-				foreach (Mass _mass in Dungeon.Instance.FloorData.MapData.Masses)	// マス単位でのループ
+				foreach (Mass _mass in DungeonScene.FloorData.MapData.Masses)	// マス単位でのループ
 				{
 					// 保全
 					if (!_mass)	// ヌルチェック

@@ -18,7 +18,7 @@ using System.Collections;
 /// <para>ダンジョン</para>
 /// </summary>
 [DisallowMultipleComponent]
-public class Dungeon : MonoSingleton<Dungeon>
+public class Dungeon : Scene
 {
 	// 定数定義
 	private const string _INSTANCE_NAME = "Dungeon";	// 自動生成された時のインスタンス名
@@ -30,11 +30,6 @@ public class Dungeon : MonoSingleton<Dungeon>
 	private EnemySpawner _enemy_spawner;	//敵生成機
 
 	// プロパティ定義
-
-#if UNITY_EDITOR
-	/// <value><see cref="_INSTANCE_NAME"/></value>
-	protected override string InstanceName => _INSTANCE_NAME;
-#endif	// end UNITY_EDITOR
 
 	/// <summary>
 	/// <para>マップ本体</para>
@@ -64,7 +59,7 @@ public class Dungeon : MonoSingleton<Dungeon>
 	/// <summary>
 	/// <para>初期化処理</para>
 	/// </summary>
-	protected override void Start()
+	private void Start()
 	{
 		// 初期化
 		if(_data)	// ヌルチェック

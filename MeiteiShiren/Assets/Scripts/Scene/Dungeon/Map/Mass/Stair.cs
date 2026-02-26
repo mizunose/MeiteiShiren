@@ -79,7 +79,7 @@ public class Stair : Mass
 		var _mesh_filter = gameObject.AddComponent<MeshFilter>();	// メッシュ管理機能
 
 		// メッシュ作成
-		gameObject.AddComponent<MeshRenderer>().material = Dungeon.Instance.FloorData.MapData.GroundTexture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
+		gameObject.AddComponent<MeshRenderer>().material = DungeonScene.FloorData.MapData.GroundTexture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
 		_mesh.vertices = _VERTICES;	// メッシュの頂点情報を設定
 		_mesh.triangles = _INDICES;	// メッシュの頂点インデックスを設定
 		_mesh.RecalculateNormals();	// 法線を再計算
@@ -94,11 +94,11 @@ public class Stair : Mass
 	public override void Boot()
 	{
 		// 生成
-		_confirm_drop_down = Instantiate(Dungeon.Instance.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
-		_confirm_message_box = Instantiate(Dungeon.Instance.FloorData.MapData.StairData.ConfirmMessageBox);	// 選択UIのインスタンス生成
+		_confirm_drop_down = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
+		_confirm_message_box = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmMessageBox);	// 選択UIのインスタンス生成
 
 		// 初期化
-		_confirm_message_box.SetValue(Dungeon.Instance.FloorData.MapData.StairData.ConfirmText);	// 表示テキスト設定
+		_confirm_message_box.SetValue(DungeonScene.FloorData.MapData.StairData.ConfirmText);	// 表示テキスト設定
 
 		// イベント接続
 		_confirm_drop_down.YesEvent.signal += ConfirmedBootYes;	// 「はい」選択時の処理
@@ -123,7 +123,7 @@ public class Stair : Mass
 	private void ConfirmedBootYes()
 	{
 		ConfirmedBoot();	// 選択時処理
-		Dungeon.Instance.BootSwitchFloor();	// 階層移動を実行
+		DungeonScene.BootSwitchFloor();	// 階層移動を実行
 	}
 
 

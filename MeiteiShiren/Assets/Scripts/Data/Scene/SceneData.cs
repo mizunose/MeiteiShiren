@@ -25,6 +25,7 @@ public class SceneData :  CreatableData
 
 	// 変数宣言
 	[Header("ステータス")]
+	[SerializeField, Tooltip("シーン本体")] private Scene _scene_prefab;
 	[SerializeField, Tooltip("配置物")] private GameObject[] _setups;
 
 	// プロパティ定義
@@ -37,10 +38,11 @@ public class SceneData :  CreatableData
 	/// <para>シーンを構築</para>
 	/// </summary>
 	/// <returns>作成したシーン</returns>
-	public GameObject CreateScene()
+	public Scene CreateScene()
 	{
 		// 変数宣言
-		GameObject _scene = new GameObject();	// シーン本体
+		Scene _scene = Instantiate(_scene_prefab);	// シーン本体
+
 
 		// 初期化
 #if UNITY_EDITOR

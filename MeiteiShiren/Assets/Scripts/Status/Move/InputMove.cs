@@ -19,6 +19,12 @@ using UnityEngine;
 /// </summary>
 public class InputMove : Move
 {
+	// プロパティ定義
+
+	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
+	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
+
 	/// <summary>
 	/// <para>初期化処理</para>
 	/// </summary>
@@ -59,17 +65,17 @@ public class InputMove : Move
 		Vector2Int _next_mass_idx = Map.PositionToMass(_world_moved);	// 移動先のワールド座標から該当マスの番号を取得
 
 		// 保全
-		if (_next_mass_idx.x < 0 || _next_mass_idx.x >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
+		if (_next_mass_idx.x < 0 || _next_mass_idx.x >= DungeonScene.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
 		{
 			_next_mass_idx.x = _currect_mass_idx.x;	// 移動先として選択させない
 		}
-		if (_next_mass_idx.y < 0 ||_next_mass_idx.y >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
+		if (_next_mass_idx.y < 0 ||_next_mass_idx.y >= DungeonScene.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
 		{
 			_next_mass_idx.y = _currect_mass_idx.y;	// 移動先として選択させない
 		}
 
 		// 変数宣言
-		Mass _next_mass = Dungeon.Instance.FloorData.MapData.Masses[_next_mass_idx.y, _next_mass_idx.x];	// 移動先のマス番号からマス本体を取得
+		Mass _next_mass = DungeonScene.FloorData.MapData.Masses[_next_mass_idx.y, _next_mass_idx.x];	// 移動先のマス番号からマス本体を取得
 
 		// 移動可否検査
 		if(!IsMovable(_next_mass))	// 移動不可能
@@ -77,13 +83,13 @@ public class InputMove : Move
 			if (_input.x != 0.0f && _input.y != 0.0f)	// 斜め移動で演算していた
 			{
 				// 更新
-				_next_mass = Dungeon.Instance.FloorData.MapData.Masses[_currect_mass_idx.y, _next_mass_idx.x];	// x成分に沿った移動で再度試す
+				_next_mass = DungeonScene.FloorData.MapData.Masses[_currect_mass_idx.y, _next_mass_idx.x];	// x成分に沿った移動で再度試す
 
 				// 検査
 				if(!IsMovable(_next_mass))	// x方向にも移動できない
 				{
 					// 更新
-					_next_mass = Dungeon.Instance.FloorData.MapData.Masses[_next_mass_idx.y, _currect_mass_idx.x];	// y成分に沿った移動で再度試す
+					_next_mass = DungeonScene.FloorData.MapData.Masses[_next_mass_idx.y, _currect_mass_idx.x];	// y成分に沿った移動で再度試す
 					
 					// 検査
 					if(!IsMovable(_next_mass))	// y方向にも移動できない

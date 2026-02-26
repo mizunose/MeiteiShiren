@@ -24,6 +24,11 @@ public class EnemySpawnData : CreatableData
 	[SerializeField, Tooltip("生成対象")] private GameObject[] _enemies;
 	private List<GameObject> _spawned = new();	// 生成物一覧
 
+	// プロパティ定義
+
+	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
+	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
 
 	/// <summary>
 	/// <para>敵生成処理</para>
@@ -48,7 +53,7 @@ public class EnemySpawnData : CreatableData
 		}
 
 		// 変数宣言
-		var _masses = Dungeon.Instance.FloorData.MapData.MainContact.GetComponentsInChildren<Mass>();	// 主連続領域のマス
+		var _masses = DungeonScene.FloorData.MapData.MainContact.GetComponentsInChildren<Mass>();	// 主連続領域のマス
 		List<Transform> _masses_transform = new();	// 生成位置の候補一覧
 
 		// 初期化
@@ -77,6 +82,6 @@ public class EnemySpawnData : CreatableData
 		_spawned.Add(_enemy);	// 生成物を監視
 
 		// ターン制に紐づけ
-		Dungeon.Instance.TurnFlow.AddActor(_enemy);	// 行動をターン管理に任せる
+		DungeonScene.TurnFlow.AddActor(_enemy);	// 行動をターン管理に任せる
 	}
 }

@@ -35,6 +35,11 @@ public class Mass : VirtualizeMono
 	private Transform _targeted = null;	// 1ターン前に効果発動した相手
 	//private Trap _trap = null;	// 付与されている罠
 
+	// プロパティ定義
+
+	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
+	protected Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
 
 	/// <summary>
 	/// <para>初期化処理</para>
@@ -48,7 +53,7 @@ public class Mass : VirtualizeMono
 		Visualize();	// 視覚化
 
 		// イベント接続
-		Dungeon.Instance.TurnFlow.OnMassAction += TurnedAction;	// 行動指示時処理を接続
+		DungeonScene.TurnFlow.OnMassAction += TurnedAction;	// 行動指示時処理を接続
 	}
 
 
@@ -62,7 +67,7 @@ public class Mass : VirtualizeMono
 		var _mesh_filter = gameObject.AddComponent<MeshFilter>();	// メッシュ管理機能
 
 		// メッシュ作成
-		gameObject.AddComponent<MeshRenderer>().material = Dungeon.Instance.FloorData.MapData.GroundTexture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
+		gameObject.AddComponent<MeshRenderer>().material = DungeonScene.FloorData.MapData.GroundTexture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
 		_mesh.vertices = Settings.Instance.Map.MassVertices;	// メッシュの頂点情報を設定
 		_mesh.triangles = _INDICES;	// メッシュの頂点インデックスを設定
 		_mesh.RecalculateNormals();	// 法線を再計算
@@ -88,7 +93,7 @@ public class Mass : VirtualizeMono
 			// 検査
 			if (_child && _child != _targeted)	// 未処理
 			{
-				if (_child == Dungeon.Instance.Player.transform)	// プレイヤーが乗った
+				if (_child == DungeonScene.Player.transform)	// プレイヤーが乗った
 				{
 					Boot();	// 搭乗時は自動で起動する
 					_targeted = _child;	// 処理した相手を記録

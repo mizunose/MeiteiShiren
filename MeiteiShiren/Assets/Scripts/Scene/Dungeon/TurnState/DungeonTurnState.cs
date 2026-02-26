@@ -42,6 +42,9 @@ public class DungeonTurnState : MonoBehaviour
 		/// <value>ターン内での行動可否(trueで可能, falseで不可能)</value>
 		public bool Chance { get; set;} = false;
 
+		/// <value>現在シーンがダンジョンならインスタンスを取得</value>
+		private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
 
 		/// <summary>
 		/// <para>初期化処理</para>
@@ -49,7 +52,7 @@ public class DungeonTurnState : MonoBehaviour
 		private void Start()
 		{
 			// イベント接続
-			Dungeon.Instance.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン変更時処理を接続
+			DungeonScene.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン変更時処理を接続
 		}
 
 		/// <summary>
@@ -68,6 +71,11 @@ public class DungeonTurnState : MonoBehaviour
 
 	// 変数宣言
 	private List<Actionable> _actors = new();	// 行動するオブジェクト一覧
+
+	// プロパティ定義
+
+	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
+	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 
 	/// <summary>
@@ -99,8 +107,8 @@ public class DungeonTurnState : MonoBehaviour
 	private void OnEnable()
 	{
 		// イベント接続
-		Dungeon.Instance.Player.GetComponent<InputMove>().OnMoveStarted += OnMoveStarted;	// プレイヤー移動時処理を接続
-		Dungeon.Instance.Player.GetComponent<InputAttack>().OnAttacked += OnAttacked;	// プレイヤー攻撃時処理を接続
+		DungeonScene.Player.GetComponent<InputMove>().OnMoveStarted += OnMoveStarted;	// プレイヤー移動時処理を接続
+		DungeonScene.Player.GetComponent<InputAttack>().OnAttacked += OnAttacked;	// プレイヤー攻撃時処理を接続
 	}
 
 
@@ -110,10 +118,10 @@ public class DungeonTurnState : MonoBehaviour
 	private void OnDisable()
 	{
 		// イベント解除
-		if (Dungeon.NullCheck)	// ヌルチェック
+		if (SceneLoader.NullCheck)	// ヌルチェック
 		{
-			Dungeon.Instance.Player.GetComponent<InputMove>().OnMoveStarted -= OnMoveStarted;	// プレイヤー移動時処理を解除
-			Dungeon.Instance.Player.GetComponent<InputAttack>().OnAttacked -= OnAttacked;	// プレイヤー攻撃時処理を解除
+			DungeonScene.Player.GetComponent<InputMove>().OnMoveStarted -= OnMoveStarted;	// プレイヤー移動時処理を解除
+			DungeonScene.Player.GetComponent<InputAttack>().OnAttacked -= OnAttacked;	// プレイヤー攻撃時処理を解除
 		}
 	}
 

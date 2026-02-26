@@ -63,6 +63,9 @@ public class DynamicMap : MapData
 	/// <value>周囲の壁も含めたマップ全体のサイズ</value>
 	public override Vector2Int MapSize => _size + Vector2Int.one * _arround_wall * 2;
 
+	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
+	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
 
 	/// <summary>
 	/// <para>マップを作成</para>
@@ -997,7 +1000,7 @@ public class DynamicMap : MapData
 			GameObject _contact_object = new GameObject();	// 接続部屋のインスタンス
 
 			// 初期化
-			_contact_object.transform.SetParent(Dungeon.Instance.Map.transform, false);	// マップの子に登録
+			_contact_object.transform.SetParent(DungeonScene.Map.transform, false);	// マップの子に登録
 			if (_contact_idx == 0)	// 主部分
 			{
 				MainContact = _contact_object;	// 主部分を意味
@@ -1053,7 +1056,7 @@ public class DynamicMap : MapData
 		}
 
 		// プレイヤー作成	//TODO:チーム配置
-		Dungeon.Instance.Player.transform.SetParent(Masses[_player_position.y, _player_position.x].transform, false);	// 対象マスに管理させる
+		DungeonScene.Player.transform.SetParent(Masses[_player_position.y, _player_position.x].transform, false);	// 対象マスに管理させる
 
 		// テクスチャ作成
 		MiniMapTexture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成
@@ -1181,7 +1184,7 @@ public class DynamicMap : MapData
 				Mass _mass = null;	// マスの機能
 
 				// 初期化
-				_mass_object.transform.SetParent(Dungeon.Instance.Map.transform, false);	// マップの子に登録
+				_mass_object.transform.SetParent(DungeonScene.Map.transform, false);	// マップの子に登録
 #if UNITY_EDITOR
 				_mass_object.name = "Mass_" + _x_idx + "_" + _y_idx;	// デバッグ時にはわかりやすいように命名しておく
 #endif	// end UNITY_EDITOR
