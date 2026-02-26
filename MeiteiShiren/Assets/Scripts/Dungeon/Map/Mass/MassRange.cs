@@ -17,6 +17,7 @@ using UnityEditor;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>マス範囲</para>
 /// </summary>
@@ -24,6 +25,7 @@ public class MassRange : CreatableData
 {
 	#if UNITY_EDITOR
 	// クラス定義
+
 	/// <summary>
 	/// <para>マス範囲のインスペクタ表示拡張</para>
 	/// </summary>

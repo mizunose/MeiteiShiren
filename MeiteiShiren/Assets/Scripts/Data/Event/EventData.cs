@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>イベントのデータ</para>
+/// </summary>
 public abstract class EventData : CreatableData
 {
 }

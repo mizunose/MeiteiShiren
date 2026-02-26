@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>自由形式ドロップダウンのデータ</para>
+/// </summary>
 public class FreeStyleDropDownData : DropDownData
 {
 	// 変数宣言

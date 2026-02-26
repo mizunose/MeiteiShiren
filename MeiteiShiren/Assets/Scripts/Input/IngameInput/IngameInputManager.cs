@@ -12,12 +12,14 @@
 using UnityEngine.InputSystem;
 
 // クラス定義
+
 /// <summary>
 /// <para>インゲーム画面での入力</para>
 /// </summary>
 public class IngameInputManager : ActionMapsManager<IngameInputManager>
 {
 	// クラス定義
+
 	/// <summary>
 	/// <para>プレイヤー入力管理</para>
 	/// </summary>

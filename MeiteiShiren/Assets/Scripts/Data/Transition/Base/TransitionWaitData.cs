@@ -13,6 +13,7 @@ using System.Collections;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>トランジション待機部データ</para>
 /// </summary>

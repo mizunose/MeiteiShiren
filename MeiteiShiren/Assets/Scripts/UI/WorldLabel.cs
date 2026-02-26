@@ -15,6 +15,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // クラス定義
+
 /// <summary>
 /// <para>ワールド空間からテキスト表示する</para>
 /// </summary>

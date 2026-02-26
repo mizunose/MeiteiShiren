@@ -14,6 +14,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // クラス定義
+
+/// <summary>
+/// <para>共有キャンバス</para>
+/// </summary>
 public class PublicCanvasData : CreatableData
 {
 	// 変数宣言

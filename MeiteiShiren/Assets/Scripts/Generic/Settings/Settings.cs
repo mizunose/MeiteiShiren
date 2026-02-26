@@ -17,6 +17,7 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>プロパティ値</para>
 /// </summary>

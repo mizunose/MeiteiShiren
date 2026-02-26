@@ -12,6 +12,7 @@
 using UnityEngine.InputSystem;
 
 // クラス定義
+
 /// <summary>
 /// <para>InputActionMapsの管理</para>
 /// </summary>

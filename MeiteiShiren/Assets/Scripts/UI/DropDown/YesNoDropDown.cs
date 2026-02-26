@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // クラス定義
+
 /// <summary>
 /// <para>ドロップダウン式 Y/N ボタン</para>
 /// </summary>

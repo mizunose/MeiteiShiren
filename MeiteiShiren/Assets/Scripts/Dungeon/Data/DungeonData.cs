@@ -13,6 +13,7 @@ using System;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>ダンジョンデータ</para>
 /// </summary>

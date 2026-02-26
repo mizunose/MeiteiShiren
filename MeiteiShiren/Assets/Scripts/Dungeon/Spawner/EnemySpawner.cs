@@ -8,8 +8,10 @@
 	敵生成
 =====*/
 
-// クラス定義
+// 名前空間宣言
 using UnityEngine;
+
+// クラス定義
 
 /// <summary>
 /// <para>敵生成管理</para>

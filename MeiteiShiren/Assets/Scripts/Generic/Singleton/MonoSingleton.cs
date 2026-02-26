@@ -15,6 +15,7 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>MonoBehaviorのシングルトン</para>
 /// </summary>

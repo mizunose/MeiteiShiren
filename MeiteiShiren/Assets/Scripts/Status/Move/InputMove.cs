@@ -13,6 +13,7 @@ using System.Collections;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>入力移動</para>
 /// </summary>

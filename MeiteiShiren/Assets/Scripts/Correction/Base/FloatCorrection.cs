@@ -17,6 +17,7 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>float型の補正値</para>
 /// </summary>

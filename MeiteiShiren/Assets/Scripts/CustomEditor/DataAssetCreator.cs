@@ -22,12 +22,25 @@ using UnityEditor;
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>データアセット作成ウィンドウ</para>
+/// </summary>
 public class DataAssetCreator : EditorWindow
 {
 	// クラス定義
+
+	/// <summary>
+	/// <para>クラスの関係性ツリー</para>
+	/// </summary>
+	/// <typeparam name="RootType">根とするクラス</typeparam>
 	private class ClassTree<RootType>
 	{
 		// クラス定義
+
+		/// <summary>
+		/// <para>ツリーの葉</para>
+		/// </summary>
 		private class Reaf
 		{
 			// 変数宣言

@@ -12,8 +12,9 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
-/// <para>マップデータの抽象クラス</para>
+/// <para>マップデータ</para>
 /// </summary>
 public abstract class MapData : CreatableData
 {

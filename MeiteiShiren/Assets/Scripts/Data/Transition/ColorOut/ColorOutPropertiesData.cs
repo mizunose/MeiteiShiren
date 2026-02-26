@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>全面塗りつぶしフェードのプロパティ</para>
+/// </summary>
 public class ColorOutPropertiesData : TransitionPropertiesData
 {
 	// 定数定義

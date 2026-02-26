@@ -13,6 +13,7 @@ using TMPro;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>選択肢の雛形</para>
 /// </summary>

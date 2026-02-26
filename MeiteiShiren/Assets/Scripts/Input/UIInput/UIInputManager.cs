@@ -8,8 +8,10 @@
 	UI入力管理を実装
 =====*/
 
-// クラス定義
+// 名前空間宣言
 using UnityEngine.InputSystem;
+
+// クラス定義
 
 /// <summary>
 /// <para>UIの入力</para>
@@ -17,6 +19,7 @@ using UnityEngine.InputSystem;
 public class UIInputManager : ActionMapsManager<UIInputManager>
 {
 	// クラス定義
+
 	/// <summary>
 	/// <para>ドロップダウン入力管理</para>
 	/// </summary>

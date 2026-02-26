@@ -12,6 +12,10 @@
 using System;
 
 // クラス定義
+
+/// <summary>
+/// <para>引数無しイベント</para>
+/// </summary>
 public class NoneArgumentEventData : EventData
 {
 	// イベント定義

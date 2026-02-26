@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>入力移動</para>
 /// </summary>

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>ダンジョンにおけるターン管理</para>
 /// </summary>
@@ -29,6 +30,7 @@ public class DungeonTurnState : MonoBehaviour
 	}
 
 	// クラス定義
+
 	/// <summary>
 	/// <para>行動権</para>
 	/// </summary>

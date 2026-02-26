@@ -12,6 +12,7 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>空腹/満腹 データ</para>
 /// </summary>

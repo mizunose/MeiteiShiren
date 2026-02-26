@@ -10,6 +10,7 @@ using UnityEngine;
 using System.Collections;
 
 // クラス定義
+
 /// <summary>
 /// <para>トランジション抜け部データ</para>
 /// </summary>

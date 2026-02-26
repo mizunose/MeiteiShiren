@@ -12,6 +12,7 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>経験値テーブル</para>
 /// </summary>

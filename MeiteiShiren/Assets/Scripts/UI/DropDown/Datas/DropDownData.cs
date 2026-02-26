@@ -9,10 +9,13 @@
 */
 
 // 名前空間宣言
-using TMPro;
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>ドロップダウンのデータ</para>
+/// </summary>
 public abstract class DropDownData : CreatableData
 {
 	// 変数宣言

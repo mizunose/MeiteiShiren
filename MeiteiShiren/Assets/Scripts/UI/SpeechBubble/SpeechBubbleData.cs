@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>吹き出しのデータ</para>
+/// </summary>
 public class SpeechBubbleData : CreatableData
 {
 	// 変数宣言

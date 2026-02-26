@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
 // クラス定義
+
 /// <summary>
 /// <para>入力インスタンスの管理</para>
 /// </summary>

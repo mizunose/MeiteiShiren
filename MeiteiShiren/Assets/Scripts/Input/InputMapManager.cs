@@ -11,8 +11,10 @@
 ・継承先では各InputActionのゲッターと対象Mapのnew(),Dispose()を用意する必要があります
 =====*/
 
-// クラス定義
+// 名前空間宣言
 using UnityEngine.InputSystem;
+
+// クラス定義
 
 /// <summary>
 /// <para>InputActionMapの状態管理</para>

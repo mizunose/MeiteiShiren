@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>敵生成データ</para>
 /// </summary>

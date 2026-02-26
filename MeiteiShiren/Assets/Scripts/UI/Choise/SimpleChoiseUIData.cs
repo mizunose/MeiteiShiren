@@ -13,6 +13,7 @@ using System;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>簡素な選択肢UIのデータ</para>
 /// </summary>

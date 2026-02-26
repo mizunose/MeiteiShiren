@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>全面塗りつぶしフェードアウト</para>
+/// </summary>
 public class ColorOutOutData : TransitionOutData
 {
 	// 変数宣言

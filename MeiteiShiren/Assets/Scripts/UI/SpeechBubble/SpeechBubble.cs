@@ -13,6 +13,7 @@ using TMPro;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>吹き出しの雛形</para>
 /// </summary>

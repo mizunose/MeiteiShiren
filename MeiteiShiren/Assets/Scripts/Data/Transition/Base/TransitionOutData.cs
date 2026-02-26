@@ -13,6 +13,7 @@ using System.Collections;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>トランジション入り部データ</para>
 /// </summary>

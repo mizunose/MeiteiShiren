@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>ダメージ</para>
+/// </summary>
 public class Damage : Affect
 {
 	// 定数定義

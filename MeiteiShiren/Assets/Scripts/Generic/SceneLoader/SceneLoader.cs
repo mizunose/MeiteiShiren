@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>シーン切替</para>
 /// </summary>

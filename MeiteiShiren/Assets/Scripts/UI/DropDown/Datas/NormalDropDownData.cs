@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>通常ドロップダウンのデータ</para>
+/// </summary>
 public class NormalDropDownData : DropDownData
 {
 }

@@ -15,6 +15,7 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 // クラス定義
+
 /// <summary>
 /// <para>トランジションデータ</para>
 /// </summary>

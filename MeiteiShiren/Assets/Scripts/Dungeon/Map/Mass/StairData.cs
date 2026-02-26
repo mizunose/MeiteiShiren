@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>階段データ</para>
+/// </summary>
 public class StairData : CreatableData
 {
 	// 変数宣言

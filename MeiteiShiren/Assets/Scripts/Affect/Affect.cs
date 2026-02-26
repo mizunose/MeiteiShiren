@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>効果</para>
+/// </summary>
 public abstract class Affect : CreatableData
 {
 	/// <summary>

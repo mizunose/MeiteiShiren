@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>自動生成マップデータ</para>
 /// </summary>

@@ -12,6 +12,10 @@
 using UnityEngine;
 
 // クラス定義
+
+/// <summary>
+/// <para>作成可能なデータ</para>
+/// </summary>
 public abstract class CreatableData : ScriptableObject
 {
 }

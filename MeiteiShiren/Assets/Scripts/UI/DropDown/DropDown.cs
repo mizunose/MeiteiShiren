@@ -15,8 +15,9 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 // クラス定義
+
 /// <summary>
-/// <para>ドロップダウン選択肢</para>
+/// <para>ドロップダウン式選択肢</para>
 /// </summary>
 [RequireComponent(typeof(VerticalLayoutGroup))]
 public abstract class DropDown : VirtualizeMono
