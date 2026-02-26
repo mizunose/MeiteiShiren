@@ -57,8 +57,7 @@ public abstract class Attack : MonoBehaviour
 	}
 
 	// 定数定義
-	private const float _ROUND_DEGREE = 360.0f;	// 円の角度
-	private const int _SPLIT_DIRECTION = 8;	// 攻撃の方向候補数
+	private static readonly SplitedDirections _attackable_directions = new EightDirections();	// 攻撃可能な方向
 
 	// 変数宣言
 	[SerializeField, Tooltip("データ")] private AttackData _data;
@@ -66,23 +65,7 @@ public abstract class Attack : MonoBehaviour
 	// プロパティ定義
 
 	/// <value>各攻撃方向の角度</value>
-	public static float[] AttackableAngles
-	{
-		get
-		{
-			// 変数宣言
-			float[] _result = new float[_SPLIT_DIRECTION];	// 演算結果格納用
-
-			// 初期化
-			for (int _direction_idx = 0; _direction_idx < _SPLIT_DIRECTION; _direction_idx++)	// 攻撃方向単位でのループ
-			{
-				_result[_direction_idx] = _ROUND_DEGREE * _direction_idx / _SPLIT_DIRECTION;	// 攻撃方向から角度を算出
-			}
-
-			// 提供
-			return _result;	// 演算結果
-		}
-	}
+	public static float[] AttackableAngles => _attackable_directions.SplitedAngles;
 
 	/// <returns>試算結果</returns>
 	public abstract SimulatedData Simulate();
@@ -209,67 +192,9 @@ public abstract class Attack : MonoBehaviour
 	protected void DoAttack(List<GameObject> targets)
 	{
 		// 効果発動
-		foreach (GameObject _target in targets)	// 発動対象ごとのループ
+		foreach (GameObject target in targets)	// 発動対象ごとのループ
 		{
-			foreach (var _affect in _data.Affects)	// 効果単位でのループ
-			{
-				if (_affect)	// ヌルチェック
-				{
-					_affect.Boot(gameObject, _target);	// 設置物に効果発動
-				}
-			}
-		}
-	}
-
-
-	/// <summary>
-	/// <para>角度を攻撃方向に変換する</para>
-	/// </summary>
-	/// <param name="angle">角度で表された向き</param>
-	/// <returns>攻撃方向を示すベクトル</returns>
-	private Vector2Int CalculateAttackDirection(float angle)
-	{
-		// 初期化
-		switch ((int)((angle + _ROUND_DEGREE / _SPLIT_DIRECTION / 2) / (_ROUND_DEGREE / _SPLIT_DIRECTION)))	// 攻撃方向によって分岐
-		{
-			// 0 / 8
-			case 0:
-				return Vector2Int.up;	// 上
-
-			// 1 / 8
-			case 1:
-				return Vector2Int.one;	// 右上
-
-			// 2 / 8
-			case 2:
-				return Vector2Int.right;	// 右
-
-			// 3 / 8
-			case 3:
-				return new Vector2Int(1, -1);	// 右下
-
-			// 4 / 8
-			case 4:
-				return Vector2Int.down;	// 下
-
-			// 5 / 8
-			case 5:
-				return -Vector2Int.one;	// 左下
-
-			// 6 / 8
-			case 6:
-				return Vector2Int.left;	// 左
-
-			// 7 / 8
-			case 7:
-				return new Vector2Int(-1, 1);	// 左上
-
-			// その他
-			default:
-#if UNITY_EDITOR
-				Debug.LogError("攻撃方向に対応が定義されていません");
-#endif	// end UNITY_EDITOR
-				return Vector2Int.up;	// 仮データ
+			_data.Affects.BootAffects(gameObject, target);	// 設置物に効果発動
 		}
 	}
 
@@ -336,7 +261,7 @@ public abstract class Attack : MonoBehaviour
 					foreach (Vector2Int _shift in _data.Range.Range)	// マス単位でのループ
 					{
 						// 変数宣言
-						Vector2Int _attack_direction = CalculateAttackDirection(_angle);	// 攻撃方向
+						Vector2Int _attack_direction = _attackable_directions.CalculateSplitedDirectionInt(_angle);	// 攻撃方向
 						Vector2Int _target_idx = _base_idx + (activity ? 1 : -1) * new Vector2Int(
 							_shift.x * _attack_direction.y + _shift.y * _attack_direction.x,
 							_shift.y * _attack_direction.y - _shift.x * _attack_direction.x
@@ -387,7 +312,7 @@ public abstract class Attack : MonoBehaviour
 						if (transform.parent)	// ヌルチェック
 						{
 							// 更新
-							_target_idx += (activity ? 1 : -1) * CalculateAttackDirection(_angle);	// 移動して走査
+							_target_idx += (activity ? 1 : -1) * _attackable_directions.CalculateSplitedDirectionInt(_angle);	// 移動して走査
 
 							// 終了条件
 							if (_target_idx.x < 0 || _target_idx.x >= DungeonScene.FloorData.MapData.Masses.GetLength(1)
@@ -447,7 +372,7 @@ public abstract class Attack : MonoBehaviour
 					foreach (float _angle in angles)	// 方向単位でのループ
 					{
 						// 変数宣言
-						Vector2Int _target_idx = _base_idx + (activity ? 1 : -1) * CalculateAttackDirection(_angle);	// 対象マスの番号
+						Vector2Int _target_idx = _base_idx + (activity ? 1 : -1) * _attackable_directions.CalculateSplitedDirectionInt(_angle);	// 対象マスの番号
 
 						// 保全
 						if (_target_idx.x < 0 || _target_idx.x >= DungeonScene.FloorData.MapData.Masses.GetLength(1)

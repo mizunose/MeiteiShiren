@@ -22,7 +22,7 @@ public class AttackData : CreatableData
 	[Header("ステータス")]
 	[SerializeField, Tooltip("味方討ち")] private bool _fiendry_fire = false;	// trueで味方も攻撃に含める
 	[SerializeField, Tooltip("攻撃範囲")] private MassRange _range;
-	[SerializeField, Tooltip("攻撃効果")] private Affect[] _affects;
+	[SerializeField, Tooltip("攻撃効果")] private Affects _affects;
 
 	// プロパティ定義
 
@@ -33,5 +33,5 @@ public class AttackData : CreatableData
 	public MassRange Range => _range;
 
 	/// <value><see cref="_affects"/></value>
-	public Affect[] Affects => _affects;
+	public Affects Affects => _affects;
 }
