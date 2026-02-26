@@ -19,6 +19,7 @@ using UnityEngine;
 /// <summary>
 /// <para>MonoBehaviorのシングルトン</para>
 /// </summary>
+[DisallowMultipleComponent]
 public abstract class MonoSingleton<MonoType> : VirtualizeMono where MonoType : MonoSingleton<MonoType>	// where文で継承ツリーを明示：MonoType←MonoSingleton<MonoType>←VirtualizeMono←MonoBehaviour
 {
 	// 変数宣言

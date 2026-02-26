@@ -16,6 +16,7 @@ using UnityEngine;
 /// <summary>
 /// <para>敵生成管理</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class EnemySpawner : MonoBehaviour
 {
 	// 変数宣言

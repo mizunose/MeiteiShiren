@@ -16,6 +16,7 @@ using UnityEngine;
 /// <summary>
 /// <para>‹Q‚¦</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class Hunger : MonoBehaviour
 {
 	// •Ï”éŒ¾

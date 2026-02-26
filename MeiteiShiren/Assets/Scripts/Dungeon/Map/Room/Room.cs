@@ -16,6 +16,7 @@ using UnityEngine;
 /// <summary>
 /// マップを構成する部屋。子に構成マスを持つ想定。また、親が所属する連続区域である想定。
 /// </summary>
+[DisallowMultipleComponent]
 public class Room : MonoBehaviour
 {
 }

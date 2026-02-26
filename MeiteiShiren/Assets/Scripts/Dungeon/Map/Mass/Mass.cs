@@ -16,6 +16,7 @@ using UnityEngine;
 /// <summary>
 /// <para>マップを構成するマス。子に管理物(乗っているもの)を持つ想定。また、親が構成物(マップや部屋など)である想定。</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class Mass : VirtualizeMono
 {
 	// 定数定義
@@ -28,12 +29,6 @@ public class Mass : VirtualizeMono
 			new Vector2(1.0f, 0.0f),	// 右上
 			new Vector2(0.0f, 1.0f),	// 左下
 			new Vector2(1.0f, 1.0f),	// 右下
-		};
-	private static readonly Vector3[] _VERTICES = {	// マスメッシュの頂点情報
-			new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 左上
-			new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 右上
-			new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 左下
-			new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 右下
 		};
 
 	// 変数宣言
@@ -68,7 +63,7 @@ public class Mass : VirtualizeMono
 
 		// メッシュ作成
 		gameObject.AddComponent<MeshRenderer>().material = Dungeon.Instance.FloorData.MapData.GroundTexture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
-		_mesh.vertices = _VERTICES;	// メッシュの頂点情報を設定
+		_mesh.vertices = Settings.Instance.Map.MassVertices;	// メッシュの頂点情報を設定
 		_mesh.triangles = _INDICES;	// メッシュの頂点インデックスを設定
 		_mesh.RecalculateNormals();	// 法線を再計算
 		_mesh.uv = _UVS;	// テクスチャ座標を設定

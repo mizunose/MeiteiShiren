@@ -18,6 +18,7 @@ using UnityEngine;
 /// <summary>
 /// <para>ˆÚ“®</para>
 /// </summary>
+[DisallowMultipleComponent]
 public abstract class Move : MonoBehaviour
 {
 	// \‘¢‘Ì’è‹`

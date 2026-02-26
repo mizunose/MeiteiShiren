@@ -18,6 +18,7 @@ using UnityEngine;
 /// <summary>
 /// <para>攻撃</para>
 /// </summary>
+[DisallowMultipleComponent]
 public abstract class Attack : MonoBehaviour
 {
 	// 構造体定義

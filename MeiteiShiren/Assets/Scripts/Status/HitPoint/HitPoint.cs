@@ -17,6 +17,7 @@ using UnityEngine;
 /// <summary>
 /// <para>体力</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class HitPoint : MonoBehaviour
 {
 	// イベント定義

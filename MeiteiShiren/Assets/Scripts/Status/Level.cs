@@ -17,6 +17,7 @@ using UnityEngine;
 /// <summary>
 /// <para>ƒŒƒxƒ‹</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class Level : MonoBehaviour
 {
 	// ’è”’è‹`

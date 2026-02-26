@@ -19,6 +19,7 @@ using UnityEngine;
 /// <summary>
 /// <para>ダンジョンにおけるターン管理</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class DungeonTurnState : MonoBehaviour
 {
 	// 列挙定義

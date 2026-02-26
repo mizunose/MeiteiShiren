@@ -17,6 +17,7 @@ using UnityEngine;
 /// <summary>
 /// <para>選択肢の雛形</para>
 /// </summary>
+[DisallowMultipleComponent]
 [RequireComponent(typeof(RectTransform))]
 public abstract class ChoiseUI : MonoBehaviour
 {

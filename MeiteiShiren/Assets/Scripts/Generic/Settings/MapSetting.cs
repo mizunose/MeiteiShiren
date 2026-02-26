@@ -29,4 +29,20 @@ public class MapSetting : CreatableData
 
 	/// <value><see cref="_alpha"/></value>
 	public float Alpha => _alpha;
+
+	/// <summary>
+	/// <para>マスメッシュの頂点情報</para>
+	/// </summary>
+	public Vector3[] MassVertices
+	{
+		get
+		{
+			return new []{
+				new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 左上
+				new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 右上
+				new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 左下
+				new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 右下
+			};	// マスのサイズからローカル座標系におけるマスの頂点情報を算出
+		}
+	}
 }

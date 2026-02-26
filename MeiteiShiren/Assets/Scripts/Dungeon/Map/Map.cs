@@ -18,6 +18,7 @@ using UnityEngine.UI;
 /// <summary>
 /// <para>マップ</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class Map : MonoBehaviour
 {
 	/// <summary>

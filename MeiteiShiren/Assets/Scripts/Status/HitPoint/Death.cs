@@ -16,6 +16,7 @@ using UnityEngine;
 /// <summary>
 /// <para>Ž€–S</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class Death : MonoBehaviour
 {
 	/// <summary>

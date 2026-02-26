@@ -17,7 +17,7 @@ using UnityEngine;
 /// <summary>
 /// <para>‚«o‚µ‚Ì—Œ`</para>
 /// </summary>
-[RequireComponent(typeof(RectTransform))]
+[RequireComponent(typeof(RectTransform)), DisallowMultipleComponent]
 public abstract class SpeechBubble : MonoBehaviour
 {
 	// •Ï”éŒ¾

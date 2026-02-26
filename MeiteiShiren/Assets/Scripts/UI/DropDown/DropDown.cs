@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// <summary>
 /// <para>ドロップダウン式選択肢</para>
 /// </summary>
-[RequireComponent(typeof(VerticalLayoutGroup))]
+[RequireComponent(typeof(VerticalLayoutGroup)), DisallowMultipleComponent]
 public abstract class DropDown : VirtualizeMono
 {
 	// 構造体定義

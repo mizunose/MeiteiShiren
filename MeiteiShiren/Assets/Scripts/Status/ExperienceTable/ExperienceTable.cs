@@ -16,6 +16,7 @@ using UnityEngine;
 /// <summary>
 /// <para>経験値テーブル</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class ExperienceTable : CreatableData
 {
 	// 変数宣言

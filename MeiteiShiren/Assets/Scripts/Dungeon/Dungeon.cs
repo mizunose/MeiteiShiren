@@ -17,6 +17,7 @@ using System.Collections;
 /// <summary>
 /// <para>ダンジョン</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class Dungeon : MonoSingleton<Dungeon>
 {
 	// 定数定義

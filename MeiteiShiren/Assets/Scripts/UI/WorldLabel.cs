@@ -19,6 +19,7 @@ using UnityEngine.UI;
 /// <summary>
 /// <para>ワールド空間からテキスト表示する</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class WorldLabel : MonoBehaviour
 {
 	// 変数宣言
