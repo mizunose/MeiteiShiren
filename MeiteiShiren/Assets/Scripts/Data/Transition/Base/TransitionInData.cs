@@ -1,7 +1,10 @@
 ﻿/*
 <TransitionInData.cs>
 
-- 内容
+-author
+	mizunose
+
+-about
 ・トランジションの抜け部のデータ
 */
 
