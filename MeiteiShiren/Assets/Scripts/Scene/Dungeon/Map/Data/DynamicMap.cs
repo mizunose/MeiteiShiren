@@ -936,14 +936,14 @@ public class DynamicMap : MapData
 
 		// 変数宣言
 		int _player_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// プレイヤー生成位置の番号
-		Vector2Int _player_position = PositionAreaToMap(_main_spwan_masses[_player_spawn_idx]);	// プレイヤー生成マス
+		Vector2Int _player_position = _main_spwan_masses[_player_spawn_idx];	// プレイヤー生成マス
 
 		// プレイヤー位置予約
 		_main_spwan_masses.RemoveAt(_player_spawn_idx);	// プレイヤー生成に使うマスなので他の生成に使わない
 
 		// 変数宣言
 		int _goal_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// 階段位置の番号
-		Vector2Int _goal_position = PositionAreaToMap(_main_spwan_masses[_goal_spawn_idx]);	// 階段生成位置
+		Vector2Int _goal_position = _main_spwan_masses[_goal_spawn_idx];	// 階段生成位置
 
 		// 階段作成
 		_area_infos[_goal_position.y][_goal_position.x] = MassType.STAIR;	// マスを階段に変換
@@ -1056,7 +1056,8 @@ public class DynamicMap : MapData
 		}
 
 		// プレイヤー作成	//TODO:チーム配置
-		DungeonScene.Player.transform.SetParent(Masses[_player_position.y, _player_position.x].transform, false);	// 対象マスに管理させる
+		_player_position = PositionAreaToMap(_player_position);	// マスでの構成に位置を補正
+		Masses[_player_position.y, _player_position.x].AddCharacter(DungeonScene.Player);	// 対象マスに管理させる
 
 		// テクスチャ作成
 		MiniMapTexture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成
