@@ -56,7 +56,6 @@ public class Mass : VirtualizeMono
 		};
 
 	// 変数宣言
-	private Transform _targeted = null;	// 1ターン前に効果発動した相手
 	private AboveObject<Item> _above_item = null;	// 所持しているアイテム
 	private AboveObject<GameObject> _above_character = null;	// 乗せたキャラクター
 	private Inventory _character_inventory = null;	// キャラクターが持っているインベントリ
