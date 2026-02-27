@@ -15,4 +15,5 @@ MonoBehaviour:
   _fiendry_fire: 0
   _range: {fileID: 11400000, guid: b5e8153c5c0d50f4aa0c09f1ed51b4dc, type: 2}
   _affects:
-  - {fileID: 11400000, guid: 270fa1d62459ded4b89416779b2369bf, type: 2}
+    _affects:
+    - {fileID: 11400000, guid: 270fa1d62459ded4b89416779b2369bf, type: 2}

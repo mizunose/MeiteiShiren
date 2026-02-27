@@ -20,13 +20,20 @@ using UnityEngine;
 public class Mass : VirtualizeMono
 {
 	// クラス定義
-	private class AboveObject<T> where T : Object
+
+	/// <summary>
+	/// <para>上に載っているオブジェクト</para>
+	/// </summary>
+	/// <typeparam name="ObjectType">オブジェクト種</typeparam>
+	private class AboveObject<ObjectType> where ObjectType : Object
 	{
 		// 変数宣言
-		private T _instance = null;	// インスタンス
+		private ObjectType _instance = null;	// インスタンス
 
 		// プロパティ定義
-		public T Instance => _instance;
+
+		/// <value><see cref="_instance"/></value>
+		public ObjectType Instance => _instance;
 
 		/// <value>処理のターゲットにしたか。処理済みならtrue, そうでなければfalse</value>
 		public bool IsTargeted { get; set; } = false;
@@ -35,8 +42,8 @@ public class Mass : VirtualizeMono
 		/// <summary>
 		/// <para>コンストラクタ</para>
 		/// </summary>
-		/// <param name="instance"></param>
-		public AboveObject(T instance)
+		/// <param name="instance">本体</param>
+		public AboveObject(ObjectType instance)
 		{
 			// 初期化
 			_instance = instance;	// インスタンス設定
@@ -64,9 +71,6 @@ public class Mass : VirtualizeMono
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
 	protected Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
-
-	/// <value>キャラクタのインスタンス</value>
-	protected GameObject AboveCharacter => _above_character.Instance;
 
 
 	/// <summary>
@@ -118,18 +122,23 @@ public class Mass : VirtualizeMono
 			}
 		}
 
-		// プレイヤーに対する処理
-		for (int _child_idx = 0; _child_idx < transform.childCount; _child_idx++)	// 子オブジェクト単位でのループ
-		{
-			// 変数宣言
-			var _child = transform.GetChild(_child_idx);	// 扱う子オブジェクト
+		// 効果発動
+		FirstWakeUp<Item>(_above_item, _above_item?.Instance?.transform);
+		FirstWakeUp<GameObject>(_above_character, _above_character?.Instance?.transform);
+	}
 
-			// 検査
-			if (_above_character?.Instance && !_above_character.IsTargeted)	// 未処理
-			{
-				Boot();	// 搭乗時は自動で起動する
-				_above_character.IsTargeted = true;	// 処理した
-			}
+
+	/// <summary>
+	/// <para>初回時の自動起動処理</para>
+	/// </summary>
+	/// <typeparam name="ObjectType">オブジェクト種</typeparam>
+	private void FirstWakeUp<ObjectType>(AboveObject<ObjectType> target, Transform target_transform) where ObjectType : Object
+	{
+		// 効果発動
+		if (target?.Instance && !target.IsTargeted)	// 未処理
+		{
+			Boot(target_transform);	// 搭乗時は自動で起動する
+			target.IsTargeted = true;	// 処理した
 		}
 	}
 
@@ -212,7 +221,8 @@ public class Mass : VirtualizeMono
 	/// <summary>
 	/// <para>機能を起動</para>
 	/// </summary>
-	public virtual void Boot()
+	/// <param name="user">起動者</param>
+	public virtual void Boot(Transform user)
 	{
 	}
 }

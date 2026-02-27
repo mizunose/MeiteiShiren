@@ -91,10 +91,11 @@ public class Stair : Mass
 	/// <summary>
 	/// <para>機能を起動</para>
 	/// </summary>
-	public override void Boot()
+	/// <param name="user">起動者</param>
+	public override void Boot(Transform user)
 	{
 		// プレイヤ操作
-		if (AboveCharacter == DungeonScene.Player.transform)	// プレイヤーが乗った
+		if (user == DungeonScene.Player.transform)	// プレイヤーが乗った
 		{
 			// 生成
 			_confirm_drop_down = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
