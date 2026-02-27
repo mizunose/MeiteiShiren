@@ -28,7 +28,7 @@ public abstract class Move : MonoBehaviour
 	public struct SimulatedData
 	{
 		// 変数宣言
-		public Transform next_mass;	// 移動先のマス
+		public Mass next_mass;	// 移動先のマス
 		public float direction;	// 終了時点での向き
 	}
 
@@ -86,8 +86,11 @@ public abstract class Move : MonoBehaviour
 			}
 		}
 
-		// 親の変更
-		transform.parent = data.next_mass;	// マスを移るため親を取り替える
+		// マス移動
+		if (data.next_mass) // ヌルチェック
+		{
+			_current_mass.MoveCharacter(data.next_mass);	// マスを移る
+		}
 		
 		// イベント発行
 		if (_from != _at)	// 移動するとき

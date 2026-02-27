@@ -237,19 +237,20 @@ public class ChaseMove : Move
 	/// <param name="goal">追跡対象</param>
 	/// <param name="is_ignore_actor">行動オブジェクトを無視して演算するか</param>
 	/// <returns>最適な一手の移動先。現時点では移動できず待機する場合は現地点を、そもそも移動経路が塞がれてしまった場合にはnullを返す。</returns>
-	private Transform MoveOnMapWithAStar(Transform goal, bool is_ignore_actor = true)
+	private Mass MoveOnMapWithAStar(Transform goal, bool is_ignore_actor = true)
 	{
 		// 定数定義
 		const int _SCORE_ERAGUER = -1;	// スコアの異常値(初期値)
 
 		// 変数宣言
-		Vector2Int _current_mass_idx = Map.PositionToMass(GetCurrentMass().transform.position);	// 現在マスの番号
+		Mass _current_mass = GetCurrentMass();
+		Vector2Int _current_mass_idx = Map.PositionToMass(_current_mass.transform.position);	// 現在マスの番号
 		Vector2Int _goal_idx = Map.PositionToMass(goal.position);	// 目標地点のマス番号
 
 		// 保全
 		if (_goal_idx == _current_mass_idx)	// すでに目標地点にいる
 		{
-			return transform;	// 移動せずとも目標地点である
+			return _current_mass;	// 移動せずとも目標地点である
 		}
 
 		// 変数宣言
@@ -422,7 +423,7 @@ public class ChaseMove : Move
 		if (IsMovable(_route[0]))	// 実際の移動に影響はない
 		{
 			// 提供
-			return _route[0].transform;	// 移動先提供
+			return _route[0];	// 移動先提供
 		}
 		else	// 実際に移動できるわけではない
 		{
@@ -438,13 +439,13 @@ public class ChaseMove : Move
 					// 提供
 					if (_turned_next_mass)	// 迂回に成功
 					{
-						return _route[_idx].transform;	// 迂回路上の移動先
+						return _route[_idx];	// 迂回路上の移動先
 					}
 				}
 			}
 
 			// 提供
-			return transform;	// 待機するしかない
+			return _current_mass;	// 待機するしかない
 		}
 	}
 
@@ -453,7 +454,7 @@ public class ChaseMove : Move
 	/// <para>部屋探索処理</para>
 	/// </summary>
 	/// <returns>移動先</returns>
-	private Transform MoveOnRoom()
+	private Mass MoveOnRoom()
 	{
 		// 変数宣言
 		Mass _current_mass = GetCurrentMass();	// 現在マス
@@ -556,7 +557,7 @@ public class ChaseMove : Move
 	/// <para>通路探索処理</para>
 	/// </summary>
 	/// <returns>移動先</returns>
-	private Transform MoveOnLoad()
+	private Mass MoveOnLoad()
 	{
 		// 変数宣言
 		Mass _current_mass = GetCurrentMass();	// 現在マス
@@ -607,7 +608,7 @@ public class ChaseMove : Move
 		}
 
 		// 提供
-		return _next_mass.transform;	// 移動先を確定
+		return _next_mass;	// 移動先を確定
 	}
 
 

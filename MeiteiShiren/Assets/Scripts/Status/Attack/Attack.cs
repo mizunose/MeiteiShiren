@@ -96,7 +96,7 @@ public abstract class Attack : MonoBehaviour
 			// 回転処理
 			if (_move && _selected_data.angle != transform.eulerAngles.y)	// 攻撃方向へ回転できる
 			{
-				yield return _move.MoveMotion(new Move.SimulatedData{next_mass = transform, direction = _selected_data.angle});	// 攻撃方向に回転
+				yield return _move.MoveMotion(new Move.SimulatedData{next_mass = null, direction = _selected_data.angle});	// 攻撃方向に回転
 			}
 
 			// 初期化

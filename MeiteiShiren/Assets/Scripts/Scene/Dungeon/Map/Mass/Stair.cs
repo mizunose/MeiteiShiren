@@ -93,16 +93,20 @@ public class Stair : Mass
 	/// </summary>
 	public override void Boot()
 	{
-		// 生成
-		_confirm_drop_down = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
-		_confirm_message_box = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmMessageBox);	// 選択UIのインスタンス生成
+		// プレイヤ操作
+		if (AboveCharacter == DungeonScene.Player.transform)	// プレイヤーが乗った
+		{
+			// 生成
+			_confirm_drop_down = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
+			_confirm_message_box = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmMessageBox);	// 選択UIのインスタンス生成
 
-		// 初期化
-		_confirm_message_box.SetValue(DungeonScene.FloorData.MapData.StairData.ConfirmText);	// 表示テキスト設定
+			// 初期化
+			_confirm_message_box.SetValue(DungeonScene.FloorData.MapData.StairData.ConfirmText);	// 表示テキスト設定
 
-		// イベント接続
-		_confirm_drop_down.YesEvent.signal += ConfirmedBootYes;	// 「はい」選択時の処理
-		_confirm_drop_down.NoEvent.signal += ConfirmedBootNo;	// 「いいえ」選択時の処理
+			// イベント接続
+			_confirm_drop_down.YesEvent.signal += ConfirmedBootYes;	// 「はい」選択時の処理
+			_confirm_drop_down.NoEvent.signal += ConfirmedBootNo;	// 「いいえ」選択時の処理
+		}
 	}
 
 

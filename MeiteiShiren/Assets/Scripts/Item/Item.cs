@@ -10,7 +10,6 @@
 
 // 名前空間宣言
 using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
 
 // クラス定義

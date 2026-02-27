@@ -19,6 +19,30 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class Mass : VirtualizeMono
 {
+	// クラス定義
+	private class AboveObject<T> where T : Object
+	{
+		// 変数宣言
+		private T _instance = null;	// インスタンス
+
+		// プロパティ定義
+		public T Instance => _instance;
+
+		/// <value>処理のターゲットにしたか。処理済みならtrue, そうでなければfalse</value>
+		public bool IsTargeted { get; set; } = false;
+
+
+		/// <summary>
+		/// <para>コンストラクタ</para>
+		/// </summary>
+		/// <param name="instance"></param>
+		public AboveObject(T instance)
+		{
+			// 初期化
+			_instance = instance;	// インスタンス設定
+		}
+	}
+
 	// 定数定義
 	private static readonly int[] _INDICES = {	// マスメッシュの頂点インデックス
 			0, 1, 2,	// 左側三角形
@@ -33,12 +57,17 @@ public class Mass : VirtualizeMono
 
 	// 変数宣言
 	private Transform _targeted = null;	// 1ターン前に効果発動した相手
-	//private Trap _trap = null;	// 付与されている罠
+	private AboveObject<Item> _above_item = null;	// 所持しているアイテム
+	private AboveObject<GameObject> _above_character = null;	// 乗せたキャラクター
+	private Inventory _character_inventory = null;	// キャラクターが持っているインベントリ
 
 	// プロパティ定義
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
 	protected Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
+	/// <value>キャラクタのインスタンス</value>
+	protected GameObject AboveCharacter => _above_character.Instance;
 
 
 	/// <summary>
@@ -81,8 +110,14 @@ public class Mass : VirtualizeMono
 	/// </summary>
 	private void TurnedAction()
 	{
-		// 変数宣言
-		bool _is_targeted_reaved = true;	// 処理した相手が離れたか
+		// アイテム回収
+		if (_character_inventory)	// インベントリを持っている
+		{
+			if (_character_inventory.AddItem(_above_item.Instance))	// インベントリに登録
+			{
+				_above_item = null;	// アイテムを託したため管理から外す
+			}
+		}
 
 		// プレイヤーに対する処理
 		for (int _child_idx = 0; _child_idx < transform.childCount; _child_idx++)	// 子オブジェクト単位でのループ
@@ -91,27 +126,87 @@ public class Mass : VirtualizeMono
 			var _child = transform.GetChild(_child_idx);	// 扱う子オブジェクト
 
 			// 検査
-			if (_child && _child != _targeted)	// 未処理
+			if (_above_character?.Instance && !_above_character.IsTargeted)	// 未処理
 			{
-				if (_child == DungeonScene.Player.transform)	// プレイヤーが乗った
-				{
-					Boot();	// 搭乗時は自動で起動する
-					_targeted = _child;	// 処理した相手を記録
-					_is_targeted_reaved = false;	// 相手が乗った
-				}
+				Boot();	// 搭乗時は自動で起動する
+				_above_character.IsTargeted = true;	// 処理した
 			}
-			else	// 処理済み
-			{
-				// 初期化
-				_is_targeted_reaved = false;	// 相手はまだ居る
-			}
+		}
+	}
+
+
+	/// <summary>
+	/// <para>アイテム追加</para>
+	/// </summary>
+	/// <returns>処理の成否(追加に失敗するとfalse)</returns>
+	public bool AddItem(Item item)
+	{
+		// すでにアイテムがある場合受け入れない
+		if (_above_item?.Instance)	// ヌルチェック
+		{
+			// 提供
+			return false;	// 処理失敗
 		}
 
-		// リセット
-		if (_is_targeted_reaved)	// 処理済みの相手が離れた
+		// アイテム受理
+		_above_item = new (item);	// アイテム登録
+		item.transform.SetParent(transform, false);	// 自身の子に登録
+
+		// 提供
+		return true;	// 処理成功
+	}
+
+
+	/// <summary>
+	/// <para>キャラクタ追加</para>
+	/// </summary>
+	/// <returns>処理の成否(追加に失敗するとfalse)</returns>
+	public bool AddCharacter(GameObject character)
+	{
+		// すでにキャラクタがいる場合受け入れない
+		if (_above_character?.Instance)	// ヌルチェック
 		{
-			_targeted = null;	// 未処理とする
+			// 提供
+			return false;	// 処理失敗
 		}
+
+		// 更新
+		_above_character = new (character);	// キャラクタ登録
+		character.transform.SetParent(transform, false);	// 自身の子に登録
+		_character_inventory = character.GetComponent<Inventory>();	// インベントリ部分をキャッシュ
+
+		// 提供
+		return true;	// 処理成功
+	}
+
+
+	/// <summary>
+	/// <para>キャラクタ移動</para>
+	/// </summary>
+	/// <returns>処理の成否(移動に失敗するとfalse)</returns>
+	public bool MoveCharacter(Mass next_move)
+	{
+		// 保全
+		if (!_above_character?.Instance)	// 移すキャラクタがいない
+		{
+			// 提供
+			return false;	// 処理失敗
+		}
+		
+		// 更新
+		if (next_move.AddCharacter(_above_character.Instance))
+		{
+			_above_character = null;	// キャラクタを移したため管理から外す
+			_character_inventory = null;	// インベントリ部分もクリア
+		}
+		else
+		{
+			// 提供
+			return false;	// 処理失敗
+		}
+
+		// 提供
+		return true;	// 処理成功
 	}
 
 
@@ -120,6 +215,5 @@ public class Mass : VirtualizeMono
 	/// </summary>
 	public virtual void Boot()
 	{
-		//TODO:アイテムが乗っているならインベントリに入れる。ただしインベントリが満タンなら選択UIを起動する
 	}
 }

@@ -106,7 +106,7 @@ public class InputMove : Move
 		}
 
 		// 初期化
-		_result.next_mass = _next_mass.transform;	// 移動先を確定
+		_result.next_mass = _next_mass;	// 移動先を確定
 
 		// 変数宣言
 		_result.direction = Vector3.Angle(Vector3.forward, _result.next_mass.transform.position - _current_mass.transform.position);	// 終了時点での向き

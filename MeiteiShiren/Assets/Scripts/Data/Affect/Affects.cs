@@ -9,14 +9,16 @@
 =====*/
 
 // 名前空間宣言
+using System;
 using UnityEngine;
 
 // クラス定義
 
 /// <summary>
-/// <para>効果</para>
+/// <para>効果一覧</para>
 /// </summary>
-public class Affects : CreatableData
+[Serializable]
+public class Affects
 {
 	// 変数宣言
 	[Header("発動効果一覧")]
