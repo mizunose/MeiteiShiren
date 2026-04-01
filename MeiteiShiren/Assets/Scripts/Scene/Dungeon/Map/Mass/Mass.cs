@@ -123,8 +123,16 @@ public class Mass : VirtualizeMono
 		}
 
 		// 効果発動
-		FirstWakeUp<Item>(_above_item, _above_item?.Instance?.transform);
-		FirstWakeUp<GameObject>(_above_character, _above_character?.Instance?.transform);
+		if (_above_item?.Instance && !_above_item.IsTargeted)	// 未処理アイテム
+		{
+			Boot(_above_item?.Instance?.transform);	// 搭乗時は自動で起動する
+			_above_item.IsTargeted = true;	// 処理した
+		}
+		if (_above_character?.Instance && !_above_character.IsTargeted)	// 未処理キャラクタ
+		{
+			Boot(_above_character?.Instance?.transform);	// 搭乗時は自動で起動する
+			_above_character.IsTargeted = true;	// 処理した
+		}
 	}
 
 
@@ -134,12 +142,7 @@ public class Mass : VirtualizeMono
 	/// <typeparam name="ObjectType">オブジェクト種</typeparam>
 	private void FirstWakeUp<ObjectType>(AboveObject<ObjectType> target, Transform target_transform) where ObjectType : Object
 	{
-		// 効果発動
-		if (target?.Instance && !target.IsTargeted)	// 未処理
-		{
-			Boot(target_transform);	// 搭乗時は自動で起動する
-			target.IsTargeted = true;	// 処理した
-		}
+		//}
 	}
 
 
