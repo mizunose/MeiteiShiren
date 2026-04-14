@@ -87,16 +87,6 @@ public class VirtualizeMono : MonoBehaviour
 	virtual protected void CustomFixedUpdate() { }
 
 	/// <summary>
-	/// <para>GUI描画用に高頻度で行われる更新処理</para>
-	/// </summary>
-	virtual protected void OnGUI() { }
-
-	/// <summary>
-	/// <para>OnGUI()関数で任意に処理を追加しやすいように定義</para>
-	/// </summary>
-	virtual protected void CustomOnGUI() { }
-
-	/// <summary>
 	/// <para>インスタンス破棄時に行う処理</para>
 	/// </summary>
 	virtual protected void OnDestroy() { }
