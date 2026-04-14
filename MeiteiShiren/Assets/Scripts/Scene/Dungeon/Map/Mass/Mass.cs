@@ -137,16 +137,6 @@ public class Mass : VirtualizeMono
 
 
 	/// <summary>
-	/// <para>初回時の自動起動処理</para>
-	/// </summary>
-	/// <typeparam name="ObjectType">オブジェクト種</typeparam>
-	private void FirstWakeUp<ObjectType>(AboveObject<ObjectType> target, Transform target_transform) where ObjectType : Object
-	{
-		//}
-	}
-
-
-	/// <summary>
 	/// <para>アイテム追加</para>
 	/// </summary>
 	/// <returns>処理の成否(追加に失敗するとfalse)</returns>
