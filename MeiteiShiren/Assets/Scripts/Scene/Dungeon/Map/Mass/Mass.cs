@@ -72,6 +72,12 @@ public class Mass : VirtualizeMono
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
 	protected Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
+	/// <value>アイテムが乗っているならインスタンスを取得</value>
+	public Item AboveItem => _above_item?.Instance;
+	
+	/// <value>キャラクターが乗っているならインスタンスを取得</value>
+	public GameObject AboveCharacter => _above_character?.Instance;
+
 
 	/// <summary>
 	/// <para>初期化処理</para>
@@ -114,7 +120,7 @@ public class Mass : VirtualizeMono
 	private void TurnedAction()
 	{
 		// アイテム回収
-		if (_character_inventory)	// インベントリを持っている
+		if (_character_inventory != null && _above_item != null)	// インベントリを持っていて、アイテムを受け取れる
 		{
 			if (_character_inventory.AddItem(_above_item.Instance))	// インベントリに登録
 			{

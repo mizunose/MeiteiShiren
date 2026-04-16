@@ -51,7 +51,7 @@ public class ChaseMove : Move
 		// 視界	//TODO:部屋にいるときは視界を部屋中に拡張
 		if (_room)	// 室内
 		{
-			for (int _idx = 0; _idx < _room.transform.childCount; _idx++)	// 部屋の持つオブジェクト単位でのループ
+			for (int _idx = 0; _idx < _room.transform.childCount; _idx++)	// 部屋の持つマス単位でのループ
 			{
 				// 追跡管理
 				ViewCheckChase(_room.transform.GetChild(_idx).GetComponent<Mass>());	// 視界内の追跡対象を捉える
@@ -350,7 +350,7 @@ public class ChaseMove : Move
 							// 移動可否検査
 							for (int _idx = 0; _idx < _node_mass.transform.childCount; _idx++)	// マスの持つオブジェクト単位でのループ
 							{
-								if (!_node_mass.transform.GetChild(_idx).GetComponent<Camp>())	// アクターでない=障害物
+								if (false)	//TODO:静的障害物(壁や生成岩)の判定 (!_node_mass.transform.GetChild(_idx).GetComponent<Camp>())	// アクターでない=障害物
 								{
 									// 終了
 									_is_movable_without_actor = false;	// 移動できない
@@ -467,7 +467,7 @@ public class ChaseMove : Move
 			List<Transform> _gateways = new();	// 出口一覧
 
 			// 初期化
-			for (int _idx = 0; _idx < _room.transform.childCount; _idx++)	// 部屋の持つオブジェクト単位でのループ
+			for (int _idx = 0; _idx < _room.transform.childCount; _idx++)	// 部屋の持つマス単位でのループ
 			{
 				// 変数宣言
 				var _mass = _room.transform.GetChild(_idx).GetComponent<Mass>();	// 管理マス
@@ -511,7 +511,7 @@ public class ChaseMove : Move
 							// 通過性の検査
 							for (int _object_idx = 0; _object_idx < _arround_mass.transform.childCount; _object_idx++)	// マスの持つオブジェクト単位でのループ
 							{
-								if (!_arround_mass.transform.GetChild(_object_idx).GetComponent<Camp>())	// アクターでない=障害物
+								if (false)	//TODO:静的障害物(壁や生成岩)の判定 !_arround_mass.transform.GetChild(_object_idx).GetComponent<Camp>())	// アクターでない=障害物
 								{
 									_is_throughable = false;	// 通れない
 									break;	// 通過性の検査は完了したためこれ以上の処理は不要

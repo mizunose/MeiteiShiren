@@ -183,6 +183,6 @@ public abstract class Move : MonoBehaviour
 	protected bool IsMovable(Mass target)
 	{
 		// ’ñ‹Ÿ
-		return target && target.transform.childCount == 0;	// ˆÚ“®‰Â”Û
+		return target && target.AboveCharacter == null;	// ˆÚ“®‰Â”Û
 	}
 }

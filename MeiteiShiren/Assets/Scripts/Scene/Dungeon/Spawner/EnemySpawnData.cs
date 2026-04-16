@@ -59,7 +59,7 @@ public class EnemySpawnData : CreatableData
 		// 初期化
 		for (int _mass_idx = 0; _mass_idx < _masses.Length; _mass_idx++)	// マス単位でのループ
 		{
-			if (_masses[_mass_idx].transform.childCount == 0)	// 生成物配置可能
+			if (_masses[_mass_idx].AboveCharacter == null)	// 生成物配置可能
 			{
 				_spawnable_masses.Add(_masses[_mass_idx]);	// 生成位置候補として登録
 			}

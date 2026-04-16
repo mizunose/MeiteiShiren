@@ -439,11 +439,10 @@ public abstract class Attack : MonoBehaviour
 				// 処理分岐
 				if (activity)	// 攻撃する側の演算なので攻撃対象を演算する
 				{
-					for (int _idx = 0; _idx < _target_mass.transform.childCount; _idx++)	// 設置物単位でのループ
+					// 変数宣言
+					GameObject _target = _target_mass.AboveCharacter;	// 攻撃を受けるオブジェクト
+					if (_target != null)	// ヌルチェック
 					{
-						// 変数宣言
-						GameObject _target = _target_mass.transform.GetChild(_idx).gameObject;	// 攻撃を受けるオブジェクト
-
 						// フレンドリーファイア
 						if (!_data.FriendryFire)	// 味方討ちを防ぐ
 						{

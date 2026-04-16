@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*=====
+<NonePenetratingRushItem.cs>
 
-namespace Assets.Scripts.Item.RushItem
+-author
+	mizunose
+
+-about
+	非貫通型の突進アイテムを実装
+=====*/
+
+// クラス定義
+
+/// <summary>
+/// <para>非貫通突進するアイテム</para>
+/// </summary>
+public class NonePenetratingRushItem : RushItem
 {
-	internal class NonePenetratingRushItem
-	{
-	}
 }

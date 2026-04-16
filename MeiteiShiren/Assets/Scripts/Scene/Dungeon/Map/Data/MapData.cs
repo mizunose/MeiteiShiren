@@ -10,6 +10,7 @@
 
 // 名前空間宣言
 using UnityEngine;
+using System.Collections.Generic;
 
 // クラス定義
 
@@ -22,12 +23,12 @@ public abstract class MapData : CreatableData
 	[Header("ステータス")]
 	[SerializeField, Tooltip("サイズ"), Min(1)] protected Vector2Int _size = new Vector2Int(1, 1);
 	[Header("生成物の情報")]
-	[SerializeField, Tooltip("地面のテクスチャ")] protected Material _ground_texture;
-	[SerializeField, Tooltip("壁のモデル")] protected GameObject _wall_model;
+	[SerializeField, Tooltip("地面のテクスチャ")] private Material _ground_texture;
+	[SerializeField, Tooltip("壁のモデル")] private GameObject _wall_model;
 	[SerializeField, Tooltip("階段のデータ")] private StairData _stair_data;
 	[Header("ミニマップ")]
-	[SerializeField, Tooltip("アンカー(左上)に対する位置")] protected Vector2 _anchor_position = new Vector2(220, -220);
-	[SerializeField, Tooltip("ミニマップ表示サイズ")] protected Vector2 _minimap_size = new Vector2(400, 400);
+	[SerializeField, Tooltip("アンカー(左上)に対する位置")] private Vector2 _anchor_position = new Vector2(220, -220);
+	[SerializeField, Tooltip("ミニマップ表示サイズ")] private Vector2 _minimap_size = new Vector2(400, 400);
 
 	// プロパティ定義
 

@@ -43,7 +43,7 @@ public class DynamicMap : MapData
 	// 定数定義
 	private const MassType _INITIAL_PACK = MassType.WALL;	// 最初にエリアを仮埋めするマス種
 	private const int _RATIO_RAND_RANGE_MAX = 100;	// 空間分割の乱数幅
-	private int _ROAD_WIDTH = 1;	// 道の幅
+	private int _ROAD_WIDTH = 1;    // 道の幅
 
 	// 変数宣言
 	[Header("空間分割・部屋作成")]
@@ -57,6 +57,10 @@ public class DynamicMap : MapData
 	[SerializeField, Tooltip("入口設立の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_entrance_threshold = 0;
 	[Header("商店作成")]
 	[SerializeField, Tooltip("商店作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_shop_threshold = 0;
+	[Header("動的配置")]
+	[SerializeField, Tooltip("アイテム配置数最低値"), Min(0)] private int _min_set_items;
+	[SerializeField, Tooltip("アイテム配置数猶予(最低値に加えていくつまで配置して良いか)"), Min(0)] private int _margin_set_items;
+	[SerializeField, Tooltip("出現アイテム")] private List<Item> _item_list = new();
 
 	// プロパティ定義
 
@@ -935,13 +939,6 @@ public class DynamicMap : MapData
 		}
 
 		// 変数宣言
-		int _player_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// プレイヤー生成位置の番号
-		Vector2Int _player_position = _main_spwan_masses[_player_spawn_idx];	// プレイヤー生成マス
-
-		// プレイヤー位置予約
-		_main_spwan_masses.RemoveAt(_player_spawn_idx);	// プレイヤー生成に使うマスなので他の生成に使わない
-
-		// 変数宣言
 		int _goal_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// 階段位置の番号
 		Vector2Int _goal_position = _main_spwan_masses[_goal_spawn_idx];	// 階段生成位置
 
@@ -951,10 +948,6 @@ public class DynamicMap : MapData
 
 
 		//TODO:罠作成
-
-
-		//TODO:アイテム作成
-
 
 		// 作成した階層の情報をマップの情報に変換する
 		foreach (var _area_line_info in _area_infos)	// 生成空間の行単位でのループ
@@ -1055,9 +1048,31 @@ public class DynamicMap : MapData
 			}
 		}
 
+		// 変数宣言
+		int _player_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// プレイヤー生成位置の番号
+		Vector2Int _player_position = _main_spwan_masses[_player_spawn_idx];	// プレイヤー生成マス
+
 		// プレイヤー作成	//TODO:チーム配置
-		_player_position = PositionAreaToMap(_player_position);	// マスでの構成に位置を補正
+		_main_spwan_masses.RemoveAt(_player_spawn_idx);	// プレイヤー生成に使うマスなので他の生成に使わない
+		_player_position = PositionAreaToMap(_player_position);	// マップでの構成に位置を補正
 		Masses[_player_position.y, _player_position.x].AddCharacter(DungeonScene.Player);	// 対象マスに管理させる
+
+		// 変数宣言
+		int _item_count = UnityEngine.Random.Range(_min_set_items, _min_set_items + _margin_set_items + 1);
+
+		// アイテム作成
+		for (int _idx = 0; _idx < _item_count; _idx++)	// 生成空間の行単位でのループ
+		{
+			// 変数宣言
+			int _item_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// アイテム生成位置の番号
+			Vector2Int _item_position = _main_spwan_masses[_item_spawn_idx];	// アイテム生成マス
+			Item _created_item = Instantiate(_item_list[UnityEngine.Random.Range(0, _item_list.Count)]);	// アイテムのインスタンス
+
+			// アイテム配置
+			_main_spwan_masses.RemoveAt(_item_spawn_idx);	// アイテム生成に使うマスなので他の生成に使わない
+			_item_position = PositionAreaToMap(_item_position);	// マップでの構成に位置を補正
+			Masses[_item_position.y, _item_position.x].AddItem(_created_item);	// 対象マスに管理させる
+		}
 
 		// テクスチャ作成
 		MiniMapTexture = new Texture2D(MapSize.x, MapSize.y, TextureFormat.RGBA32, false);	// インスタンス作成

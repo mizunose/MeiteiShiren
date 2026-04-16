@@ -31,7 +31,7 @@ public class SelfAffectItem : Item
 		//TODO:味方を選ぶ
 
 		// 効果発動
-		_affects.BootAffects(gameObject, user);	// 発動者に効果発動
+		_data.Affects.BootAffects(gameObject, user);	// 発動者に効果発動
 
 		// 提供
 		yield break;	// 終了

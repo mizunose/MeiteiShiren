@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2e333c5730dc3f49bec75d1efc879d9, type: 3}
-  m_Name: Hunger
+  m_Script: {fileID: 11500000, guid: 2b100f210f8d354449c820c425585db2, type: 3}
+  m_Name: FoodData
   m_EditorClassIdentifier: 
-  _keep_fulling: 1
-  _affect: {fileID: 11400000, guid: 742a63a215e06014cbfd9ff8b1c97355, type: 2}
+  _affects:
+    _affects:
+    - {fileID: 11400000, guid: 742a63a215e06014cbfd9ff8b1c97355, type: 2}

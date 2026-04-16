@@ -21,8 +21,7 @@ using System.Collections;
 public abstract class Item : MonoBehaviour
 {
 	// 変数宣言
-	protected Affects _affects;	// 与える効果
-
+	[SerializeField, Tooltip("データ")] protected ItemData _data;
 
 	/// <summary>
 	/// <para>使用</para>

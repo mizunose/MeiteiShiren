@@ -39,7 +39,7 @@ public abstract class RushItem : Item
 		// 効果発動
 		if (_hitten)//TODO:衝突判定
 		{
-			_affects.BootAffects(gameObject, user);	// 衝突相手に効果発動
+			_data.Affects.BootAffects(gameObject, _hitten);	// 衝突相手に効果発動
 		}
 
 		// 提供

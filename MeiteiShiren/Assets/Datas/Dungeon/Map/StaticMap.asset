@@ -15,3 +15,6 @@ MonoBehaviour:
   _size: {x: 1, y: 1}
   _ground_texture: {fileID: 0}
   _wall_model: {fileID: 0}
+  _stair_data: {fileID: 0}
+  _anchor_position: {x: 220, y: -220}
+  _minimap_size: {x: 400, y: 400}
