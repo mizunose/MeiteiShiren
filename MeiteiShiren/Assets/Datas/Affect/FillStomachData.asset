@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0352cfcc14e5b74183c45d391d3fafa, type: 3}
   m_Name: FillStomachData
   m_EditorClassIdentifier: 
-  _value: 10
+  _value: 100

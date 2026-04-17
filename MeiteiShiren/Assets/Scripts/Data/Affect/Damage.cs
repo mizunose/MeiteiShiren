@@ -82,7 +82,7 @@ public class Damage : Affect
 			int _final_damage = CalculateDamage(_corrected_damage, _hit_point.Data.Defence);	// ダメージ値を算出
 
 			// ダメージ補正
-			if (!_killable && _hit_point.HP - _final_damage < 0)	// 本来ならこのダメージ処理で死ぬが、非致死性ダメージとして扱う
+			if (!_killable && _hit_point.HP - _final_damage <= 0)	// 本来ならこのダメージ処理で死ぬが、非致死性ダメージとして扱う
 			{
 				_final_damage = _hit_point.HP - 1;	// 1残すダメージに補正する
 			}

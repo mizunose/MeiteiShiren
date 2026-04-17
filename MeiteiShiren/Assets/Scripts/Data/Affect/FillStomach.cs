@@ -49,7 +49,7 @@ public class FillStomach : Affect
 		if (_hunger)	// 回復できる
 		{
 			// 変数宣言
-			var _corrections = oneself.GetComponentsInChildren<DamageCorrection>();	// 補正値一覧
+			var _corrections = oneself.GetComponentsInChildren<FillStomachCorrection>();	// 補正値一覧
 			float _all_base_correction = 0.0f;	// 基礎値補正の合計
 			float _all_correction_ratio = 1.0f;	// 補正倍率の合計
 
@@ -61,17 +61,17 @@ public class FillStomach : Affect
 			}
 			
 			// 補正
-			float _corrected_damage = (_value + _all_base_correction) * _all_correction_ratio;	// 補正を反映
+			float _corrected_fill = (_value + _all_base_correction) * _all_correction_ratio;	// 補正を反映
 
 			// ダメージ処理
-			_hunger.Value -= (int)_corrected_damage;	// ダメージを与える
+			_hunger.Value += (int)_corrected_fill;	// 空腹を癒す
 
 			// 変数宣言
 			GameObject _print_object = new();	// 回復値表示用インスタンス
-			WorldLabel _printer = _print_object.AddComponent<WorldLabel>();	// ダメージ表示機能
+			WorldLabel _printer = _print_object.AddComponent<WorldLabel>();	// 回復値表示機能
 
 			// 初期化
-			_printer.SetValue($"{_corrected_damage}", opponent.transform);	// ダメージ表示
+			_printer.SetValue($"{_corrected_fill}", opponent.transform);	// 回復値表示
 			_printer.transform.SetParent(opponent.transform, false);	// 親子付け
 		}
 	}

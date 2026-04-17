@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb6049289061a794e867b8031d86b3b3, type: 3}
   m_Name: HungryDamage
   m_EditorClassIdentifier: 
-  m_fDamage: 0
-  m_bIgnoreInvincible: 0
-  m_bGrantInvincible: 1
-  m_bKillable: 1
+  _value: 1
+  _ignore_defence: 1
+  _ignore_invincible: 1
+  _killable: 0
