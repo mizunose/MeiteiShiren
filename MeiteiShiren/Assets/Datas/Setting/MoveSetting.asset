@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c06b6d8b56fb0784095fa00ca57bd729, type: 3}
   m_Name: MoveSetting
   m_EditorClassIdentifier: 
-  _spend: 0.025
+  _spend: 0.1
   _spend_ratio: 1

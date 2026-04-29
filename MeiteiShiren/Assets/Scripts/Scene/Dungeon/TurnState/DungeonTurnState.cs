@@ -40,7 +40,7 @@ public class DungeonTurnState : MonoBehaviour
 		// プロパティ定義
 
 		/// <value>ターン内での行動可否(trueで可能, falseで不可能)</value>
-		public bool Chance { get; set;} = false;
+		public bool Chance { get; set; } = false;
 
 		/// <value>現在シーンがダンジョンならインスタンスを取得</value>
 		private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;

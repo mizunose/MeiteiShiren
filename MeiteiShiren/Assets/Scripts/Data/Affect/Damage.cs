@@ -95,6 +95,7 @@ public class Damage : Affect
 			WorldLabel _printer = _print_object.AddComponent<WorldLabel>();	// ダメージ表示機能
 
 			// 初期化
+			_printer.SetTextColor(Settings.Instance.WorldLabel.DamageColor);	// テキスト色変更
 			_printer.SetValue($"{_final_damage}", opponent.transform);	// ダメージ表示
 			_printer.transform.SetParent(opponent.transform, false);	// 親子付け
 		}

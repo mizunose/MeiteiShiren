@@ -24,11 +24,11 @@ public abstract class RushItem : Item
 
 
 	/// <summary>
-	/// <para>使用</para>
+	/// <para>使用モーション処理</para>
 	/// </summary>
 	/// <param name="user">使用者</param>
 	/// <returns>遅延処理用のインターフェース体</returns>
-	public override IEnumerator Use(GameObject user)
+	protected　override IEnumerator _UseMotion(GameObject user)
 	{
 		// 変数宣言
 		var _rush_direction = _movable_directions.CalculateSplitedDirectionInt(user.gameObject.transform.rotation.y);	// 突撃方向

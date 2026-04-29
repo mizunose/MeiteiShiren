@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1595299179931111934}
   - component: {fileID: -4306289311271039927}
   - component: {fileID: 7932177380740222947}
+  - component: {fileID: 896958713674466546}
   m_Layer: 0
   m_Name: IngameHiruhi
   m_TagString: Untagged
@@ -128,6 +129,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 283d89dbf7da3c24f9b961bc5a2aebc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _items_data: {fileID: 11400000, guid: 7ab01463dd856d14a95af6fcbf50ec50, type: 2}
+  _data: {fileID: 11400000, guid: b5bf6008b1f8fed479f8f1d2113878cb, type: 2}
+--- !u!114 &896958713674466546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5498470843638692480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bd8acdba6ebb534fa8e1fe33b4e591d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _data: {fileID: 11400000, guid: 8631de071928f8f4cbcd5691d70fafad, type: 2}
 --- !u!1 &6028007702552931740
 GameObject:
   m_ObjectHideFlags: 0

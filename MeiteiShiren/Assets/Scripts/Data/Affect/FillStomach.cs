@@ -71,6 +71,7 @@ public class FillStomach : Affect
 			WorldLabel _printer = _print_object.AddComponent<WorldLabel>();	// 回復値表示機能
 
 			// 初期化
+			_printer.SetTextColor(Settings.Instance.WorldLabel.HealColor);	// テキスト色変更
 			_printer.SetValue($"{_corrected_fill}", opponent.transform);	// 回復値表示
 			_printer.transform.SetParent(opponent.transform, false);	// 親子付け
 		}

@@ -20,7 +20,6 @@ public abstract class DropDownData : CreatableData
 {
 	// 変数宣言
 	[Header("ステータス")]
-	[SerializeField, Tooltip("キャンバス")] private PublicCanvasData _canvas;
 	[SerializeField, Tooltip("選択UI")] private ChoiseUI _choise_ui;
 
 
@@ -28,7 +27,4 @@ public abstract class DropDownData : CreatableData
 
 	/// <value><see cref="_choise_ui"/></value>
 	public ChoiseUI ChoiseUI => _choise_ui;
-
-	/// <value><see cref="_canvas"/></value>
-	public PublicCanvasData Canvas => _canvas;
 }

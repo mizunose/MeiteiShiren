@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee6ac7229f80acc4dbafc72d24c44dc6, type: 3}
+  m_Name: PlayableInventoryControllerData
+  m_EditorClassIdentifier: 
+  _trigger_event: {fileID: 11400000, guid: e96bad4d805901f4382c935cc7d2f12f, type: 2}
+  _items_inventory: {fileID: 3510737808592247417, guid: ad5a2d489bcb5c24ea423bd50215a6fb, type: 3}

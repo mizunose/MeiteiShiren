@@ -9,6 +9,7 @@
 */
 
 // 名前空間宣言
+using System.Collections.Generic;
 using UnityEngine;
 
 // クラス定義
@@ -20,10 +21,10 @@ public class FreeStyleDropDownData : DropDownData
 {
 	// 変数宣言
 	[Header("ステータス")]
-	[SerializeField, Tooltip("選択肢")] private DropDown.SelectableInformation[] _choices;
+	[SerializeField, Tooltip("選択肢")] private List<DropDown.SelectableInformation> _choices;
 
 	// プロパティ定義
 
 	/// <value><see cref="_choices"/></value>
-	public DropDown.SelectableInformation[] Choices => _choices;
+	public List<DropDown.SelectableInformation> Choices => _choices;
 }

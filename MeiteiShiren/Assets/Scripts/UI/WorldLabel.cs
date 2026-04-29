@@ -136,6 +136,17 @@ public class WorldLabel : MonoBehaviour
 
 
 	/// <summary>
+	/// <para>テキスト色変更</para>
+	/// </summary>
+	/// <param name="next_color">変更先</param>
+	public void SetTextColor(Color next_color)
+	{
+		//更新
+		_text_label.color = next_color;	// 設定色変更
+	}
+
+
+	/// <summary>
 	/// <para>ワールド基準値を基に、表示位置をスクリーン位置に移す</para>
 	/// </summary>
 	private void ResetPrintPosition()

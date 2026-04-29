@@ -20,11 +20,11 @@ using UnityEngine;
 public class SelfAffectItem : Item
 {
 	/// <summary>
-	/// <para>使用</para>
+	/// <para>使用モーション処理</para>
 	/// </summary>
 	/// <param name="user">使用者</param>
 	/// <returns>遅延処理用のインターフェース体</returns>
-	public　override IEnumerator Use(GameObject user)
+	protected　override IEnumerator _UseMotion(GameObject user)
 	{
 		//TODO:モーション再生
 
@@ -32,7 +32,7 @@ public class SelfAffectItem : Item
 
 		// 効果発動
 		_data.Affects.BootAffects(gameObject, user);	// 発動者に効果発動
-
+		
 		// 提供
 		yield break;	// 終了
 	}

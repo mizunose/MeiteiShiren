@@ -118,7 +118,6 @@ public class Stair : Mass
 	{
 		// 確認UIを削除
 		Destroy(_confirm_message_box.gameObject);	// 吹き出しを削除
-		Destroy(_confirm_drop_down.gameObject);	// 選択肢を削除
 	}
 
 

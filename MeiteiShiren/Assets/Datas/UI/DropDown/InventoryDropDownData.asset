@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b46db8c833a657429b9b41874d43045, type: 3}
+  m_Name: InventoryDropDownData
+  m_EditorClassIdentifier: 
+  _canvas: {fileID: 11400000, guid: aa70c45b5a19ea640a5697e43595d978, type: 2}
+  _choise_ui: {fileID: 1859128078642575739, guid: a083876929225114a96bc3541642eac6, type: 3}
+  _items_data: {fileID: 11400000, guid: 7ab01463dd856d14a95af6fcbf50ec50, type: 2}
+  _cancel_text: "\u9589\u3058\u308B"
+  _item_use_ui: {fileID: 3558407090842003754, guid: 6dc1e7f0b98d50a4ca99a9afe5005a3e, type: 3}

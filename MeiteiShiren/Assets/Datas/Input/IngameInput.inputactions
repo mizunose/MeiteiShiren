@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "IngameInput",
     "maps": [
         {
@@ -18,6 +19,15 @@
                     "name": "Attack",
                     "type": "Button",
                     "id": "860c5a8a-659e-4b71-92fa-37a64b76300c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "OpenMenu",
+                    "type": "Button",
+                    "id": "9d079580-12ea-48ed-9e31-8a607e49753c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -88,6 +98,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "50f38816-1b41-4582-bee2-1fa68a3d5f39",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
