@@ -79,7 +79,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: aaaa
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5fe5ea824e418554dba99883d46597f0, type: 2}
   m_sharedMaterial: {fileID: -8573231412580239904, guid: 5fe5ea824e418554dba99883d46597f0, type: 2}
@@ -507,6 +507,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2165100683076392112}
     m_Modifications:
+    - target: {fileID: 745177706311397432, guid: 66cf516298517104c8d9a62767626b28, type: 3}
+      propertyPath: _view_port
+      value: 
+      objectReference: {fileID: 702874693446245170}
     - target: {fileID: 3337534765953334413, guid: 66cf516298517104c8d9a62767626b28, type: 3}
       propertyPath: m_Name
       value: InventoryDropDown

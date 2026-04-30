@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// <summary>
 /// <para>ドロップダウン式選択肢</para>
 /// </summary>
-[RequireComponent(typeof(VerticalLayoutGroup)), DisallowMultipleComponent]
+[RequireComponent(typeof(VerticalLayoutGroup), typeof(RectTransform)), DisallowMultipleComponent]
 public abstract class DropDown : UserInterface
 {
 	// 構造体定義
@@ -39,9 +39,11 @@ public abstract class DropDown : UserInterface
 	public event Action OnCursorMoved;	// カーソル移動時イベント
 
 	// 変数宣言
-	[Header("ステータス")]
+	[Header("内部参照")]
+	[SerializeField, Tooltip("表示範囲")] private RectMask2D _view_port = null;
 	private int _selected_index;	// 選択番号
 	private List<ChoiseUI> _text_labels = new();	// テキスト
+	private RectTransform _rect_transform;	// 矩形情報
 
 	// プロパティ定義
 
@@ -68,6 +70,7 @@ public abstract class DropDown : UserInterface
 		UIInputManager.Instance.DropDown.TrendEnable();	// ドロップダウン入力有効化
 
 		// 初期化
+		_rect_transform = GetComponent<RectTransform>();	// 矩形情報取得
 		ResetChoiceUI();	// テキスト領域作成
 
 		// 初期カーソル
@@ -187,6 +190,7 @@ public abstract class DropDown : UserInterface
 			if (_selected_index > 0)	// 上に選択肢がある
 			{
 				_selected_index--;	// 一つ上に選択を切り替え
+
 			}
 			else	// 最上を選択中
 			{
@@ -208,6 +212,39 @@ public abstract class DropDown : UserInterface
 		// 選択状態更新
 		_past_select.Unselect();	// 旧選択状態を解除
 		_text_labels[_selected_index].Select();	// 新選択状態を設定
+		
+		// 変数宣言
+		//TODO:rectTreansform
+		var _choise_rect = _Data.ChoiseUI.gameObject.GetComponent<RectTransform>();
+		var _vp_rect = _view_port ? _view_port.GetComponent<RectTransform>() : _rect_transform;
+		int _min_draw = _vp_rect ? (int)(_vp_rect.rect.height / _choise_rect.rect.height) : 0;
+		Debug.Log(_choise_rect.rect.height);
+
+		// 領域移動
+		var _pos_temp = _rect_transform.anchoredPosition;
+		int _max_draw_idx =_Choices.Count - _min_draw;
+		
+		if (_max_draw_idx > 0)
+		{
+			Debug.Log(_max_draw_idx +" _ "+ _selected_index);
+			if (_selected_index < _max_draw_idx)
+			{
+				Debug.Log("now");
+				_pos_temp.y = _choise_rect.rect.height * _selected_index;
+			}
+			else
+			{
+				Debug.Log(_choise_rect.rect.height * _Choices.Count);
+				_pos_temp.y = _rect_transform.rect.height - _vp_rect.rect.height;
+
+			}
+		}
+		else
+		{
+			Debug.Log(_max_draw_idx +" : "+ _min_draw +" : "+ _Choices.Count);
+			_pos_temp.y = 0;
+		}
+		_rect_transform.anchoredPosition = _pos_temp;
 
 		// イベント発行
 		OnCursorMoved?.Invoke();	// カーソル移動時イベント発行
