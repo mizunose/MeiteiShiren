@@ -55,8 +55,11 @@ public class InventoryDropDown : DropDown
 	/// <summary>
 	/// <para>有効時処理</para>
 	/// </summary>
-	protected virtual void OnEnable()
+	protected override void OnEnable()
 	{
+		// 継承
+		base.OnEnable();	// 親関数の起動
+
 		// イベント接続
 		_data.ItemsData.OnListChanged += OnChangeChoices;	// インベントリ更新時の処理を接続
 	}
@@ -65,8 +68,11 @@ public class InventoryDropDown : DropDown
 	/// <summary>
 	/// <para>無効時処理</para>
 	/// </summary>
-	protected virtual void OnDisable()
+	protected override void OnDisable()
 	{
+		// 継承
+		base.OnDisable();	// 親関数の起動
+
 		// イベント接続解除
 		_data.ItemsData.OnListChanged -= OnChangeChoices;	// インベントリ更新時の処理を解除
 	}
@@ -99,7 +105,7 @@ public class InventoryDropDown : DropDown
 	protected override UserInterface CreateSubUI()
 	{
 		// 変数宣言
-		var _sub_ui = Instantiate(_data.ItemUseUI, transform);	// サブ階層のUI
+		var _sub_ui = Instantiate(_data.ItemUseUI, null);	// サブ階層のUI
 		var _item = _choosable_items[_SelectedIndex];	// 該当するアイテム
 
 		// イベント接続

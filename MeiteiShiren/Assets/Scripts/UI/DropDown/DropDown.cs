@@ -79,6 +79,19 @@ public abstract class DropDown : UserInterface
 
 
 	/// <summary>
+	/// <para>破棄時処理</para>
+	/// </summary>
+	protected override void OnDestroy()
+	{
+		// 継承
+		base.OnDestroy();	// 親関数の起動
+
+		// 入力管理
+		IngameInputManager.Instance.TrendEnable();	// インゲーム入力を復権させる
+	}
+
+
+	/// <summary>
 	/// <para>テキストUIリセット</para>
 	/// </summary>
 	protected void ResetChoiceUI()
@@ -143,22 +156,33 @@ public abstract class DropDown : UserInterface
 				// 変数宣言
 				var _sub_ui = CreateSubUI();	// サブ階層のUI作成
 
-				// 状態管理
-				enabled = false;	// 機能を無効化
+				// 持続性
+				if (_Data.Durability)	// 待機する
+				{
+					// イベント接続
+					_sub_ui.OnDestroyed += () => {
+						// 状態管理
+						enabled = true;	// 機能を再有効化
+						Debug.Log("aaaaaa");
+					};	// サブのUIの返答を待機する処理
 
-				// イベント接続
-				_sub_ui.OnDestroyed += () => {
 					// 状態管理
-					enabled = true;	// 機能を再有効化
-				};	// サブのUIから戻ってこれるようにする
+					enabled = false;	// 機能を無効化
+				}
+				else	// 待機しない
+				{
+					// 破棄
+					Destroy(gameObject);	// 自身を削除
+				}
 			}
 			else	// 選択を確定させる
 			{
-				// 入力管理
-				IngameInputManager.Instance.TrendEnable();	// インゲーム入力を復権させる
-
-				// 自身を削除
-				Destroy(gameObject);	// 選択肢を削除
+				// 持続性
+				if (!_Data.Durability)	// 1度キリ
+				{
+					// 破棄
+					Destroy(gameObject);	// 自身を削除
+				}
 			}
 		}
 	}
@@ -171,7 +195,7 @@ public abstract class DropDown : UserInterface
 	protected virtual UserInterface CreateSubUI()
 	{
 		// 提供
-		return Instantiate(_Choices[_selected_index].sub_ui, transform);	// サブ階層のUI
+		return Instantiate(_Choices[_selected_index].sub_ui, null);	// サブ階層のUI
 	}
 
 
@@ -226,22 +250,17 @@ public abstract class DropDown : UserInterface
 		
 		if (_max_draw_idx > 0)
 		{
-			Debug.Log(_max_draw_idx +" _ "+ _selected_index);
 			if (_selected_index < _max_draw_idx)
 			{
-				Debug.Log("now");
 				_pos_temp.y = _choise_rect.rect.height * _selected_index;
 			}
 			else
 			{
-				Debug.Log(_choise_rect.rect.height * _Choices.Count);
 				_pos_temp.y = _rect_transform.rect.height - _vp_rect.rect.height;
-
 			}
 		}
 		else
 		{
-			Debug.Log(_max_draw_idx +" : "+ _min_draw +" : "+ _Choices.Count);
 			_pos_temp.y = 0;
 		}
 		_rect_transform.anchoredPosition = _pos_temp;
