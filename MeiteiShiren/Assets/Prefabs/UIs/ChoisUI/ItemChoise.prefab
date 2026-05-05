@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 4663980966887759460}
   - component: {fileID: 1859128078642575739}
   m_Layer: 0
-  m_Name: SimpleChoice
+  m_Name: ItemChoise
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

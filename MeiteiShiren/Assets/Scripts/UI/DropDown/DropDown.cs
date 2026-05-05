@@ -30,7 +30,7 @@ public abstract class DropDown : UserInterface
 	public class SelectableInformation
 	{
 		// 変数宣言
-		[SerializeField, Tooltip("表示")] public string text;
+		[SerializeField, Tooltip("表示内容")] public ChoiseUIValue choise_value;
 		[SerializeField, Tooltip("イベント")] public NoneArgumentEventData event_data;
 		[SerializeField, Tooltip("サブ階層UI")] public UserInterface sub_ui;
 	}
@@ -60,11 +60,8 @@ public abstract class DropDown : UserInterface
 	/// <summary>
 	/// <para>初期化処理</para>
 	/// </summary>
-	protected override void Awake()
+	protected virtual void Awake()
 	{
-		// 継承
-		base.Awake();	// 親関数の起動
-
 		// 入力管理
 		IngameInputManager.Instance.TrendDisable();	// インゲーム入力無効化
 		UIInputManager.Instance.DropDown.TrendEnable();	// ドロップダウン入力有効化
@@ -74,7 +71,10 @@ public abstract class DropDown : UserInterface
 		ResetChoiceUI();	// テキスト領域作成
 
 		// 初期カーソル
-		_text_labels[0].Select();	// カーソル位置を選択
+		if (_text_labels.Count > 0)	// カーソルの候補がある
+		{
+			_text_labels[0].Select();	// カーソル位置を選択
+		}
 	}
 
 
@@ -87,6 +87,7 @@ public abstract class DropDown : UserInterface
 		base.OnDestroy();	// 親関数の起動
 
 		// 入力管理
+		UIInputManager.Instance.DropDown.TrendDisable();	// ドロップダウン入力無効化
 		IngameInputManager.Instance.TrendEnable();	// インゲーム入力を復権させる
 	}
 
@@ -119,7 +120,7 @@ public abstract class DropDown : UserInterface
 		// テキスト表示
 		for (int _idx = 0; _idx < _Choices.Count; _idx++)	// 選択候補単位でのループ
 		{
-			_text_labels[_idx].Print(_Choices[_idx].text);	// 表示文字設定
+			_text_labels[_idx].Print(_Choices[_idx].choise_value);	// 表示設定
 		}
 	}
 
@@ -142,12 +143,12 @@ public abstract class DropDown : UserInterface
 		}
 		if (UIInputManager.Instance.DropDown.Decide.BaseOne.triggered)	// 決定の入力があった
 		{
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			if (_Choices[_selected_index].event_data == null && _Choices[_selected_index].sub_ui == null)	// することがない
 			{
 				Debug.LogWarning("UIかイベントを設定してください");
 			}
-			#endif	// ! UNITY_EDITOR
+#endif	// ! UNITY_EDITOR
 
 			// 決定
 			_Choices[_selected_index].event_data?.Invoke();	// 採択を通知
@@ -155,25 +156,6 @@ public abstract class DropDown : UserInterface
 			{
 				// 変数宣言
 				var _sub_ui = CreateSubUI();	// サブ階層のUI作成
-
-				// 持続性
-				if (_Data.Durability)	// 待機する
-				{
-					// イベント接続
-					_sub_ui.OnDestroyed += () => {
-						// 状態管理
-						enabled = true;	// 機能を再有効化
-						Debug.Log("aaaaaa");
-					};	// サブのUIの返答を待機する処理
-
-					// 状態管理
-					enabled = false;	// 機能を無効化
-				}
-				else	// 待機しない
-				{
-					// 破棄
-					Destroy(gameObject);	// 自身を削除
-				}
 			}
 			else	// 選択を確定させる
 			{
@@ -181,7 +163,7 @@ public abstract class DropDown : UserInterface
 				if (!_Data.Durability)	// 1度キリ
 				{
 					// 破棄
-					Destroy(gameObject);	// 自身を削除
+					UIPage.Instance.PageClose();	// UIの操作を終了する
 				}
 			}
 		}
@@ -195,7 +177,7 @@ public abstract class DropDown : UserInterface
 	protected virtual UserInterface CreateSubUI()
 	{
 		// 提供
-		return Instantiate(_Choices[_selected_index].sub_ui, null);	// サブ階層のUI
+		return UIPage.Instance.OpenUI(_Choices[_selected_index].sub_ui, !_Data.Durability);	// サブ階層のUI
 	}
 
 
@@ -236,13 +218,11 @@ public abstract class DropDown : UserInterface
 		// 選択状態更新
 		_past_select.Unselect();	// 旧選択状態を解除
 		_text_labels[_selected_index].Select();	// 新選択状態を設定
-		
+
 		// 変数宣言
-		//TODO:rectTreansform
 		var _choise_rect = _Data.ChoiseUI.gameObject.GetComponent<RectTransform>();
 		var _vp_rect = _view_port ? _view_port.GetComponent<RectTransform>() : _rect_transform;
 		int _min_draw = _vp_rect ? (int)(_vp_rect.rect.height / _choise_rect.rect.height) : 0;
-		Debug.Log(_choise_rect.rect.height);
 
 		// 領域移動
 		var _pos_temp = _rect_transform.anchoredPosition;

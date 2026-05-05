@@ -177,6 +177,54 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Page"",
+            ""id"": ""4b728e9f-ec8e-4665-8fb6-655e76ee39e4"",
+            ""actions"": [
+                {
+                    ""name"": ""Quit"",
+                    ""type"": ""Button"",
+                    ""id"": ""c4971958-a28f-4e68-8177-d8b1c56e89bb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=1)"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""13c550da-77e9-435f-aec1-3e33bdf7417c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=1)"",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""9670a987-4c55-491e-9001-6d9e0164c817"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Quit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""88e217c5-794a-4d9b-b7f4-b4096c9f9ae6"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -186,11 +234,16 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
         m_DropDown_Decide = m_DropDown.FindAction("Decide", throwIfNotFound: true);
         m_DropDown_Up = m_DropDown.FindAction("Up", throwIfNotFound: true);
         m_DropDown_Down = m_DropDown.FindAction("Down", throwIfNotFound: true);
+        // Page
+        m_Page = asset.FindActionMap("Page", throwIfNotFound: true);
+        m_Page_Quit = m_Page.FindAction("Quit", throwIfNotFound: true);
+        m_Page_Cancel = m_Page.FindAction("Cancel", throwIfNotFound: true);
     }
 
     ~@UIInput()
     {
         UnityEngine.Debug.Assert(!m_DropDown.enabled, "This will cause a leak and performance issues, UIInput.DropDown.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Page.enabled, "This will cause a leak and performance issues, UIInput.Page.Disable() has not been called.");
     }
 
     /// <summary>
@@ -380,6 +433,113 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="DropDownActions" /> instance referencing this action map.
     /// </summary>
     public DropDownActions @DropDown => new DropDownActions(this);
+
+    // Page
+    private readonly InputActionMap m_Page;
+    private List<IPageActions> m_PageActionsCallbackInterfaces = new List<IPageActions>();
+    private readonly InputAction m_Page_Quit;
+    private readonly InputAction m_Page_Cancel;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Page".
+    /// </summary>
+    public struct PageActions
+    {
+        private @UIInput m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public PageActions(@UIInput wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Page/Quit".
+        /// </summary>
+        public InputAction @Quit => m_Wrapper.m_Page_Quit;
+        /// <summary>
+        /// Provides access to the underlying input action "Page/Cancel".
+        /// </summary>
+        public InputAction @Cancel => m_Wrapper.m_Page_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Page; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="PageActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(PageActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="PageActions" />
+        public void AddCallbacks(IPageActions instance)
+        {
+            if (instance == null || m_Wrapper.m_PageActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PageActionsCallbackInterfaces.Add(instance);
+            @Quit.started += instance.OnQuit;
+            @Quit.performed += instance.OnQuit;
+            @Quit.canceled += instance.OnQuit;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="PageActions" />
+        private void UnregisterCallbacks(IPageActions instance)
+        {
+            @Quit.started -= instance.OnQuit;
+            @Quit.performed -= instance.OnQuit;
+            @Quit.canceled -= instance.OnQuit;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="PageActions.UnregisterCallbacks(IPageActions)" />.
+        /// </summary>
+        /// <seealso cref="PageActions.UnregisterCallbacks(IPageActions)" />
+        public void RemoveCallbacks(IPageActions instance)
+        {
+            if (m_Wrapper.m_PageActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="PageActions.AddCallbacks(IPageActions)" />
+        /// <seealso cref="PageActions.RemoveCallbacks(IPageActions)" />
+        /// <seealso cref="PageActions.UnregisterCallbacks(IPageActions)" />
+        public void SetCallbacks(IPageActions instance)
+        {
+            foreach (var item in m_Wrapper.m_PageActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_PageActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="PageActions" /> instance referencing this action map.
+    /// </summary>
+    public PageActions @Page => new PageActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "DropDown" which allows adding and removing callbacks.
     /// </summary>
@@ -408,5 +568,27 @@ public partial class @UIInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDown(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Page" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="PageActions.AddCallbacks(IPageActions)" />
+    /// <seealso cref="PageActions.RemoveCallbacks(IPageActions)" />
+    public interface IPageActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Quit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnQuit(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCancel(InputAction.CallbackContext context);
     }
 }

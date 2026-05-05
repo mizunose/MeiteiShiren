@@ -21,14 +21,14 @@ public class UseItemDropDownData : DropDownData
 {
 	// 変数宣言
 	[Header("ステータス")]
-	[SerializeField, Tooltip("使用コマンド")] private string _use_text = "使う";
-	[SerializeField, Tooltip("廃棄コマンド")] private string _dispose_text = "捨てる";
+	[SerializeField, Tooltip("使用コマンド")] private ChoiseUIValue _use_text = new ChoiseUIValue{ text = "使う" };
+	[SerializeField, Tooltip("廃棄コマンド")] private ChoiseUIValue _dispose_text = new ChoiseUIValue{ text = "捨てる" };
 
 	// プロパティ定義
 
 	/// <value><see cref="_use_text"/></value>
-	public string UseText => _use_text;
+	public ChoiseUIValue UseText => _use_text;
 
 	/// <value><see cref="_dispose_text"/></value>
-	public string DisposeText => _dispose_text;
+	public ChoiseUIValue DisposeText => _dispose_text;
 }

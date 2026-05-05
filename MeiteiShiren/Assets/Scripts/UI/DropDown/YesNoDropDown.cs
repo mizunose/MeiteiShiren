@@ -53,8 +53,8 @@ public class YesNoDropDown : DropDown
 		YesEvent = ScriptableObject.CreateInstance<NoneArgumentEventData>();
 		NoEvent = ScriptableObject.CreateInstance<NoneArgumentEventData>();
 		_choices = new(){
-			new SelectableInformation{text = _data.YesText, event_data = YesEvent},	// はいの選択肢
-			new SelectableInformation{text = _data.NoText, event_data = NoEvent},	// いいえの選択肢
+			new SelectableInformation{choise_value = new ChoiseUIValue{text = _data.YesText}, event_data = YesEvent},	// はいの選択肢
+			new SelectableInformation{choise_value = new ChoiseUIValue{text = _data.NoText}, event_data = NoEvent},	// いいえの選択肢
 			};
 
 		// 継承

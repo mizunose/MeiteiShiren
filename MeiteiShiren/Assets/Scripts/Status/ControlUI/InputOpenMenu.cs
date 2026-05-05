@@ -9,7 +9,6 @@
 =====*/
 
 // 名前空間宣言
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -47,13 +46,14 @@ public class InputOpenMenu : MonoBehaviour
 			if (IngameInputManager.Instance.Player.OpenMenu.BaseOne.triggered)	// メニュー画面展開入力中
 			{
 				// 入力管理
-				IngameInputManager.Instance.TrendDisable();	// 入力系の処理なのでモーション中は干渉権を無効化する
-				
+				IngameInputManager.Instance.TrendDisable();	// 入力系の処理なので干渉権を無効化する
+
 				// 生成
-				Instantiate(_data.MenuTabDropDown);	// 選択UIのインスタンス生成
+				UIPage.Instance.OpenUI(_data.MenuTabDropDown);
+				//Instantiate(_data.MenuTabDropDown);	// 選択UIのインスタンス生成
 
 				// 入力管理
-				IngameInputManager.Instance.Player.TrendEnable();	// プレイヤーの干渉権を復権させる
+				IngameInputManager.Instance.TrendEnable();	// 干渉権を復権させる
 			}
 
 			// 待機

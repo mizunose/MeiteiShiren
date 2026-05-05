@@ -90,10 +90,13 @@ public class InventoryDropDown : DropDown
 		// 更新
 		foreach (var item in _data.ItemsData.ItemInventory)	// アイテム単位でのループ
 		{
-			_choices.Add(new SelectableInformation{text = item.Data.Name, event_data = null, sub_ui = _data.ItemUseUI});	// アイテム選択肢追加
+			ChoiseUIValue _print_content = new ChoiseUIValue {
+				text = item.Data.Name,	// アイテムの名前
+				icon = item.Data.Icon,	// アイテムのアイコン
+			};
+			_choices.Add(new SelectableInformation{choise_value = _print_content, event_data = null, sub_ui = _data.ItemUseUI});	// アイテム選択肢追加
 			_choosable_items.Add(item);	// 選択肢に対応したアイテム登録
 		}
-		_choices.Add(new SelectableInformation{text = _data.CancelText, event_data = ScriptableObject.CreateInstance<NoneArgumentEventData>()});	// キャンセル選択肢追加
 		ResetChoiceUI();	// 表示テキスト更新
 	}
 
@@ -105,7 +108,7 @@ public class InventoryDropDown : DropDown
 	protected override UserInterface CreateSubUI()
 	{
 		// 変数宣言
-		var _sub_ui = Instantiate(_data.ItemUseUI, null);	// サブ階層のUI
+		var _sub_ui = UIPage.Instance.OpenUI(_data.ItemUseUI, _data.Durability);	// サブ階層のUI
 		var _item = _choosable_items[_SelectedIndex];	// 該当するアイテム
 
 		// イベント接続
@@ -121,16 +124,5 @@ public class InventoryDropDown : DropDown
 
 		// 提供
 		return _sub_ui;	// 作成したUIを返す
-	}
-
-
-	/// <summary>
-	/// <para>アイテム使用イベント設定処理</para>
-	/// </summary>
-	/// <param name="event_data">対象イベント</param>
-	/// <param name="item">対象アイテム</param>
-	private void SetItemSelectedEvent(NoneArgumentEventData event_data, Item item)
-	{
-		//TODO:詰め
 	}
 }

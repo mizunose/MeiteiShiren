@@ -50,8 +50,8 @@ public class UseItemDropDown : DropDown
 		UseEvent = ScriptableObject.CreateInstance<NoneArgumentEventData>();
 		DisposeEvent = ScriptableObject.CreateInstance<NoneArgumentEventData>();
 		_choices = new(){
-			new SelectableInformation{text = _data.UseText, event_data = UseEvent},	// 使用コマンド
-			new SelectableInformation{text = _data.DisposeText, event_data = DisposeEvent},	// 廃棄コマンド
+			new SelectableInformation{choise_value = _data.UseText, event_data = UseEvent},	// 使用コマンド
+			new SelectableInformation{choise_value = _data.DisposeText, event_data = DisposeEvent},	// 廃棄コマンド
 			};
 
 		// 継承

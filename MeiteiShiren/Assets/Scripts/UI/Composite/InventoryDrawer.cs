@@ -65,7 +65,6 @@ public class InventoryDrawer : UserInterface
 	/// </summary>
 	private void EnableWith()
 	{
-		Debug.Log("？");
 		// 更新
 		enabled = true;	// 自身も無効化
 	}

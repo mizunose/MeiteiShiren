@@ -30,27 +30,12 @@ public abstract class UserInterface : MonoBehaviour
 	[Header("ステータス")]
 	[SerializeField, Tooltip("データ")] private UserInterfaceData _ui_data;
 
-
-	/// <summary>
-	/// <para>初期化処理</para>
-	/// </summary>
-	protected virtual void Awake()
-	{
-		// 初期化
-		Debug.Log(transform.parent);
-		if(!transform.parent)	// 親が設定されていないUI
-		{
-			transform.SetParent(_ui_data.Canvas.Instance.transform, false);	// 親子付け
-		}
-	}
-
 	
 	/// <summary>
 	/// <para>有効時処理</para>
 	/// </summary>
 	protected virtual void OnEnable()
 	{
-		Debug.Log("hoooo");
 		// イベント発行
 		OnEnabled?.Invoke();	// 無効化時イベント発行
 	}

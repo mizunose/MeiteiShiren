@@ -24,6 +24,7 @@ public class ItemData : CreatableData
 	[SerializeField, Tooltip("与える効果")] private Affects _affects;
 	[SerializeField, Tooltip("再利用性	※falseで使い捨て")] private bool _reusability = false;
 	[SerializeField, Tooltip("説明文")] private string _description;
+	[SerializeField, Tooltip("アイコン")] private Sprite _icon;
 
 
 	// プロパティ定義
@@ -39,4 +40,7 @@ public class ItemData : CreatableData
 
 	/// <value><see cref="_description"/></value>
 	public string Description => _description;
+
+	/// <value><see cref="_icon"/></value>
+	public Sprite Icon => _icon;
 }
