@@ -87,8 +87,14 @@ public abstract class DropDown : UserInterface
 		base.OnDestroy();	// 親関数の起動
 
 		// 入力管理
-		UIInputManager.Instance.DropDown.TrendDisable();	// ドロップダウン入力無効化
-		IngameInputManager.Instance.TrendEnable();	// インゲーム入力を復権させる
+		if (UIInputManager.NullCheck)	// ヌルチェック
+		{
+			UIInputManager.Instance.DropDown.TrendDisable();	// ドロップダウン入力無効化
+		}
+		if (IngameInputManager.NullCheck)	// ヌルチェック
+		{
+			IngameInputManager.Instance.TrendEnable();	// インゲーム入力を復権させる
+		}
 	}
 
 

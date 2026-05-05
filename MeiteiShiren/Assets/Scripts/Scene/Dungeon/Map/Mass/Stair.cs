@@ -61,7 +61,7 @@ public class Stair : Mass
 	protected override sealed void OnDisable()
 	{
 		// イベント接続解除
-		if (_confirm_drop_down) // ヌルチェック
+		if (_confirm_drop_down)	// ヌルチェック
 		{
 			_confirm_drop_down.YesEvent.signal -= ConfirmedBootYes;	// 「はい」選択時の処理を解除
 			_confirm_drop_down.NoEvent.signal -= ConfirmedBootNo;	// 「いいえ」選択時の処理を解除

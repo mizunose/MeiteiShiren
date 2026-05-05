@@ -73,7 +73,10 @@ public class UIPage : MonoSingleton<UIPage>
 		base.OnDisable();	// 親関数の起動
 
 		// 入力管理
-		UIInputManager.Instance.Page.TrendDisable();	// ページ入力無効化
+		if (UIInputManager.NullCheck)	// ヌルチェック
+		{
+			UIInputManager.Instance.Page.TrendDisable();	// ページ入力無効化
+		}
 	}
 
 
