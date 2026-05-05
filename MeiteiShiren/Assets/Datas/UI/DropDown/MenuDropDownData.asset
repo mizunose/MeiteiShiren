@@ -24,4 +24,4 @@ MonoBehaviour:
       text: "\u30D0\u30C3\u30B0"
       icon: {fileID: 0}
     event_data: {fileID: 11400000, guid: e96bad4d805901f4382c935cc7d2f12f, type: 2}
-    sub_ui: {fileID: 0}
+    sub_ui: {fileID: 3510737808592247417, guid: ad5a2d489bcb5c24ea423bd50215a6fb, type: 3}

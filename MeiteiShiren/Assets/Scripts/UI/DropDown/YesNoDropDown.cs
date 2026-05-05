@@ -46,16 +46,13 @@ public class YesNoDropDown : DropDown
 	/// </summary>
 	protected override void Awake()
 	{
-		// 継承
-		base.Awake();	// 親関数の起動
-
 		// 初期化
 		YesEvent = ScriptableObject.CreateInstance<NoneArgumentEventData>();
 		NoEvent = ScriptableObject.CreateInstance<NoneArgumentEventData>();
 		_choices = new(){
 			new SelectableInformation{choise_value = new ChoiseUIValue{text = _data.YesText}, event_data = YesEvent},	// はいの選択肢
 			new SelectableInformation{choise_value = new ChoiseUIValue{text = _data.NoText}, event_data = NoEvent},	// いいえの選択肢
-			};
+		};
 
 		// 継承
 		base.Awake();	// 親関数の起動

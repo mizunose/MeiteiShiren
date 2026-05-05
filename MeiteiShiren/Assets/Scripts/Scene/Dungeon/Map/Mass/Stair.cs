@@ -98,7 +98,7 @@ public class Stair : Mass
 		if (user == DungeonScene.Player.transform)	// プレイヤーが乗った
 		{
 			// 生成
-			_confirm_drop_down = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
+			_confirm_drop_down = UIPage.Instance.OpenUI(DungeonScene.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
 			_confirm_message_box = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmMessageBox);	// 選択UIのインスタンス生成
 
 			// 初期化

@@ -27,9 +27,7 @@ public class UIPage : MonoSingleton<UIPage>
 #endif	// end UNITY_EDITOR
 
 	// 変数宣言
-	//[SerializeField, Tooltip("データ")]private SceneLoaderData _data = null;
 	private UserInterface _current_ui = null;	// 現在操作しているUI
-	//private List<UserInterface> _breadcrumb_list = new();	// 保留シーンのパンくずリスト
 	private Stack<UserInterface> _breadcrumb_trail = new();	// パンくずリスト
 
 	// プロパティ定義
