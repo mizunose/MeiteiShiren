@@ -136,6 +136,13 @@ public abstract class DropDown : UserInterface
 	/// </summary>
 	protected virtual void Update()
 	{
+		// 保全
+		if (_Choices.Count < 1)	// 捜査対象がない
+		{
+			// 終了
+			return;	// 動かすカーソルがない
+		}
+
 		// 入力受付
 		if (UIInputManager.Instance.DropDown.Up.BaseOne.triggered)	// 上移動の入力
 		{
