@@ -15,7 +15,6 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 // クラス定義
 
@@ -129,6 +128,7 @@ public class MassRange : CreatableData
 							{
 								_instance._range.Add(_clicked);	// 範囲に登録
 							}
+							EditorUtility.SetDirty(_instance);	// 更新内容を保存予約
 						}
 					}
 				}
@@ -284,7 +284,7 @@ public class MassRange : CreatableData
 
 	// 変数変更
 	[SerializeField, Tooltip("種類")] private RangeType _type;
-	[HideInInspector, SerializeField, Tooltip("範囲 ※優先度順")] private List<Vector2Int> _range;
+	[HideInInspector, SerializeField, Tooltip("範囲 ※優先度順")] private List<Vector2Int> _range = new();
 
 	// プロパティ定義
 
@@ -297,7 +297,7 @@ public class MassRange : CreatableData
 		get
 		{
 			// 提供
-			if (Type == RangeType.RANGED)	// 一覧表記が必要
+			if (_type == RangeType.RANGED)	// 一覧表記が必要
 			{
 				return _range;	// 範囲に含まれるマスの一覧
 			}
