@@ -72,9 +72,9 @@ public class EightDirections : SplitedDirections
 			// その他
 			default:
 #if UNITY_EDITOR
-				Debug.LogError("攻撃方向に対応が定義されていません");
+				Debug.LogError("方向に対応が定義されていません");
 #endif	// end UNITY_EDITOR
-				return Vector2Int.up;	// 仮データ
+				return Vector2Int.zero;	// 仮データ
 		}
 	}
 

@@ -19,10 +19,16 @@ using UnityEngine;
 /// </summary>
 public class InputMove : Move
 {
+	// 変数宣言
+	[SerializeField, Tooltip("データ")] private MoveData _data;
+
 	// プロパティ定義
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
 	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
+	/// <value><see cref="_data"/></value>
+	protected override MoveData _Data => _data;
 
 
 	/// <summary>

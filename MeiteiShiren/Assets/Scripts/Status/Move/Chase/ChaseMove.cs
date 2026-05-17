@@ -22,9 +22,6 @@ using UnityEngine;
 /// </summary>
 public class ChaseMove : Move
 {
-	// 定数定義
-	private const int _SPLIT_DIRECTION = 8; // 移動の方向候補数
-
 	// 変数宣言
 	[SerializeField, Tooltip("データ")] private ChaseData _data;
 	private Transform _chase_target;	// 追跡相手の姿勢
@@ -34,6 +31,9 @@ public class ChaseMove : Move
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
 	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
+	/// <value><see cref="_data"/></value>
+	protected override MoveData _Data => _data;
 
 
 	/// <summary>
@@ -157,7 +157,7 @@ public class ChaseMove : Move
 			_result.next_mass = MoveOnRoom();	// 室内探索
 
 			// 終了
-			if(!_result.next_mass || _result.next_mass == transform)	// 異常値もしくは移動していない
+			if(!_result.next_mass || _result.next_mass == _current_mass.transform)	// 異常値もしくは移動していない
 			{
 				return (false, _result);	// 処理しない
 			}
@@ -561,7 +561,7 @@ public class ChaseMove : Move
 	{
 		// 変数宣言
 		Mass _current_mass = GetCurrentMass();	// 現在マス
-		Vector2 _shift = CalculateMoveDirection();	// 進行方向
+		Vector2 _shift = _movable_directions.CalculateSplitedDirectionInt(transform.eulerAngles.y);	// 進行方向;
 		Mass _next_mass = CalculateMovedMass(_shift);	// 進行先のマス
 
 		// 探索
@@ -609,57 +609,6 @@ public class ChaseMove : Move
 
 		// 提供
 		return _next_mass;	// 移動先を確定
-	}
-
-
-	/// <summary>
-	/// <para>自身の向きを算出する</para>
-	/// </summary>
-	/// <returns>正面を示すベクトル</returns>
-	private Vector2 CalculateMoveDirection()
-	{
-		// 初期化
-		switch ((int)((transform.eulerAngles.y + _ROUND_DEGREE / _SPLIT_DIRECTION / 2) / (_ROUND_DEGREE / _SPLIT_DIRECTION)))	// 攻撃方向によって分岐
-		{
-			// 0 / 8
-			case 0:
-				return Vector2.up;	// 上
-
-			// 1 / 8
-			case 1:
-				return Vector2.one;	// 右上
-
-			// 2 / 8
-			case 2:
-				return Vector2.right;	// 右
-
-			// 3 / 8
-			case 3:
-				return new Vector2(1.0f, -1.0f);	// 右下
-
-			// 4 / 8
-			case 4:
-				return Vector2.down;	// 下
-
-			// 5 / 8
-			case 5:
-				return -Vector2.one;	// 左下
-
-			// 6 / 8
-			case 6:
-				return Vector2.left;	// 左
-
-			// 7 / 8
-			case 7:
-				return new Vector2(-1.0f, 1.0f);	// 左上
-
-			// その他
-			default:
-#if UNITY_EDITOR
-				Debug.LogError("移動方向に対応が定義されていません");
-#endif	// end UNITY_EDITOR
-				return Vector2.up;	// 仮データ
-		}
 	}
 
 

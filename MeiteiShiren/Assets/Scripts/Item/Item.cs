@@ -24,13 +24,10 @@ public abstract class Item : MonoBehaviour
 	// イベント定義
 	public event Action OnDestroyed;	// 破棄時イベント
 
-	// 変数宣言
-	[SerializeField, Tooltip("データ")] protected ItemData _data;
-
 	// プロパティ定義
 
 	/// <value><see cref="_data"/></value>
-	public ItemData Data => _data;
+	public abstract ItemData Data { get;}
 
 
 	/// <summary>
@@ -40,15 +37,24 @@ public abstract class Item : MonoBehaviour
 	/// <returns>遅延処理用のインターフェース</returns>
 	public IEnumerator Use(GameObject user)
 	{
+		// 入力管理
+		IngameInputManager.Instance.TrendDisable();	// インゲーム入力無効化
+
 		// 更新
 		yield return _UseMotion(user);	// 使用モーション再生
+		
+		// 入力管理
+		if (IngameInputManager.NullCheck)	// ヌルチェック
+		{
+			IngameInputManager.Instance.TrendEnable();	// インゲーム入力を復権させる
+		}
 
 		// 終了
-		if (!_data.Reusability)	// 使い切り
+		if (!Data.Reusability)	// 使い切り
 		{
 			Destroy(gameObject);	// 自身を削除
 		}
-		yield break;
+		yield break;	// 処理終了
 	}
 
 

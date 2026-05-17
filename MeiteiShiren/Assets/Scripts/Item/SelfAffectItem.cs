@@ -19,6 +19,14 @@ using UnityEngine;
 /// </summary>
 public class SelfAffectItem : Item
 {
+	// 変数宣言
+	[SerializeField, Tooltip("データ")] private ItemData _data;
+
+	// プロパティ定義
+	/// <value><see cref="_data"/></value>
+	public override ItemData Data => _data;
+
+
 	/// <summary>
 	/// <para>使用モーション処理</para>
 	/// </summary>

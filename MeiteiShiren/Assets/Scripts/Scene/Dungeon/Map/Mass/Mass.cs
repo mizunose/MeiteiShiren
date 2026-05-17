@@ -10,6 +10,7 @@
 
 // 名前空間宣言
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 // クラス定義
 
@@ -214,6 +215,31 @@ public class Mass : VirtualizeMono
 
 		// 提供
 		return true;	// 処理成功
+	}
+
+
+	/// <summary>
+	/// <para>キャラクタ管理放棄</para>
+	/// </summary>
+	public GameObject ReleaseCharacter()
+	{
+		
+		// すでにキャラクタがいる場合受け入れない
+		if (_above_character?.Instance)	// ヌルチェック
+		{
+			// 提供
+			return null;	// 処理失敗
+		}
+
+		// 変数宣言
+		var _temporal_character = _above_character.Instance;	// 放棄対象を退避
+
+		// 更新
+		_above_character = null;	// キャラクタ登録リセット
+		_character_inventory = null;	// インベントリキャッシュリセット
+
+		// 提供
+		return _temporal_character;	// 放棄対象
 	}
 
 

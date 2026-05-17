@@ -14,9 +14,9 @@ using UnityEngine;
 // クラス定義
 
 /// <summary>
-/// <para>攻撃データ</para>
+/// <para>追跡データ</para>
 /// </summary>
-public class ChaseData : CreatableData
+public class ChaseData : MoveData
 {
 	// 変数宣言
 	[Header("ステータス")]

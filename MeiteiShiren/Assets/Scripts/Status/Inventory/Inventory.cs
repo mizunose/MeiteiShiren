@@ -47,7 +47,7 @@ public abstract class Inventory : MonoBehaviour
 		// 更新
 		item.transform.SetParent(CacheContainer.Instance.transform);	// キャッシュ領域に退避
 		_items_data.Add(item);	// 一覧に登録
-		
+
 		// 提供
 		return true;	// 処理成功
 	}

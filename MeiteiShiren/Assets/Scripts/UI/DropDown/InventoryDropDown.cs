@@ -114,7 +114,7 @@ public class InventoryDropDown : DropDown
 		// イベント接続
 		_sub_ui.UseEvent.signal += () =>{
 			// アイテム使用
-			StartCoroutine(_item.Use(_data.ItemsData.User));	// アイテムのモーション再生
+			ItemExecutor.Instance.PlayItemMotion(_item, _data.ItemsData.User);	// アイテムのモーション再生
 		};	// アイテム使用処理を設定
 		_sub_ui.DisposeEvent.signal += () =>{
 			// アイテム廃棄
