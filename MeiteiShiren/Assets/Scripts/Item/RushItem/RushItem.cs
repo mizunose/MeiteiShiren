@@ -63,39 +63,49 @@ public abstract class RushItem : Item
 		// 初期化
 		transform.SetParent(_start_mass.transform, false);	// マスに顕現する	※使用する時、キャッシュに退避されている可能性が高く、挙動を移すためにマスに現れる必要がある
 		transform.eulerAngles = user.transform.eulerAngles;	// 使用者の向きに合わせる
-		
-		// 移動処理
-		while(true)	// 経路マス単位でのループ
+
+		// 根元の当たり判定
+		if (_start_mass?.AboveCharacter)	// 根元で衝突
 		{
-			// 変数宣言
-			var _move_information = _mover.Simulate();	// 今回の移動の情報
+			// 効果発動
+			_data.Affects.BootAffects(gameObject, _start_mass.AboveCharacter);	// 衝突相手に効果発動
+		}
 
-			// 衝突
-			if (!_move_information.is_actionable)	// 壁に衝突
+		// 移動処理
+		if (!_start_mass?.AboveCharacter || _data.IsPenetrating)	// 根元で消失しない
+		{
+			while(true)	// 経路マス単位でのループ
 			{
-				// ループ終了
-				break;	// 移動完了
-			}
-			if (_move_information.result.next_mass.AboveCharacter)	// キャラクタに衝突
-			{
-				// 効果発動
-				_data.Affects.BootAffects(gameObject, user);	// 衝突相手に効果発動
+				// 変数宣言
+				var _move_information = _mover.Simulate();	// 今回の移動の情報
 
-				// 通過性
-				if (!_data.IsPenetrating)	// 貫通しない
+				// 衝突
+				if (!_move_information.is_actionable)	// 壁に衝突
 				{
 					// ループ終了
 					break;	// 移動完了
 				}
+				if (_move_information.result.next_mass.AboveCharacter)	// キャラクタに衝突
+				{
+					// 効果発動
+					_data.Affects.BootAffects(gameObject, _move_information.result.next_mass.AboveCharacter);	// 衝突相手に効果発動
+
+					// 通過性
+					if (!_data.IsPenetrating)	// 貫通しない
+					{
+						// ループ終了
+						break;	// 移動完了
+					}
+				}
+
+				// モーション再生
+				yield return _mover.MoveMotion(_move_information.result);	// 移動モーション
+
+				// 更新
+				_end_mass = _move_information.result.next_mass;	// 移動した後のマスを記録
 			}
-
-			// モーション再生
-			yield return _mover.MoveMotion(_move_information.result);	// 移動モーション
-
-			// 更新
-			_end_mass = _move_information.result.next_mass;	// 移動した後のマスを記録
 		}
-		
+
 		// 保全
 		if (_end_mass?.AboveCharacter && _end_mass.AboveCharacter == gameObject)	// キャラクタとしてマスに登録済み
 		{

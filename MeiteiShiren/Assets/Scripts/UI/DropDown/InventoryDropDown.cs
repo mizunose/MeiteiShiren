@@ -118,7 +118,10 @@ public class InventoryDropDown : DropDown
 		};	// アイテム使用処理を設定
 		_sub_ui.DisposeEvent.signal += () =>{
 			// アイテム廃棄
-			_data.ItemsData.Drop(_item);
+			if (!_data.ItemsData.Drop(_item))
+			{
+				Debug.Log("アイテムを置く場所がありません");
+			}
 			//TODO:もし周囲が埋まっていたら失敗表示、成功したらターンを進める
 		};	// アイテム廃棄処理を設定
 
