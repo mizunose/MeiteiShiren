@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -71,7 +72,7 @@ public class DataAssetCreator : EditorWindow
 		private const string _GENERIC_ARGUMENTS_TAIL = ">";	// ジェネリック型名の接尾字
 		private const int _BUTTON_INDENT_SCALE = 15;	// ボタンのインデントに掛ける倍率
 		private static readonly Type _PROJECT_BROWSER_TYPE = Assembly.Load("UnityEditor.dll").GetType("UnityEditor.ProjectBrowser");	// Unity内ファイルブラウザウィンドウの型
-		private const string _DATA_FILE_PATH_TAIL = "Data.asset";	// データファイルパスの接尾字
+		private const string _DATA_FILE_PATH_TAIL = ".asset";	// データファイルパスの接尾字
 
 		// 変数宣言
 		private Reaf _root = new Reaf(typeof(RootType));	// ツリーの根
@@ -93,9 +94,12 @@ public class DataAssetCreator : EditorWindow
 		public void BuildTree()
 		{
 			// 変数宣言
-			var _data_classes = TypeCache.GetTypesDerivedFrom<RootType>();	// プロジェクト内のデータクラス一覧
+			var _data_classes = TypeCache.GetTypesDerivedFrom<RootType>().ToList();	// プロジェクト内のデータクラス一覧
 			Dictionary<Type, Reaf> _data_dictionary = new();	// 生成データの管理領域
-			
+
+			// 並べ替え
+			_data_classes.Sort((Type first, Type second) => first.Name.CompareTo(second.Name));	// 名前昇順に並べ替え
+
 			// 初期化
 			_root.children.Clear();	// キャッシュクリア
 			foreach (var _data_class in _data_classes)	// データクラス単位でのループ
@@ -226,7 +230,7 @@ public class DataAssetCreator : EditorWindow
 					}
 
 					// ボタン表示
-					if (!_throughed_reaves[_element_class].node.DataClass.IsAbstract && _throughed_reaves[_element_class].node.children.Count == 0)	// データ化できる継承先クラス
+					if (!_throughed_reaves[_element_class].node.DataClass.IsAbstract)	// データ化できる継承先クラス
 					{
 						// 変数宣言
 						var _temporal_indent = EditorGUI.indentLevel;	// 補正前のインデント値を退避
