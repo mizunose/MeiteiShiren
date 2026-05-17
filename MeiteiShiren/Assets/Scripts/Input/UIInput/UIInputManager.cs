@@ -8,8 +8,10 @@
 	UI入力管理を実装
 =====*/
 
-// クラス定義
+// 名前空間宣言
 using UnityEngine.InputSystem;
+
+// クラス定義
 
 /// <summary>
 /// <para>UIの入力</para>
@@ -17,6 +19,7 @@ using UnityEngine.InputSystem;
 public class UIInputManager : ActionMapsManager<UIInputManager>
 {
 	// クラス定義
+
 	/// <summary>
 	/// <para>ドロップダウン入力管理</para>
 	/// </summary>
@@ -57,11 +60,55 @@ public class UIInputManager : ActionMapsManager<UIInputManager>
 		}
 	}
 
+	/// <summary>
+	/// <para>ページ入力管理</para>
+	/// </summary>
+	public class UIPageInput : InputMapManager
+	{
+		//	変数宣言
+		UIInputManager _parent;	// 親クラスの実体
+		InputActionManager _quit;	// 終了入力受付インスタンス
+		InputActionManager _cancel;	// キャンセル入力受付インスタンス
+
+		// プロパティ定義
+
+		/// <value>管理しているInputMap</value>
+		protected override InputActionMap Target => _parent.Maps.Page;
+
+		/// <value><see cref="_quit"/></value>
+		public InputActionManager Quit => _quit;
+
+		/// <value><see cref="_cancel"/></value>
+		public InputActionManager Cancel => _cancel;
+
+
+		/// <summary>
+		/// <para>コンストラクタ</para>
+		/// </summary>
+		/// <param name="parent">親クラス</param>
+		public UIPageInput(in UIInputManager parent)
+		{
+			// 初期化
+			_parent = parent;	// 親クラスのインスタンスを登録
+			_quit = new InputActionManager(_parent.Maps.Page.Quit);	// 終了入力受付を生成
+			_cancel = new InputActionManager(_parent.Maps.Page.Cancel);	// キャンセル入力受付を生成
+		}
+	}
+
+	// 定数定義
+	private const string _INSTANCE_NAME = "UIInput";	// 自動生成された時のインスタンス名
+
 	// 変数宣言
 	private UIInput _maps;	// 管理対象マップを所持するインスタンス
 	private UIDropDownInput _drop_down;	// ドロップダウン入力の管理インスタンス
+	private UIPageInput _page;	// ページ入力の管理インスタンス
 
 	// プロパティ定義
+
+#if UNITY_EDITOR
+	/// <value><see cref="_INSTANCE_NAME"/></value>
+	protected override string InstanceName => _INSTANCE_NAME;
+#endif	// end UNITY_EDITOR
 
 	/// <value>有効状態管理対象</value>
 	protected override IInputActionCollection2 Target => _maps;
@@ -98,6 +145,22 @@ public class UIInputManager : ActionMapsManager<UIInputManager>
 		}
 	}
 
+	/// <value><see cref="_page"/></value>
+	public UIPageInput Page
+	{
+		get
+		{
+			// 保全
+			if (_page == null)	// ヌルチェック
+			{
+				_page = new(this);	// 作成
+			}
+			
+			// 提供
+			return _page;	// インスタンス本体
+		}
+	}
+
 
 	/// <summary>
 	/// <para>含有Mapを有効状態へ近づける</para>
@@ -106,6 +169,7 @@ public class UIInputManager : ActionMapsManager<UIInputManager>
 	{
 		// 状態遷移
 		DropDown.TrendEnable();	// ドロップダウン入力の有効化
+		Page.TrendEnable();	// ページ入力の有効化
 	}
 
 
@@ -116,6 +180,7 @@ public class UIInputManager : ActionMapsManager<UIInputManager>
 	{
 		// 状態遷移
 		DropDown.TrendDisable();	// ドロップダウン入力の無効化
+		Page.TrendDisable();	// ページ入力の無効化
 	}
 
 

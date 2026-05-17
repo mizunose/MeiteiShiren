@@ -9,10 +9,10 @@
 =====*/
 
 // 名前空間宣言
-using System.Collections.Generic;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>ターン制攻撃</para>
 /// </summary>

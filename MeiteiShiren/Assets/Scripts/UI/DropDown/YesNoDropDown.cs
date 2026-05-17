@@ -1,5 +1,5 @@
 ﻿/*=====
-<DropDown.cs>
+<YesNoDropDown.cs>
 
 -author
 	mizunose
@@ -11,8 +11,10 @@
 // 名前空間宣言
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 // クラス定義
+
 /// <summary>
 /// <para>ドロップダウン式 Y/N ボタン</para>
 /// </summary>
@@ -21,8 +23,8 @@ public class YesNoDropDown : DropDown
 {
 	// 変数宣言
 	[Header("ステータス")]
-	[SerializeField, Tooltip("データ")] private NormalDropDownData _data;
-	private SelectableInformation[] _choices;
+	[SerializeField, Tooltip("データ")] private YesNoDropDownData _data;
+	private List<SelectableInformation> _choices;
 
 	// プロパティ定義
 
@@ -36,20 +38,23 @@ public class YesNoDropDown : DropDown
 	protected override DropDownData _Data => _data;
 
 	/// <value><see cref="_choices"/></value>
-	protected override SelectableInformation[] _Choices => _choices;
+	protected override List<SelectableInformation> _Choices => _choices;
 
 
 	/// <summary>
 	/// <para>初期化処理</para>
 	/// </summary>
-	protected override sealed void CustomAwake()
+	protected override void Awake()
 	{
 		// 初期化
 		YesEvent = ScriptableObject.CreateInstance<NoneArgumentEventData>();
 		NoEvent = ScriptableObject.CreateInstance<NoneArgumentEventData>();
-		_choices = new[]{
-			new SelectableInformation{text = "はい", event_data = YesEvent},	// はいの選択肢
-			new SelectableInformation{text = "いいえ", event_data = NoEvent},	// いいえの選択肢
-			};
+		_choices = new(){
+			new SelectableInformation{choise_value = new ChoiseUIValue{text = _data.YesText}, event_data = YesEvent},	// はいの選択肢
+			new SelectableInformation{choise_value = new ChoiseUIValue{text = _data.NoText}, event_data = NoEvent},	// いいえの選択肢
+		};
+
+		// 継承
+		base.Awake();	// 親関数の起動
 	}
 }

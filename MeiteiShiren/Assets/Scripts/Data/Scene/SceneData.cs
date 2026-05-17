@@ -12,24 +12,24 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>シーンデータ</para>
 /// </summary>
-[CreateAssetMenu(menuName = "Datas/" + _NAME, fileName = _NAME)]
-public class SceneData : ScriptableObject
+public class SceneData :  CreatableData
 {
 	// 定数定義
-	private const string _NAME = "Scene";	// タブ名称
-	
+#if UNITY_EDITOR
+	private const string _SCENE_NAME = "Scene";	// 自動生成された時のインスタンス名
+#endif	// end UNITY_EDITOR
+
 	// 変数宣言
 	[Header("ステータス")]
+	[SerializeField, Tooltip("シーン本体")] private Scene _scene_prefab;
 	[SerializeField, Tooltip("配置物")] private GameObject[] _setups;
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>配置物</para>
-	/// </summary>
 	/// <value><see cref="_setups"/></value>
 	public GameObject[] Setups => _setups;
 
@@ -38,10 +38,16 @@ public class SceneData : ScriptableObject
 	/// <para>シーンを構築</para>
 	/// </summary>
 	/// <returns>作成したシーン</returns>
-	public GameObject CreateScene()
+	public Scene CreateScene()
 	{
 		// 変数宣言
-		GameObject _scene = new GameObject();	// シーン本体
+		Scene _scene = Instantiate(_scene_prefab);	// シーン本体
+
+
+		// 初期化
+#if UNITY_EDITOR
+		_scene.name = _SCENE_NAME;	// 命名
+#endif	// end UNITY_EDITOR
 
 		// 配置
 		foreach (var setup in _setups)	// 配置物単位でのループ

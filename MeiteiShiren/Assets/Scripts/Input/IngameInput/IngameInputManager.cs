@@ -12,12 +12,14 @@
 using UnityEngine.InputSystem;
 
 // クラス定義
+
 /// <summary>
 /// <para>インゲーム画面での入力</para>
 /// </summary>
 public class IngameInputManager : ActionMapsManager<IngameInputManager>
 {
 	// クラス定義
+
 	/// <summary>
 	/// <para>プレイヤー入力管理</para>
 	/// </summary>
@@ -27,6 +29,7 @@ public class IngameInputManager : ActionMapsManager<IngameInputManager>
 		IngameInputManager _parent;	// 親クラスの実体
 		InputActionManager _move;	// 移動入力受付インスタンス
 		InputActionManager _attack;	// 攻撃入力受付インスタンス
+		InputActionManager _open_menu;	// メニュー展開入力受付インスタンス
 
 		// プロパティ定義
 	
@@ -39,6 +42,9 @@ public class IngameInputManager : ActionMapsManager<IngameInputManager>
 		/// <value><see cref="_attack"/></value>
 		public InputActionManager Attack => _attack;
 
+		/// <value><see cref="_open_menu"/></value>
+		public InputActionManager OpenMenu => _open_menu;
+
 
 		/// <summary>
 		/// <para>コンストラクタ</para>
@@ -50,14 +56,23 @@ public class IngameInputManager : ActionMapsManager<IngameInputManager>
 			_parent = parent;	// 親クラスのインスタンスを登録
 			_move = new InputActionManager(_parent.Maps.Player.Move);	// 移動入力受付を生成
 			_attack = new InputActionManager(_parent.Maps.Player.Attack);	// 攻撃入力受付を生成
+			_open_menu = new InputActionManager(_parent.Maps.Player.OpenMenu);	// メニュー展開入力受付を生成
 		}
 	}
+
+	// 定数定義
+	private const string _INSTANCE_NAME = "IngameInput";	// 自動生成された時のインスタンス名
 
 	// 変数宣言
 	private IngameInput _maps;	// 管理対象マップを所持するインスタンス
 	private IngamePlayerInput _player;	// プレイヤー入力の管理インスタンス
 
 	// プロパティ定義
+
+#if UNITY_EDITOR
+	/// <value><see cref="_INSTANCE_NAME"/></value>
+	protected override string InstanceName => _INSTANCE_NAME;
+#endif	// end UNITY_EDITOR
 
 	/// <value>有効状態管理対象</value>
 	protected override IInputActionCollection2 Target => _maps;

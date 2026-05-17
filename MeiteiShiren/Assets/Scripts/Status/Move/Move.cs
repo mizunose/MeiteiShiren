@@ -14,9 +14,11 @@ using System.Collections;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>移動</para>
 /// </summary>
+[DisallowMultipleComponent]
 public abstract class Move : MonoBehaviour
 {
 	// 構造体定義
@@ -26,15 +28,22 @@ public abstract class Move : MonoBehaviour
 	public struct SimulatedData
 	{
 		// 変数宣言
-		public Transform next_mass;	// 移動先のマス
+		public Mass next_mass;	// 移動先のマス
 		public float direction;	// 終了時点での向き
 	}
 
 	// 定数定義
 	protected const float _ROUND_DEGREE = 360.0f;	// 円の角度
+	protected static readonly SplitedDirections _movable_directions = new EightDirections();	// 移動可能な方向
 
 	// イベント定義
 	public event Action OnMoveStarted;	// 移動開始時のイベント
+	
+
+	// プロパティ定義
+
+	/// <value>データ</value>
+	protected abstract MoveData _Data{get;}
 
 
 	/// <summary>
@@ -84,9 +93,19 @@ public abstract class Move : MonoBehaviour
 			}
 		}
 
-		// 親の変更
-		transform.parent = data.next_mass;	// マスを移るため親を取り替える
-		
+		// マス移動
+		if (data.next_mass)	// ヌルチェック
+		{
+			if (_Data.PersistenceOnMass)
+			{
+				_current_mass.MoveCharacter(data.next_mass);	// マスを移る
+			}
+			else
+			{
+				transform.SetParent(data.next_mass.transform, false);
+			}
+		}
+
 		// イベント発行
 		if (_from != _at)	// 移動するとき
 		{
@@ -178,6 +197,6 @@ public abstract class Move : MonoBehaviour
 	protected bool IsMovable(Mass target)
 	{
 		// 提供
-		return target && target.transform.childCount == 0;	// 移動可否
+		return target && (_Data.PersistenceOnMass ? target.AboveCharacter == null : true);	// 移動可否	※残留性がある場合は残留枠も考慮
 	}
 }

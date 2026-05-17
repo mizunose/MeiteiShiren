@@ -15,9 +15,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // クラス定義
+
 /// <summary>
 /// <para>ワールド空間からテキスト表示する</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class WorldLabel : MonoBehaviour
 {
 	// 変数宣言
@@ -130,6 +132,17 @@ public class WorldLabel : MonoBehaviour
 		_target = target;	// 基準値設定
 		ResetPrintPosition();	// 表示位置更新
 		_text_label.text = text;	// テキスト表示変更
+	}
+
+
+	/// <summary>
+	/// <para>テキスト色変更</para>
+	/// </summary>
+	/// <param name="next_color">変更先</param>
+	public void SetTextColor(Color next_color)
+	{
+		//更新
+		_text_label.color = next_color;	// 設定色変更
 	}
 
 

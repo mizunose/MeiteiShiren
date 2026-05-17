@@ -27,3 +27,7 @@ MonoBehaviour:
   _room_sharpen_threshold: 2
   _make_entrance_threshold: 30
   _make_shop_threshold: 50
+  _min_set_items: 1
+  _margin_set_items: 5
+  _item_list:
+  - {fileID: -6601806260531083905, guid: d5f3ef7aca39ea7419008771ef6fca1b, type: 3}

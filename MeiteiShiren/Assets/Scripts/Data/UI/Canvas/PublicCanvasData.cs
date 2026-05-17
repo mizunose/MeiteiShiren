@@ -14,12 +14,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // クラス定義
-[CreateAssetMenu(menuName = _NAME, fileName = _NAME + "Data")]
-public class PublicCanvasData : ScriptableObject
-{
-	// 定数定義
-	protected const string _NAME = "PublicCanvas";	// アセット名
 
+/// <summary>
+/// <para>共有キャンバス</para>
+/// </summary>
+public class PublicCanvasData : CreatableData
+{
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("基準となるスクリーンサイズ")] private Vector2 _virtual_size = new Vector2(1920.0f, 1080.0f);
@@ -45,9 +45,9 @@ public class PublicCanvasData : ScriptableObject
 				_canvas_instance.additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord1;	// シェーダーセマンティクス：テクスチャ座標
 				_canvas_instance.additionalShaderChannels |= AdditionalCanvasShaderChannels.Normal;	// シェーダーセマンティクス：法線
 				_canvas_instance.additionalShaderChannels |= AdditionalCanvasShaderChannels.Tangent;	// シェーダーセマンティクス：接線
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 				_canvas_object.name = "PublicCanvas";	// デバッグ時にはわかりやすいように命名しておく
-			#endif	// end UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 				// 変数宣言
 				var _scaler = _canvas_instance.AddComponent<CanvasScaler>();	// UIのスケール制御

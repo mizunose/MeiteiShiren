@@ -12,44 +12,37 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>マップのプロパティ値</para>
 /// </summary>
-[CreateAssetMenu(menuName = Settings.SETTING_MENU_TAB_NAME + _NAME, fileName = _NAME)]
-public class MapSetting : ScriptableObject
+public class MapSetting : CreatableData
 {
-	// 定数定義
-	private const string _NAME = "MapSetting";	// タブ名称
-
 	// 変数宣言
 	[SerializeField, Tooltip("1マスあたりの大きさ")] private float _mass_size = 1.0f;
 	[SerializeField, Tooltip("ミニマップ表示透明度"), Range(0.0f, 1.0f)] private float _alpha = 0.21f;
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>マスの大きさ</para>
-	/// </summary>
 	/// <value><see cref="_mass_size"/></value>
-	public float MassSize
-	{
-		get
-		{
-			// 提供
-			return _mass_size;	// マスの大きさ
-		}
-	}
+	public float MassSize => _mass_size;
+
+	/// <value><see cref="_alpha"/></value>
+	public float Alpha => _alpha;
 
 	/// <summary>
-	/// <para>ミニマップ透明度</para>
+	/// <para>マスメッシュの頂点情報</para>
 	/// </summary>
-	/// <value><see cref="_alpha"/></value>
-	public float Alpha
+	public Vector3[] MassVertices
 	{
 		get
 		{
-			// 提供
-			return _alpha;	// ミニマップの透明度
+			return new []{
+				new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 左上
+				new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, Settings.Instance.Map.MassSize * 0.5f),	// 右上
+				new Vector3(-Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 左下
+				new Vector3(Settings.Instance.Map.MassSize * 0.5f, 0.0f, -Settings.Instance.Map.MassSize * 0.5f),	// 右下
+			};	// マスのサイズからローカル座標系におけるマスの頂点情報を算出
 		}
 	}
-}	
+}

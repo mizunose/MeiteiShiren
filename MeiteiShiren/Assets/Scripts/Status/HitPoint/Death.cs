@@ -12,9 +12,11 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>死亡</para>
 /// </summary>
+[RequireComponent(typeof(HitPoint)), DisallowMultipleComponent]
 public class Death : MonoBehaviour
 {
 	/// <summary>
@@ -26,16 +28,7 @@ public class Death : MonoBehaviour
 		HitPoint _hit_point = GetComponent<HitPoint>();	// 体力
 
 		// イベント接続
-		if (_hit_point) // ヌルチェック
-		{
-			_hit_point.OnDead += OnDead;	// 死亡時処理を接続
-		}
-#if UNITY_EDITOR
-		else
-		{
-			Debug.LogError("体力が存在しないため、死は機能しません");
-		}
-#endif	// end UNITY_EDITOR
+		_hit_point.OnDead += OnDead;	// 死亡時処理を接続
 	}
 
 

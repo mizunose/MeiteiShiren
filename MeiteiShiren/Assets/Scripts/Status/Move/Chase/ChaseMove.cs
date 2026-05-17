@@ -16,18 +16,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>入力移動</para>
 /// </summary>
 public class ChaseMove : Move
 {
-	// 定数定義
-	private const int _SPLIT_DIRECTION = 8; // 移動の方向候補数
-
 	// 変数宣言
 	[SerializeField, Tooltip("データ")] private ChaseData _data;
 	private Transform _chase_target;	// 追跡相手の姿勢
 	private Transform _room_out;	// 室内で目指す出口
+
+	// プロパティ定義
+
+	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
+	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+
+	/// <value><see cref="_data"/></value>
+	protected override MoveData _Data => _data;
 
 
 	/// <summary>
@@ -45,7 +51,7 @@ public class ChaseMove : Move
 		// 視界	//TODO:部屋にいるときは視界を部屋中に拡張
 		if (_room)	// 室内
 		{
-			for (int _idx = 0; _idx < _room.transform.childCount; _idx++)	// 部屋の持つオブジェクト単位でのループ
+			for (int _idx = 0; _idx < _room.transform.childCount; _idx++)	// 部屋の持つマス単位でのループ
 			{
 				// 追跡管理
 				ViewCheckChase(_room.transform.GetChild(_idx).GetComponent<Mass>());	// 視界内の追跡対象を捉える
@@ -56,7 +62,7 @@ public class ChaseMove : Move
 			for (int _y_idx = _current_mass_idx.y - _data.ViewRange; _y_idx < _current_mass_idx.y + _data.ViewRange + 1; _y_idx++)	// 行単位でのループ
 			{
 				// 保全
-				if (_y_idx < 0 || _y_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
+				if (_y_idx < 0 || _y_idx >= DungeonScene.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
 				{
 					continue;	// マスがないので処理できない
 				}
@@ -65,13 +71,13 @@ public class ChaseMove : Move
 				for (int _x_idx = _current_mass_idx.x - _data.ViewRange; _x_idx < _current_mass_idx.x + _data.ViewRange + 1; _x_idx++)	// マス単位でのループ
 				{
 					// 保全
-					if (_x_idx < 0 || _x_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
+					if (_x_idx < 0 || _x_idx >= DungeonScene.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
 					{
 						continue;	// マスがないので処理できない
 					}
 
 					// 追跡管理
-					ViewCheckChase(Dungeon.Instance.FloorData.MapData.Masses[_y_idx, _x_idx]);	// 視界内の追跡対象を捉える
+					ViewCheckChase(DungeonScene.FloorData.MapData.Masses[_y_idx, _x_idx]);	// 視界内の追跡対象を捉える
 				}
 			}
 		}
@@ -151,7 +157,7 @@ public class ChaseMove : Move
 			_result.next_mass = MoveOnRoom();	// 室内探索
 
 			// 終了
-			if(!_result.next_mass || _result.next_mass == transform)	// 異常値もしくは移動していない
+			if(!_result.next_mass || _result.next_mass == _current_mass.transform)	// 異常値もしくは移動していない
 			{
 				return (false, _result);	// 処理しない
 			}
@@ -231,23 +237,24 @@ public class ChaseMove : Move
 	/// <param name="goal">追跡対象</param>
 	/// <param name="is_ignore_actor">行動オブジェクトを無視して演算するか</param>
 	/// <returns>最適な一手の移動先。現時点では移動できず待機する場合は現地点を、そもそも移動経路が塞がれてしまった場合にはnullを返す。</returns>
-	private Transform MoveOnMapWithAStar(Transform goal, bool is_ignore_actor = true)
+	private Mass MoveOnMapWithAStar(Transform goal, bool is_ignore_actor = true)
 	{
 		// 定数定義
 		const int _SCORE_ERAGUER = -1;	// スコアの異常値(初期値)
 
 		// 変数宣言
-		Vector2Int _current_mass_idx = Map.PositionToMass(GetCurrentMass().transform.position);	// 現在マスの番号
+		Mass _current_mass = GetCurrentMass();
+		Vector2Int _current_mass_idx = Map.PositionToMass(_current_mass.transform.position);	// 現在マスの番号
 		Vector2Int _goal_idx = Map.PositionToMass(goal.position);	// 目標地点のマス番号
 
 		// 保全
 		if (_goal_idx == _current_mass_idx)	// すでに目標地点にいる
 		{
-			return transform;	// 移動せずとも目標地点である
+			return _current_mass;	// 移動せずとも目標地点である
 		}
 
 		// 変数宣言
-		(int score, List<Vector2Int> movables, Vector2Int shift_mass)[,] _nodes = new (int score, List<Vector2Int> movable, Vector2Int parent)[Dungeon.Instance.FloorData.MapData.Masses.GetLength(0), Dungeon.Instance.FloorData.MapData.Masses.GetLength(1)];	// A*処理用マス探索情報
+		(int score, List<Vector2Int> movables, Vector2Int shift_mass)[,] _nodes = new (int score, List<Vector2Int> movable, Vector2Int parent)[DungeonScene.FloorData.MapData.Masses.GetLength(0), DungeonScene.FloorData.MapData.Masses.GetLength(1)];	// A*処理用マス探索情報
 
 		// 初期化
 		for (int _y_idx = 0; _y_idx < _nodes.GetLength(0); _y_idx++)	// 行単位でのループ
@@ -318,7 +325,7 @@ public class ChaseMove : Move
 						}
 
 						// 変数宣言
-						Mass _node_mass = Dungeon.Instance.FloorData.MapData.Masses[_y_idx, _x_idx];	// 移動先マス
+						Mass _node_mass = DungeonScene.FloorData.MapData.Masses[_y_idx, _x_idx];	// 移動先マス
 
 						// 保全
 						if (_node_mass == null)	// 移動先がない
@@ -343,7 +350,7 @@ public class ChaseMove : Move
 							// 移動可否検査
 							for (int _idx = 0; _idx < _node_mass.transform.childCount; _idx++)	// マスの持つオブジェクト単位でのループ
 							{
-								if (!_node_mass.transform.GetChild(_idx).GetComponent<Camp>())	// アクターでない=障害物
+								if (false)	//TODO:静的障害物(壁や生成岩)の判定 (!_node_mass.transform.GetChild(_idx).GetComponent<Camp>())	// アクターでない=障害物
 								{
 									// 終了
 									_is_movable_without_actor = false;	// 移動できない
@@ -396,7 +403,7 @@ public class ChaseMove : Move
 		while (_nodes[_node_idx.y, _node_idx.x].shift_mass != Vector2Int.zero)	// 経路マス単位でのループ
 		{
 			// リスト更新
-			_route.Insert(0, Dungeon.Instance.FloorData.MapData.Masses[_node_idx.y, _node_idx.x]);	// 経路に登録
+			_route.Insert(0, DungeonScene.FloorData.MapData.Masses[_node_idx.y, _node_idx.x]);	// 経路に登録
 		
 			// 変数宣言
 			Vector2Int _next_idx = _node_idx - _nodes[_node_idx.y, _node_idx.x].shift_mass;	// 次の経路マス番号を算出
@@ -416,7 +423,7 @@ public class ChaseMove : Move
 		if (IsMovable(_route[0]))	// 実際の移動に影響はない
 		{
 			// 提供
-			return _route[0].transform;	// 移動先提供
+			return _route[0];	// 移動先提供
 		}
 		else	// 実際に移動できるわけではない
 		{
@@ -432,13 +439,13 @@ public class ChaseMove : Move
 					// 提供
 					if (_turned_next_mass)	// 迂回に成功
 					{
-						return _route[_idx].transform;	// 迂回路上の移動先
+						return _route[_idx];	// 迂回路上の移動先
 					}
 				}
 			}
 
 			// 提供
-			return transform;	// 待機するしかない
+			return _current_mass;	// 待機するしかない
 		}
 	}
 
@@ -447,7 +454,7 @@ public class ChaseMove : Move
 	/// <para>部屋探索処理</para>
 	/// </summary>
 	/// <returns>移動先</returns>
-	private Transform MoveOnRoom()
+	private Mass MoveOnRoom()
 	{
 		// 変数宣言
 		Mass _current_mass = GetCurrentMass();	// 現在マス
@@ -460,7 +467,7 @@ public class ChaseMove : Move
 			List<Transform> _gateways = new();	// 出口一覧
 
 			// 初期化
-			for (int _idx = 0; _idx < _room.transform.childCount; _idx++)	// 部屋の持つオブジェクト単位でのループ
+			for (int _idx = 0; _idx < _room.transform.childCount; _idx++)	// 部屋の持つマス単位でのループ
 			{
 				// 変数宣言
 				var _mass = _room.transform.GetChild(_idx).GetComponent<Mass>();	// 管理マス
@@ -478,7 +485,7 @@ public class ChaseMove : Move
 				for (int _y_idx = _arround_mass_idx.y - 1; _y_idx < _arround_mass_idx.y + 1 + 1; _y_idx++)	// 行単位でのループ
 				{
 					// 保全
-					if (_y_idx < 0 || _y_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
+					if (_y_idx < 0 || _y_idx >= DungeonScene.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
 					{
 						continue;	// マスがないので処理できない
 					}
@@ -487,13 +494,13 @@ public class ChaseMove : Move
 					for (int _x_idx = _arround_mass_idx.x - 1; _x_idx < _arround_mass_idx.x + 1 + 1; _x_idx++)	// マス単位でのループ
 					{
 						// 保全
-						if (_x_idx < 0 || _x_idx >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
+						if (_x_idx < 0 || _x_idx >= DungeonScene.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
 						{
 							continue;	// マスがないので処理できない
 						}
 
 						// 変数宣言
-						Mass _arround_mass = Dungeon.Instance.FloorData.MapData.Masses[_y_idx, _x_idx];	// マス番号からマス本体を取得
+						Mass _arround_mass = DungeonScene.FloorData.MapData.Masses[_y_idx, _x_idx];	// マス番号からマス本体を取得
 
 						// 検査
 						if (_arround_mass && _arround_mass.transform.parent != _room.transform)	// 室外のマス
@@ -504,7 +511,7 @@ public class ChaseMove : Move
 							// 通過性の検査
 							for (int _object_idx = 0; _object_idx < _arround_mass.transform.childCount; _object_idx++)	// マスの持つオブジェクト単位でのループ
 							{
-								if (!_arround_mass.transform.GetChild(_object_idx).GetComponent<Camp>())	// アクターでない=障害物
+								if (false)	//TODO:静的障害物(壁や生成岩)の判定 !_arround_mass.transform.GetChild(_object_idx).GetComponent<Camp>())	// アクターでない=障害物
 								{
 									_is_throughable = false;	// 通れない
 									break;	// 通過性の検査は完了したためこれ以上の処理は不要
@@ -550,11 +557,11 @@ public class ChaseMove : Move
 	/// <para>通路探索処理</para>
 	/// </summary>
 	/// <returns>移動先</returns>
-	private Transform MoveOnLoad()
+	private Mass MoveOnLoad()
 	{
 		// 変数宣言
 		Mass _current_mass = GetCurrentMass();	// 現在マス
-		Vector2 _shift = CalculateMoveDirection();	// 進行方向
+		Vector2 _shift = _movable_directions.CalculateSplitedDirectionInt(transform.eulerAngles.y);	// 進行方向;
 		Mass _next_mass = CalculateMovedMass(_shift);	// 進行先のマス
 
 		// 探索
@@ -601,58 +608,7 @@ public class ChaseMove : Move
 		}
 
 		// 提供
-		return _next_mass.transform;	// 移動先を確定
-	}
-
-
-	/// <summary>
-	/// <para>自身の向きを算出する</para>
-	/// </summary>
-	/// <returns>正面を示すベクトル</returns>
-	private Vector2 CalculateMoveDirection()
-	{
-		// 初期化
-		switch ((int)((transform.eulerAngles.y + _ROUND_DEGREE / _SPLIT_DIRECTION / 2) / (_ROUND_DEGREE / _SPLIT_DIRECTION)))	// 攻撃方向によって分岐
-		{
-			// 0 / 8
-			case 0:
-				return Vector2.up;	// 上
-
-			// 1 / 8
-			case 1:
-				return Vector2.one;	// 右上
-
-			// 2 / 8
-			case 2:
-				return Vector2.right;	// 右
-
-			// 3 / 8
-			case 3:
-				return new Vector2(1.0f, -1.0f);	// 右下
-
-			// 4 / 8
-			case 4:
-				return Vector2.down;	// 下
-
-			// 5 / 8
-			case 5:
-				return -Vector2.one;	// 左下
-
-			// 6 / 8
-			case 6:
-				return Vector2.left;	// 左
-
-			// 7 / 8
-			case 7:
-				return new Vector2(-1.0f, 1.0f);	// 左上
-
-			// その他
-			default:
-#if UNITY_EDITOR
-				Debug.LogError("移動方向に対応が定義されていません");
-#endif	// end UNITY_EDITOR
-				return Vector2.up;	// 仮データ
-		}
+		return _next_mass;	// 移動先を確定
 	}
 
 
@@ -676,17 +632,17 @@ public class ChaseMove : Move
 		Vector2Int _next_mass_idx = Map.PositionToMass(_world_moved);	// 移動先のワールド座標から該当マスの番号を取得
 
 		// 保全
-		if (_next_mass_idx.x < 0 || _next_mass_idx.x >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
+		if (_next_mass_idx.x < 0 || _next_mass_idx.x >= DungeonScene.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
 		{
 			_next_mass_idx.x = _current_mass_idx.x;	// 移動先として選択させない
 		}
-		if (_next_mass_idx.y < 0 ||_next_mass_idx.y >= Dungeon.Instance.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
+		if (_next_mass_idx.y < 0 ||_next_mass_idx.y >= DungeonScene.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
 		{
 			_next_mass_idx.y = _current_mass_idx.y;	// 移動先として選択させない
 		}
 
 		// 変数宣言
-		Mass _next_mass = Dungeon.Instance.FloorData.MapData.Masses[_next_mass_idx.y, _next_mass_idx.x];	// 移動先のマス番号からマス本体を取得
+		Mass _next_mass = DungeonScene.FloorData.MapData.Masses[_next_mass_idx.y, _next_mass_idx.x];	// 移動先のマス番号からマス本体を取得
 
 		// 移動可否検査
 		if(!IsMovable(_next_mass))	// 移動不可能
@@ -694,13 +650,13 @@ public class ChaseMove : Move
 			if (shift_mass.x != 0.0f && shift_mass.y != 0.0f) // 斜め移動で演算していた
 			{
 				// 更新
-				_next_mass = Dungeon.Instance.FloorData.MapData.Masses[_current_mass_idx.y, _next_mass_idx.x];	// x成分に沿った移動で再度試す
+				_next_mass = DungeonScene.FloorData.MapData.Masses[_current_mass_idx.y, _next_mass_idx.x];	// x成分に沿った移動で再度試す
 
 				// 検査
 				if (!IsMovable(_next_mass))	// x方向にも移動できない
 				{
 					// 更新
-					_next_mass = Dungeon.Instance.FloorData.MapData.Masses[_next_mass_idx.y, _current_mass_idx.x];	// y成分に沿った移動で再度試す
+					_next_mass = DungeonScene.FloorData.MapData.Masses[_next_mass_idx.y, _current_mass_idx.x];	// y成分に沿った移動で再度試す
 
 					// 検査
 					if (!IsMovable(_next_mass))	// y方向にも移動できない

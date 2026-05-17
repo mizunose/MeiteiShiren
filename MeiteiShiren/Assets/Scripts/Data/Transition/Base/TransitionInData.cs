@@ -1,7 +1,10 @@
 ﻿/*
 <TransitionInData.cs>
 
-- 内容
+-author
+	mizunose
+
+-about
 ・トランジションの抜け部のデータ
 */
 
@@ -10,15 +13,12 @@ using UnityEngine;
 using System.Collections;
 
 // クラス定義
+
 /// <summary>
 /// <para>トランジション抜け部データ</para>
 /// </summary>
-//[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
 public abstract class TransitionInData : TransitionData
 {
-	// 定数定義
-	protected const string _MENU_TAB_NAME = TRANSITION_MENU_TAB_NAME + "In/";	// アセットメニュー名
-
 	// 変数宣言
 	[SerializeField, Tooltip("かける時間")] private float _transition_time = 1.0f;
 

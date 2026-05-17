@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
 // クラス定義
+
 /// <summary>
 /// <para>入力インスタンスの管理</para>
 /// </summary>
@@ -25,7 +26,7 @@ public class InputActionManager
 
 	// プロパティ定義
 
-	/// <value>_base_one</value>
+	/// <value><see cref="_base_one"/></value>
 	public InputAction BaseOne => _base_one;
 
 

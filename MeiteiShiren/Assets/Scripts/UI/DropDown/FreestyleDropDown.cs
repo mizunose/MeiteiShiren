@@ -11,8 +11,10 @@
 // 名前空間宣言
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 // クラス定義
+
 /// <summary>
 /// <para>自由形式ドロップダウン</para>
 /// </summary>
@@ -29,5 +31,5 @@ public class FreeStyleDropDown : DropDown
 	protected override DropDownData _Data => _data;
 
 	/// <value><see cref="_choices"/></value>
-	protected override SelectableInformation[] _Choices => _data.Choices;
+	protected override List<SelectableInformation> _Choices => _data.Choices;
 }

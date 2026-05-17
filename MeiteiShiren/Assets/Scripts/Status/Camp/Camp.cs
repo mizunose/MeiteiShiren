@@ -12,6 +12,7 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>飢え</para>
 /// </summary>
@@ -22,9 +23,6 @@ public class Camp : MonoBehaviour
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>陣営の種類</para>
-	/// </summary>
 	/// <value>所属陣営</value>
 	public CampData.CampType Type => _data.Type;
 }

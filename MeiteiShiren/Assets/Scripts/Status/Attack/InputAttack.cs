@@ -11,10 +11,9 @@
 // 名前空間宣言
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>入力攻撃</para>
 /// </summary>

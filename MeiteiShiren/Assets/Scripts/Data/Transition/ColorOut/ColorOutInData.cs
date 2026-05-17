@@ -12,12 +12,12 @@
 using UnityEngine;
 
 // クラス定義
-[CreateAssetMenu(menuName = _MENU_TAB_NAME + _NAME, fileName = _NAME)]
+
+/// <summary>
+/// <para>全面塗りつぶしフェードイン</para>
+/// </summary>
 public class ColorOutInData : TransitionInData
 {
-	// 定数定義
-	private const string _NAME = "ColorOutIn";	// アセット名
-
 	// 変数宣言
 	[SerializeField, Tooltip("プロパティデータ")] protected ColorOutPropertiesData _properties_data;
 

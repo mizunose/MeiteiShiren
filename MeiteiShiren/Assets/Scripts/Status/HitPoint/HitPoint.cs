@@ -13,9 +13,11 @@ using System;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>体力</para>
 /// </summary>
+[DisallowMultipleComponent]
 public class HitPoint : MonoBehaviour
 {
 	// イベント定義
@@ -33,10 +35,7 @@ public class HitPoint : MonoBehaviour
 
 	// プロパティ定義
 
-	/// <summary>
-	/// <para>最大HP</para>
-	/// </summary>
-	/// <value><see cref="_max_hp"/></value>
+	/// <value>最大HP</value>
 	public int MaxHP
 	{
 		get
@@ -78,11 +77,8 @@ public class HitPoint : MonoBehaviour
 			}
 		}
 	}
-	
-	/// <summary>
-	/// <para>残りHP</para>
-	/// </summary>
-	/// <value>最大HPから減少値を除いたもの</value>
+
+	/// <value>残りHP</value>
 	public int HP
 	{
 		get
@@ -129,16 +125,6 @@ public class HitPoint : MonoBehaviour
 		}
 	}
 
-	/// <summary>
-	/// <para>体力データ</para>
-	/// </summary>
 	/// <value><see cref="_data"/></value>
-	public HitPointData Data
-	{
-		get
-		{
-			// 提供
-			return _data;	// データ
-		}
-	}
+	public HitPointData Data => _data;
 }

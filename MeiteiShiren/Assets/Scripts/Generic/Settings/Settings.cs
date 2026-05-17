@@ -17,14 +17,14 @@
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>プロパティ値</para>
 /// </summary>
 public class Settings : MonoSingleton<Settings>
-{	
+{
 	// 定数定義
-	public const string SETTING_MENU_TAB_NAME = "Settings/";	// プロパティメニュータブ名
-	public const string STATUS_MENU_TAB_NAME = "Status/";	// ステータスメニュータブ名
+	private const string _INSTANCE_NAME = "Settings";	// 自動生成された時のインスタンス名
 
 	// 変数宣言
 	[Header("ダンジョン")]
@@ -34,6 +34,11 @@ public class Settings : MonoSingleton<Settings>
 	[SerializeField, Tooltip("ワールド空間ラベルのプロパティ")] private WorldLabelSetting _world_label_setting;
 
 	// プロパティ定義
+
+#if UNITY_EDITOR
+	/// <value><see cref="_INSTANCE_NAME"/></value>
+	protected override string InstanceName => _INSTANCE_NAME;
+#endif	// !UNITY_EDITOR
 
 	/// <summary>
 	/// <para>マップのプロパティ</para>

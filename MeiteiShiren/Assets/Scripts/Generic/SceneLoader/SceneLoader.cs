@@ -14,20 +14,31 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // クラス定義
+
 /// <summary>
 /// <para>シーン切替</para>
 /// </summary>
 public class SceneLoader : MonoSingleton<SceneLoader>
 {
+	// 定数定義
+#if UNITY_EDITOR
+	private const string _INSTANCE_NAME = "SceneLoader";	// 自動生成された時のインスタンス名
+#endif	// end UNITY_EDITOR
+
 	// 変数宣言
 	[SerializeField, Tooltip("データ")]private SceneLoaderData _data = null;
-	private GameObject _current_scene = null;	// 現在のシーン
-	private List<GameObject> _breadcrumb_list = new();	// 保留シーンのパンくずリスト
+	private Scene _current_scene = null;	// 現在のシーン
+	private List<Scene> _breadcrumb_list = new();	// 保留シーンのパンくずリスト
 
 	// プロパティ定義
 
+	#if UNITY_EDITOR
+/// <value><see cref="_INSTANCE_NAME"/></value>
+	protected override string InstanceName => _INSTANCE_NAME;
+#endif	// end UNITY_EDITOR
+
 	/// <value><see cref="_current_scene"/></value>
-	public GameObject CurrentScene => _current_scene;
+	public Scene CurrentScene => _current_scene;
 
 
 	/// <summary>
@@ -177,16 +188,16 @@ public class SceneLoader : MonoSingleton<SceneLoader>
 		// 保全
 		if (_breadcrumb_list.Count < 1)	// 戻るシーンがない
 		{
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			Debug.LogError("展開されていない状態でシーンが閉じられています");
-			#endif	// end UNITY_EDITOR
+#endif	// end UNITY_EDITOR
 
 			// 終了
 			yield break;	// 処理できないので中断する
 		}
 
 		// 変数宣言
-		GameObject _back_scene = _breadcrumb_list[_breadcrumb_list.Count - 1];	// シーン展開前のシーンを取得
+		Scene _back_scene = _breadcrumb_list[_breadcrumb_list.Count - 1];	// シーン展開前のシーンを取得
 
 		//TODO:新旧シーンを止めておく
 		
