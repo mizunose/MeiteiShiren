@@ -11,6 +11,7 @@
 // 名前空間宣言
 using UnityEngine;
 using UnityEngine.TextCore.Text;
+using static UnityEditor.Progress;
 
 // クラス定義
 
@@ -121,7 +122,7 @@ public class Mass : VirtualizeMono
 	private void TurnedAction()
 	{
 		// アイテム回収
-		if (_character_inventory != null && _above_item != null)	// インベントリを持っていて、アイテムを受け取れる
+		if (_character_inventory != null && _above_item != null && !_above_character.IsTargeted)	// インベントリを持っていて、アイテムを受け取れ、まだ処理していない
 		{
 			if (_character_inventory.AddItem(_above_item.Instance))	// インベントリに登録
 			{
@@ -159,6 +160,7 @@ public class Mass : VirtualizeMono
 		// アイテム受理
 		_above_item = new (item);	// アイテム登録
 		item.transform.SetParent(transform, false);	// 自身の子に登録
+		item.transform.localPosition = Vector3.zero;	// マスの中心へ配置
 
 		// 提供
 		return true;	// 処理成功

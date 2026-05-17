@@ -16,7 +16,7 @@ MonoBehaviour:
   _affects:
     _affects:
     - {fileID: 11400000, guid: 798b00d18dd1e7d43a37f543ae96ab05, type: 2}
-  _reusability: 1
+  _reusability: 0
   _description: "\u4E00\u76F4\u7DDA\u306B\u7A81\u6483\uFF01"
   _icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  _is_penetrating: 0
+  _is_penetrating: 1

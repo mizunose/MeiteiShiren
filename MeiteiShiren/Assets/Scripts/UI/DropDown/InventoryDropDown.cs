@@ -118,7 +118,7 @@ public class InventoryDropDown : DropDown
 		};	// アイテム使用処理を設定
 		_sub_ui.DisposeEvent.signal += () =>{
 			// アイテム廃棄
-			Debug.Log("アイテムを落とす");	//TODO:PlayableInventory側でマスを取得しドロップ処理 をさせるイベント発行？
+			_data.ItemsData.Drop(_item);
 			//TODO:もし周囲が埋まっていたら失敗表示、成功したらターンを進める
 		};	// アイテム廃棄処理を設定
 

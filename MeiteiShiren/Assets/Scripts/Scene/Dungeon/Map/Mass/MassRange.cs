@@ -15,6 +15,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 // クラス定義
 
@@ -305,6 +306,173 @@ public class MassRange : CreatableData
 				return null;	// データは無いものとして扱える
 			}
 		}
+	}
+
+
+	/// <summary>
+	/// <para>相対範囲を絶対範囲に変換</para>
+	/// </summary>
+	/// <param name="base_idx">基準マスの番号</param>
+	/// <param name="direction">回転方向</param>
+	/// <returns>変換後のマス情報</returns>
+	public List<Mass> CalculateAroundTarget(in Mass base_mass, in Vector2Int direction, Mass[,] masses_map)
+	{
+		// 変数宣言
+		List<Mass> target_masses = new();	// 範囲格納場所
+		Vector2Int _base_idx = Map.PositionToMass(base_mass.transform.position);	// 基準マスの番号
+
+
+		// 初期化
+		switch (_type)	// 範囲の定義によって分岐
+		{
+			// 限定範囲
+			case RangeType.RANGED:
+			{
+				// 走査
+				foreach (Vector2Int _shift in Range)	// マス単位でのループ
+				{
+					// 変数宣言
+					Vector2Int _target_idx = _base_idx + new Vector2Int(
+						_shift.x * direction.y + _shift.y * direction.x,
+						_shift.y * direction.y - _shift.x * direction.x
+						);	// 対象マスの番号	※鉛直上向きを基準に範囲を回転させている
+
+					// 保全
+					if (_target_idx.x < 0 || _target_idx.x >= masses_map.GetLength(1)
+						|| _target_idx.y < 0 || _target_idx.y >= masses_map.GetLength(0))	// マップ外のマス
+					{
+						continue;	// マスとして処理できないので次の処理へ移る
+					}
+
+					// 変数宣言
+					Mass _target_mass = masses_map[_target_idx.y, _target_idx.x];	// 対象となるマス本体を取得
+
+					// 保全
+					if (!_target_mass)	// ヌルチェック
+					{
+						continue;	// マスが存在しないので次の処理へ移る
+					}
+
+					// リスト更新
+					target_masses.Add(_target_mass);	// 効果範囲に登録
+				}
+
+				// 終了
+				break;	// 分岐処理完了
+			}
+
+			// 直線範囲
+			case RangeType.FRONT_LINE:
+			{
+				// 変数宣言
+				Vector2Int _target_idx = _base_idx;	// 対象マスの番号
+
+				// 線上走査
+				while (true)	// マス単位でのループ
+				{
+					// 更新
+					_target_idx += direction;	// 移動して走査
+
+					// 終了条件
+					if (_target_idx.x < 0 || _target_idx.x >= masses_map.GetLength(1)
+						|| _target_idx.y < 0 || _target_idx.y >= masses_map.GetLength(0))	// マップ外のマス
+					{
+						break;	// マップ外へ進出させない
+					}
+
+					// 変数宣言
+					Mass _target_mass = masses_map[_target_idx.y, _target_idx.x];	// 対象となるマス本体を取得
+
+					// 終了条件
+					if (!_target_mass)	// ヌルチェック
+					{
+						break;	// マスが存在しないので打ち止めにする
+					}
+					//TODO:壁で妨害されていて先に届かない
+
+					// リスト更新
+					target_masses.Add(_target_mass);	// 効果範囲に登録
+				}
+
+				// 終了
+				break;	// 分岐処理完了
+			}
+
+			// 部屋全体
+			case RangeType.ROOM:
+			{
+				// 変数宣言
+				Room _base_room = null;	// 基準位置のある部屋
+
+				// 初期化
+				if (base_mass.transform.parent)	// ヌルチェック
+				{
+					_base_room = base_mass.transform.parent.GetComponent<Room>();	// 基準マスから部屋を取得
+				}
+
+				// 処理分岐
+				if (_base_room)	// ヌルチェック
+				{
+					// リスト更新
+					foreach (Mass _target_mass in _base_room.GetComponentsInChildren<Mass>())	// 部屋に含まれるマス単位でのループ
+					{
+						target_masses.Add(_target_mass);	// 効果範囲に登録
+					}
+				}
+				else	// 部屋に対する行動ができない
+				{
+					// 変数宣言
+					Vector2Int _target_idx = _base_idx + direction;	// 対象マスの番号
+
+					// 保全
+					if (_target_idx.x < 0 || _target_idx.x >= masses_map.GetLength(1)
+						|| _target_idx.y < 0 || _target_idx.y >= masses_map.GetLength(0))	// マップ外のマス
+					{
+						break;	// マップ外へ進出させない
+					}
+
+					// 変数宣言
+					Mass _target_mass = masses_map[_target_idx.y, _target_idx.x];	// 対象となるマス本体を取得
+		
+					// リスト更新
+					if (_target_mass)	// ヌルチェック
+					{
+						target_masses.Add(_target_mass);	// 効果範囲に登録
+					}
+				}
+
+				// 終了
+				break;	// 分岐処理完了
+			}
+
+			// マップ全体
+			case RangeType.WORLD:
+			{
+				// 攻撃処理
+				foreach (Mass _mass in masses_map)	// マス単位でのループ
+				{
+					// 保全
+					if (!_mass)	// ヌルチェック
+					{
+						continue;	// マスが存在しないので処理できない
+					}
+					
+					// リスト更新
+					target_masses.Add(_mass);	// 効果範囲に登録
+				}
+
+				// 終了
+				break;	// 分岐処理完了
+			}
+
+			// その他
+			default:
+				Debug.LogError("対応の定義されていない範囲が使用されています");
+				break;	// 分岐処理完了
+		}
+
+		// 提供
+		return target_masses;	// 範囲該当マス
 	}
 
 

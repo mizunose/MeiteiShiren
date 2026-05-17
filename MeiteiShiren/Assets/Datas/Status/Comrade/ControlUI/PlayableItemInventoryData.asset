@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fee907811454e6548b11196c2af549fe, type: 3}
   m_Name: PlayableItemInventoryData
   m_EditorClassIdentifier: 
+  _drop_range: {fileID: 11400000, guid: 4563b3623744c7643a994587f9f5d888, type: 2}
