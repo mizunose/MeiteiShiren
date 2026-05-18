@@ -13,4 +13,13 @@ MonoBehaviour:
   m_Name: ItemDropRange
   m_EditorClassIdentifier: 
   _type: 0
-  _range: []
+  _range:
+  - {x: 0, y: 0}
+  - {x: -1, y: 1}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
+  - {x: -1, y: 0}
+  - {x: 1, y: 0}
+  - {x: -1, y: -1}
+  - {x: 0, y: -1}
+  - {x: 1, y: -1}
