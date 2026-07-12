@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WorldLabelSetting
   m_EditorClassIdentifier: 
   _font: {fileID: 11400000, guid: 5fe5ea824e418554dba99883d46597f0, type: 2}
-  _font_size: 36
+  _font_size: 72
   _default_shift: {x: 0, y: 15, z: 0}
   _print_time: 0.2
   _amplitude: 0
