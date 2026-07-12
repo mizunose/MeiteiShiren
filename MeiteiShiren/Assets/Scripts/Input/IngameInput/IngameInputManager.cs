@@ -29,7 +29,11 @@ public class IngameInputManager : ActionMapsManager<IngameInputManager>
 		IngameInputManager _parent;	// 親クラスの実体
 		InputActionManager _move;	// 移動入力受付インスタンス
 		InputActionManager _attack;	// 攻撃入力受付インスタンス
+		InputActionManager _skill;	// スキル入力受付インスタンス
+		InputActionManager _straight_dush;	// 直線ダッシュ入力受付インスタンス
+		InputActionManager _item_search_dush;	// アイテム回収ダッシュ入力受付インスタンス
 		InputActionManager _open_menu;	// メニュー展開入力受付インスタンス
+		InputActionManager _open_map;	// マップ展開入力受付インスタンス
 
 		// プロパティ定義
 	
@@ -42,8 +46,20 @@ public class IngameInputManager : ActionMapsManager<IngameInputManager>
 		/// <value><see cref="_attack"/></value>
 		public InputActionManager Attack => _attack;
 
+		/// <value><see cref="_skill"/></value>
+		public InputActionManager Skill => _skill;
+
+		/// <value><see cref="_straight_dush"/></value>
+		public InputActionManager StraightDush => _straight_dush;
+
+		/// <value><see cref="_item_search_dush"/></value>
+		public InputActionManager ItemSearchDush => _item_search_dush;
+
 		/// <value><see cref="_open_menu"/></value>
 		public InputActionManager OpenMenu => _open_menu;
+
+		/// <value><see cref="_open_map"/></value>
+		public InputActionManager OpenMap => _open_map;
 
 
 		/// <summary>
@@ -56,7 +72,11 @@ public class IngameInputManager : ActionMapsManager<IngameInputManager>
 			_parent = parent;	// 親クラスのインスタンスを登録
 			_move = new InputActionManager(_parent.Maps.Player.Move);	// 移動入力受付を生成
 			_attack = new InputActionManager(_parent.Maps.Player.Attack);	// 攻撃入力受付を生成
+			_skill = new InputActionManager(_parent.Maps.Player.Skill);	// スキル入力受付を生成
+			_straight_dush = new InputActionManager(_parent.Maps.Player.StraightDush);	// 直線ダッシュ入力入力受付を生成
+			_item_search_dush = new InputActionManager(_parent.Maps.Player.ItemSearchDush);	// アイテム回収ダッシュ入力受付を生成
 			_open_menu = new InputActionManager(_parent.Maps.Player.OpenMenu);	// メニュー展開入力受付を生成
+			_open_map = new InputActionManager(_parent.Maps.Player.OpenMap);	// マップ展開入力受付を生成
 		}
 	}
 

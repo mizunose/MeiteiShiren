@@ -25,12 +25,48 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Skill",
+                    "type": "Button",
+                    "id": "1478bd3a-81c8-4699-a697-1f5ed26aafa9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "StraightDush",
+                    "type": "Button",
+                    "id": "b539551e-1233-4ee0-8877-e8d1b3b2d7c1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ItemSearchDush",
+                    "type": "Button",
+                    "id": "24f0c788-f11b-4920-b4df-b622b7dd9e9b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "OpenMenu",
                     "type": "Button",
                     "id": "9d079580-12ea-48ed-9e31-8a607e49753c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "Press(behavior=1)",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "OpenMap",
+                    "type": "Button",
+                    "id": "a9865836-e35b-4e0e-8cb4-ec5e42fd430e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
                     "initialStateCheck": false
                 }
             ],
@@ -49,7 +85,7 @@
                 {
                     "name": "up",
                     "id": "6aac3e07-e808-4a85-b474-3fb9bfe3f23a",
-                    "path": "<Keyboard>/w",
+                    "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -60,7 +96,7 @@
                 {
                     "name": "left",
                     "id": "990ba1a1-4470-492c-b0df-694aba631406",
-                    "path": "<Keyboard>/a",
+                    "path": "<Keyboard>/leftArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -71,7 +107,7 @@
                 {
                     "name": "down",
                     "id": "3ae1ab50-357c-43d0-8491-32e1c249f4da",
-                    "path": "<Keyboard>/s",
+                    "path": "<Keyboard>/downArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -82,7 +118,7 @@
                 {
                     "name": "right",
                     "id": "e54e46a6-ae3a-4909-a2a0-05611665b503",
-                    "path": "<Keyboard>/d",
+                    "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -111,126 +147,50 @@
                     "action": "OpenMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Pause",
-            "id": "5346d9dd-974e-4392-8052-9eb7a63d450f",
-            "actions": [
-                {
-                    "name": "fire",
-                    "type": "Button",
-                    "id": "6030c6ba-be4e-46a2-afeb-8af4a8fd2894",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
+                },
                 {
                     "name": "",
-                    "id": "a660942f-7101-42a9-83a1-77728e4643bb",
-                    "path": "<Keyboard>/2",
-                    "interactions": "Press(behavior=1)",
+                    "id": "c5387b30-fd16-43ab-9d82-8d42e7dea37b",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "fire",
+                    "action": "StraightDush",
                     "isComposite": false,
                     "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "UI",
-            "id": "17642d4e-14d2-4114-b7ee-5a507ed178ef",
-            "actions": [
-                {
-                    "name": "fire",
-                    "type": "Button",
-                    "id": "a9a5020d-5b43-48c5-a83f-d34a4094777d",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 },
-                {
-                    "name": "Cursor",
-                    "type": "Value",
-                    "id": "6d00e010-b43c-4a87-b017-8a1aba277bda",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                }
-            ],
-            "bindings": [
                 {
                     "name": "",
-                    "id": "a7533cd4-7b2e-4fb0-93ab-9160a3d7b92d",
-                    "path": "<Keyboard>/3",
-                    "interactions": "Press(behavior=1)",
+                    "id": "7130028d-34bf-4131-bcee-349133cc8d1c",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "fire",
+                    "action": "ItemSearchDush",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "2D Vector",
-                    "id": "a37e1b9b-69c9-4b4b-ac4a-31b630673031",
-                    "path": "2DVector",
+                    "name": "",
+                    "id": "6eb6a79b-a633-4287-9619-fa03ceb703c8",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Cursor",
-                    "isComposite": true,
+                    "action": "Skill",
+                    "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "up",
-                    "id": "b841fdf3-c238-4006-aea6-781b26268f71",
-                    "path": "<Gamepad>/dpad/up",
+                    "name": "",
+                    "id": "c62686ec-096a-4907-8b05-db8d06cd43fa",
+                    "path": "<Keyboard>/m",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Cursor",
+                    "action": "OpenMap",
                     "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "850b64d5-e970-492b-b5b3-29495f056d89",
-                    "path": "<Gamepad>/dpad/down",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Cursor",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "left",
-                    "id": "02356d85-f537-41a0-ba57-539874a0ae60",
-                    "path": "<Gamepad>/dpad/left",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Cursor",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "right",
-                    "id": "87f7b36f-7927-40b0-93ac-b36237fd7711",
-                    "path": "<Gamepad>/dpad/right",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Cursor",
-                    "isComposite": false,
-                    "isPartOfComposite": true
+                    "isPartOfComposite": false
                 }
             ]
         }
