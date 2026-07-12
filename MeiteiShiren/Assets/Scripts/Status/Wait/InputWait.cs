@@ -76,7 +76,10 @@ public class InputWait : Wait
 	/// </summary>
 	private void EndWaitLoop()
 	{
-		_DungeonScene.TurnFlow.OnTurnChanged -= AutoWaitLoop;	// ループ呼び出し解除
+		if (SceneLoader.NullCheck && _DungeonScene)	// ヌルチェック
+		{
+			_DungeonScene.TurnFlow.OnTurnChanged -= AutoWaitLoop;	// ループ呼び出し解除
+		}
 		_temporal_input.Disable();	// 待機を終えるため無効化制御の抵抗を止める
 	}
 
