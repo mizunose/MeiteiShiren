@@ -55,6 +55,12 @@ public class Dungeon : Scene
 	/// <value>現階層のデータ</value>
 	public DungeonData.FloorData FloorData => _data.FloorDatas[_floor_idx];
 
+	/// <summary>
+	/// <para>ターン管理データ</para>
+	/// </summary>
+	/// <value>ターン管理のデータ</value>
+	public DungeonTurnStateData TurnData => _data.TurnData;
+
 
 	/// <summary>
 	/// <para>初期化処理</para>
@@ -118,7 +124,7 @@ public class Dungeon : Scene
 		}
 
 		// 階層クリア
-		Destroy(TurnFlow.gameObject);
+		Destroy(TurnFlow.gameObject);	// ターン管理を破棄
 		Destroy(Map.gameObject);	// 現階層のマップを破棄
 		Destroy(_enemy_spawner.gameObject);	// 現階層の敵生成を破棄
 
