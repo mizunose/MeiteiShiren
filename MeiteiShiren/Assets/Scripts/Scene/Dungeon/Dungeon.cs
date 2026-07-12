@@ -61,34 +61,13 @@ public class Dungeon : Scene
 	/// </summary>
 	private void Start()
 	{
-		// 初期化
-		if(_data)	// ヌルチェック
-		{
-			if (_data.Player)	// ヌルチェック
-			{
-				Player = Instantiate(_data.Player);	// プレイヤー生成
-			}
-#if UNITY_EDITOR
-			else
-			{
-				Debug.LogError("生成プレイヤーの情報が設定されていません");
-			}
-#endif	// end UNITY_EDITOR
-		}
-#if UNITY_EDITOR
-		else
-		{
-			Debug.LogError("ダンジョンデータが不足しています");
-		}
-#endif	// end UNITY_EDITOR
+		// 変数宣言
+		var _character_camera = Instantiate(_data.TrackerVirtualCamera);	// カメラ生成
 
-#if UNITY_EDITOR
-		// 保全
-		if (Map)	// ヌルチェック
-		{
-			Debug.LogError("異常なマップ機能が存在しています");
-		}
-#endif	// end UNITY_EDITOR
+		// 初期化
+		Player = Instantiate(_data.Player);	// プレイヤー生成
+		_character_camera.Follow = Player.transform;	// プレイヤーの位置を追跡させる
+		_character_camera.LookAt = Player.transform;	// プレイヤーの位置に向ける
 
 		// 階層生成
 		CreateFloor();	// 階層情報の初期化
