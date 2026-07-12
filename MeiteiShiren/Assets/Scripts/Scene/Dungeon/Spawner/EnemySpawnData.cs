@@ -27,7 +27,7 @@ public class EnemySpawnData : CreatableData
 	// プロパティ定義
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	private Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 
 	/// <summary>
@@ -53,7 +53,7 @@ public class EnemySpawnData : CreatableData
 		}
 
 		// 変数宣言
-		var _masses = DungeonScene.FloorData.MapData.MainContact.GetComponentsInChildren<Mass>();	// 主連続領域のマス
+		var _masses = _DungeonScene.FloorData.MapData.MainContact.GetComponentsInChildren<Mass>();	// 主連続領域のマス
 		List<Mass> _spawnable_masses = new();	// 生成位置の候補一覧
 
 		// 初期化
@@ -82,6 +82,6 @@ public class EnemySpawnData : CreatableData
 		_spawned.Add(_enemy);	// 生成物を監視
 
 		// ターン制に紐づけ
-		DungeonScene.TurnFlow.AddActor(_enemy);	// 行動をターン管理に任せる
+		_DungeonScene.TurnFlow.AddActor(_enemy);	// 行動をターン管理に任せる
 	}
 }

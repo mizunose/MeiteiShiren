@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: WorldLabelSetting
   m_EditorClassIdentifier: 
   _font: {fileID: 11400000, guid: 5fe5ea824e418554dba99883d46597f0, type: 2}
-  _font_size: 36
+  _font_size: 72
   _default_shift: {x: 0, y: 15, z: 0}
-  _print_time: 1.5
+  _print_time: 0.2
   _amplitude: 0
   _frequency: 0
   _disappear_time: 1
-  _rise_spead: 10
+  _rise_spead: 100
   _damage_color: {r: 0.690566, g: 0.16547522, b: 0.21921939, a: 1}
   _heal_color: {r: 0.24835174, g: 0.87169814, b: 0.6722642, a: 1}

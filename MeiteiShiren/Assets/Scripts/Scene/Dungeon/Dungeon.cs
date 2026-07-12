@@ -55,40 +55,25 @@ public class Dungeon : Scene
 	/// <value>現階層のデータ</value>
 	public DungeonData.FloorData FloorData => _data.FloorDatas[_floor_idx];
 
+	/// <summary>
+	/// <para>ターン管理データ</para>
+	/// </summary>
+	/// <value>ターン管理のデータ</value>
+	public DungeonTurnStateData TurnData => _data.TurnData;
+
 
 	/// <summary>
 	/// <para>初期化処理</para>
 	/// </summary>
 	private void Start()
 	{
-		// 初期化
-		if(_data)	// ヌルチェック
-		{
-			if (_data.Player)	// ヌルチェック
-			{
-				Player = Instantiate(_data.Player);	// プレイヤー生成
-			}
-#if UNITY_EDITOR
-			else
-			{
-				Debug.LogError("生成プレイヤーの情報が設定されていません");
-			}
-#endif	// end UNITY_EDITOR
-		}
-#if UNITY_EDITOR
-		else
-		{
-			Debug.LogError("ダンジョンデータが不足しています");
-		}
-#endif	// end UNITY_EDITOR
+		// 変数宣言
+		var _character_camera = Instantiate(_data.TrackerVirtualCamera, SceneLoader.Instance.CurrentScene.transform);	// カメラ生成
 
-#if UNITY_EDITOR
-		// 保全
-		if (Map)	// ヌルチェック
-		{
-			Debug.LogError("異常なマップ機能が存在しています");
-		}
-#endif	// end UNITY_EDITOR
+		// 初期化
+		Player = Instantiate(_data.Player);	// プレイヤー生成
+		_character_camera.Follow = Player.transform;	// プレイヤーの位置を追跡させる
+		_character_camera.LookAt = Player.transform;	// プレイヤーの位置に向ける
 
 		// 階層生成
 		CreateFloor();	// 階層情報の初期化
@@ -139,7 +124,7 @@ public class Dungeon : Scene
 		}
 
 		// 階層クリア
-		Destroy(TurnFlow.gameObject);
+		Destroy(TurnFlow.gameObject);	// ターン管理を破棄
 		Destroy(Map.gameObject);	// 現階層のマップを破棄
 		Destroy(_enemy_spawner.gameObject);	// 現階層の敵生成を破棄
 

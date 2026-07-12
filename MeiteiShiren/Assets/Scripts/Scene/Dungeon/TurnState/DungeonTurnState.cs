@@ -43,7 +43,7 @@ public class DungeonTurnState : MonoBehaviour
 		public bool Chance { get; set; } = false;
 
 		/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-		private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+		private Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 
 		/// <summary>
@@ -52,7 +52,7 @@ public class DungeonTurnState : MonoBehaviour
 		private void Start()
 		{
 			// イベント接続
-			DungeonScene.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン変更時処理を接続
+			_DungeonScene.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン変更時処理を接続
 		}
 
 		/// <summary>
@@ -71,11 +71,17 @@ public class DungeonTurnState : MonoBehaviour
 
 	// 変数宣言
 	private List<Actionable> _actors = new();	// 行動するオブジェクト一覧
+	private int _limit_turn_idx = -1;	// ターン制限の添え字
+	private int _limit_turn = 0;	// 残りターン数
+	private int _elapsed_turn = 0;	// 経過ターン数
 
 	// プロパティ定義
 
+	/// <value>専用データ</value>
+	private DungeonTurnStateData _Data => _DungeonScene.TurnData;
+
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	private Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 
 	/// <summary>
@@ -107,8 +113,9 @@ public class DungeonTurnState : MonoBehaviour
 	private void OnEnable()
 	{
 		// イベント接続
-		DungeonScene.Player.GetComponent<InputMove>().OnMoveStarted += OnMoveStarted;	// プレイヤー移動時処理を接続
-		DungeonScene.Player.GetComponent<InputAttack>().OnAttacked += OnAttacked;	// プレイヤー攻撃時処理を接続
+		_DungeonScene.Player.GetComponent<InputMove>().OnMoveStarted += OnMoveStarted;	// プレイヤー移動時処理を接続
+		_DungeonScene.Player.GetComponent<InputAttack>().OnAttacked += OnAttacked;	// プレイヤー攻撃時処理を接続
+		_DungeonScene.Player.GetComponent<InputWait>().OnWaitStarted += OnWaitStarted;	// プレイヤー待機時処理を接続
 	}
 
 
@@ -120,8 +127,9 @@ public class DungeonTurnState : MonoBehaviour
 		// イベント解除
 		if (SceneLoader.NullCheck)	// ヌルチェック
 		{
-			DungeonScene.Player.GetComponent<InputMove>().OnMoveStarted -= OnMoveStarted;	// プレイヤー移動時処理を解除
-			DungeonScene.Player.GetComponent<InputAttack>().OnAttacked -= OnAttacked;	// プレイヤー攻撃時処理を解除
+			_DungeonScene.Player.GetComponent<InputMove>().OnMoveStarted -= OnMoveStarted;	// プレイヤー移動時処理を解除
+			_DungeonScene.Player.GetComponent<InputAttack>().OnAttacked -= OnAttacked;	// プレイヤー攻撃時処理を解除
+			_DungeonScene.Player.GetComponent<InputWait>().OnWaitStarted -= OnWaitStarted;	// プレイヤー待機時処理を解除
 		}
 	}
 
@@ -143,6 +151,60 @@ public class DungeonTurnState : MonoBehaviour
 	{
 		// ターンの実行
 		StartCoroutine(TurnFlow(TurnCommandType.ATTACK));	// 攻撃によってターンを起動する
+	}
+
+
+	/// <summary>
+	/// <para>プレイヤー待機時処理</para>
+	/// </summary>
+	private void OnWaitStarted()
+	{
+		// ターンの実行
+		StartCoroutine(TurnFlow(TurnCommandType.ATTACK));	// 待機によってターンを起動する
+	}
+
+
+	/// <summary>
+	/// <para>ターンカウント処理</para>
+	/// </summary>
+	private void ElapsedTurnCount()
+	{
+		// 更新
+		_elapsed_turn++;	// 現在値更新
+
+		// 上限管理
+		if (_Data.TurnLimits.Length > 0)	// 上限を扱う
+		{
+			// 更新
+			_limit_turn--;	// ターン消費
+
+			// 到達検査
+			if (!(_limit_turn > 0))	// 上限に到達
+			{
+				// メッセージ通知
+				if (!(_limit_turn_idx < 0))	// 初回更新でない
+				{
+					//TODO:メッセージログ
+#if UNITY_EDITOR
+					Debug.Log(_Data.TurnLimits[_limit_turn_idx].log_text);
+#endif	// end UNITY_EDITOR
+				}
+
+				// 上限更新
+				if (_limit_turn_idx < _Data.TurnLimits.Length - 1)	// まだ次がある
+				{
+					_limit_turn_idx++;	// 
+					_limit_turn = _Data.TurnLimits[_limit_turn_idx].turn_threshold;	// 新たな余裕値を獲得
+				}
+				else	// 最終上限に到達
+				{
+					// TODO: 負け処理
+#if UNITY_EDITOR
+					Debug.Log("風に吹き飛ばされてダンジョンから退出");
+#endif	// end UNITY_EDITOR
+				}
+			}
+		}
 	}
 
 
@@ -186,6 +248,7 @@ public class DungeonTurnState : MonoBehaviour
 		{
 			OnTurnChanged.Invoke();	// ターン変更時イベント発行
 		}
+		ElapsedTurnCount();	// ターンを数える
 		yield return null;	// フレーム処理終了！次フレームを待つ
 	}
 

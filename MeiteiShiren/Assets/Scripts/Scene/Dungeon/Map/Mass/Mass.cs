@@ -72,7 +72,7 @@ public class Mass : VirtualizeMono
 	// プロパティ定義
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	protected Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	protected Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 	/// <value>アイテムが乗っているならインスタンスを取得</value>
 	public Item AboveItem => _above_item?.Instance;
@@ -93,7 +93,7 @@ public class Mass : VirtualizeMono
 		Visualize();	// 視覚化
 
 		// イベント接続
-		DungeonScene.TurnFlow.OnMassAction += TurnedAction;	// 行動指示時処理を接続
+		_DungeonScene.TurnFlow.OnMassAction += TurnedAction;	// 行動指示時処理を接続
 	}
 
 
@@ -107,7 +107,7 @@ public class Mass : VirtualizeMono
 		var _mesh_filter = gameObject.AddComponent<MeshFilter>();	// メッシュ管理機能
 
 		// メッシュ作成
-		gameObject.AddComponent<MeshRenderer>().material = DungeonScene.FloorData.MapData.GroundTexture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
+		gameObject.AddComponent<MeshRenderer>().material = _DungeonScene.FloorData.MapData.GroundTexture;	// メッシュの描画機能を追加し、その参照マテリアルをマップに合わせて変更
 		_mesh.vertices = Settings.Instance.Map.MassVertices;	// メッシュの頂点情報を設定
 		_mesh.triangles = _INDICES;	// メッシュの頂点インデックスを設定
 		_mesh.RecalculateNormals();	// 法線を再計算

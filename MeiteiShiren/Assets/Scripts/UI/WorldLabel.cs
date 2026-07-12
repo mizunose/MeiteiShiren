@@ -27,6 +27,7 @@ public class WorldLabel : MonoBehaviour
 	private float _timer = 0.0f;	// 経過時間
 	private TextMeshProUGUI _text_label;	// テキスト
 	private Transform _target;	// 表示場所の基準(ワールド空間)
+	private Vector3 _last_target;	// 表示座標退避領域
 	private Vector3 _shift;	// 表示位置のずらし(アニメーション用)
 
 
@@ -90,7 +91,7 @@ public class WorldLabel : MonoBehaviour
 		if (_timer < Settings.Instance.WorldLabel.PrintTime)	// 通常表示中
 		{
 			// 移動値算出
-			_shift += Vector3.right * Settings.Instance.WorldLabel.Amplitude * Mathf.Sin(2.0f * Mathf.PI * _timer * Settings.Instance.WorldLabel.Frequency / Settings.Instance.WorldLabel.PrintTime);
+			_shift += Vector3.right * Settings.Instance.WorldLabel.Amplitude * Mathf.Sin(2.0f * Mathf.PI * _timer * Settings.Instance.WorldLabel.Frequency / Settings.Instance.WorldLabel.PrintTime);	// イージング移動値
 		}
 		else	// 表示終了
 		{
@@ -155,10 +156,11 @@ public class WorldLabel : MonoBehaviour
 		if (_target)	// 基準が存在
 		{
 			_text_label.rectTransform.position = Camera.main.WorldToScreenPoint(_target.position);	// 表示位置更新
+			_last_target = _target.position;	// 表示座標を記憶
 		}
 		else	// 基準が失われた
 		{
-			_text_label.rectTransform.position -= _shift;	// 移動値から元の値を復元
+			_text_label.rectTransform.position = Camera.main.WorldToScreenPoint(_last_target);	// 元の値から算出
 		}
 	}
 }

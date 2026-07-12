@@ -86,6 +86,10 @@ public class Damage : Affect
 			{
 				_final_damage = _hit_point.HP - 1;	// 1残すダメージに補正する
 			}
+			if (_final_damage < 0)	// 最終ダメージ値が負
+			{
+				_final_damage = 0;	// 負数もダメージが発生していないものとして扱う
+			}
 
 			// ダメージ処理
 			_hit_point.HP -= _final_damage;	// ダメージを与える
@@ -95,9 +99,9 @@ public class Damage : Affect
 			WorldLabel _printer = _print_object.AddComponent<WorldLabel>();	// ダメージ表示機能
 
 			// 初期化
+			_printer.transform.SetParent(SceneLoader.Instance.CurrentScene.transform);	// 親子付け
 			_printer.SetTextColor(Settings.Instance.WorldLabel.DamageColor);	// テキスト色変更
 			_printer.SetValue($"{_final_damage}", opponent.transform);	// ダメージ表示
-			_printer.transform.SetParent(opponent.transform, false);	// 親子付け
 		}
 	}
 

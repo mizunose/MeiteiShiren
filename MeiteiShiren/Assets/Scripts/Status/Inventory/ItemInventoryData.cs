@@ -38,7 +38,7 @@ public class ItemInventoryData : CreatableData
 	public List<Item> ItemInventory => _items;
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	protected Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	protected Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 
 	/// <summary>
@@ -93,7 +93,7 @@ public class ItemInventoryData : CreatableData
 		}
 
 		// 変数宣言
-		var _dropable_masses = _drop_range.CalculateAroundTarget(_user_mass, Vector2Int.up, DungeonScene.FloorData.MapData.Masses);	// 置くマスの候補
+		var _dropable_masses = _drop_range.CalculateAroundTarget(_user_mass, Vector2Int.up, _DungeonScene.FloorData.MapData.Masses);	// 置くマスの候補
 		Mass _drop_mass = null;	// 実際に置くマス
 
 		// 配置可能マス走査

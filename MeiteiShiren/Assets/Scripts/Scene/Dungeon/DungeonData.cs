@@ -9,6 +9,7 @@
 =====*/
 
 // 名前空間宣言
+using Cinemachine;
 using System;
 using UnityEngine;
 
@@ -43,7 +44,9 @@ public class DungeonData : CreatableData
 	// 変数宣言
 	[Header("ステータス")]
 	[SerializeField, Tooltip("階層")] private FloorData[] _floor_datas;
+	[SerializeField, Tooltip("ターン管理データ")] DungeonTurnStateData _turn_data;
 	[SerializeField, Tooltip("操作キャラ")] private GameObject _player;	//TODO:チーム配置
+	[SerializeField, Tooltip("キャラカメラ")] private CinemachineVirtualCamera _tracker_virtual_camera;	//TODO:チームに移植
 	[SerializeField, Tooltip("階層移動演出")] private TransitionDatas _floor_transitions;
 	[SerializeField, Tooltip("クリア後のシーン")]private SceneData _next_scene = null;
 	[SerializeField, Tooltip("クリア時のトランジション")]private TransitionDatas _cleared_transitions = null;
@@ -53,8 +56,14 @@ public class DungeonData : CreatableData
 	/// <value><see cref="_floor_datas"/></value>
 	public FloorData[] FloorDatas => _floor_datas;
 
+	/// <value><see cref="_turn_data"/></value>
+	public DungeonTurnStateData TurnData => _turn_data;
+
 	/// <value><see cref="_player"/></value>
 	public GameObject Player => _player;
+
+	/// <value><see cref="_tracker_virtual_camera"/></value>
+	public CinemachineVirtualCamera TrackerVirtualCamera => _tracker_virtual_camera;
 
 	/// <value><see cref="_floor_transitions"/></value>
 	public TransitionDatas FloorTransitions => _floor_transitions;
