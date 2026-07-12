@@ -111,6 +111,15 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Wait"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""e2d23bf8-303e-47bb-8787-13e9f7e5efdb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Skill"",
                     ""type"": ""Button"",
                     ""id"": ""1478bd3a-81c8-4699-a697-1f5ed26aafa9"",
@@ -277,6 +286,17 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
                     ""action"": ""OpenMap"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c65b594c-47e1-447d-b838-a5e97b30a9b3"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Wait"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -287,6 +307,7 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
+        m_Player_Wait = m_Player.FindAction("Wait", throwIfNotFound: true);
         m_Player_Skill = m_Player.FindAction("Skill", throwIfNotFound: true);
         m_Player_StraightDush = m_Player.FindAction("StraightDush", throwIfNotFound: true);
         m_Player_ItemSearchDush = m_Player.FindAction("ItemSearchDush", throwIfNotFound: true);
@@ -374,6 +395,7 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Attack;
+    private readonly InputAction m_Player_Wait;
     private readonly InputAction m_Player_Skill;
     private readonly InputAction m_Player_StraightDush;
     private readonly InputAction m_Player_ItemSearchDush;
@@ -398,6 +420,10 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Attack".
         /// </summary>
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Wait".
+        /// </summary>
+        public InputAction @Wait => m_Wrapper.m_Player_Wait;
         /// <summary>
         /// Provides access to the underlying input action "Player/Skill".
         /// </summary>
@@ -450,6 +476,9 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
+            @Wait.started += instance.OnWait;
+            @Wait.performed += instance.OnWait;
+            @Wait.canceled += instance.OnWait;
             @Skill.started += instance.OnSkill;
             @Skill.performed += instance.OnSkill;
             @Skill.canceled += instance.OnSkill;
@@ -482,6 +511,9 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
+            @Wait.started -= instance.OnWait;
+            @Wait.performed -= instance.OnWait;
+            @Wait.canceled -= instance.OnWait;
             @Skill.started -= instance.OnSkill;
             @Skill.performed -= instance.OnSkill;
             @Skill.canceled -= instance.OnSkill;
@@ -551,6 +583,13 @@ public partial class @IngameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Wait" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWait(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Skill" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

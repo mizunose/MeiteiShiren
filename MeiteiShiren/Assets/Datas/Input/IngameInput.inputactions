@@ -25,6 +25,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Wait",
+                    "type": "PassThrough",
+                    "id": "e2d23bf8-303e-47bb-8787-13e9f7e5efdb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Skill",
                     "type": "Button",
                     "id": "1478bd3a-81c8-4699-a697-1f5ed26aafa9",
@@ -189,6 +198,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "OpenMap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c65b594c-47e1-447d-b838-a5e97b30a9b3",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Wait",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

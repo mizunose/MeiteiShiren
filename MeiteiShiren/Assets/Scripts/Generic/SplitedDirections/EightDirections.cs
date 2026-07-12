@@ -35,7 +35,7 @@ public class EightDirections : SplitedDirections
 	public override Vector2Int CalculateSplitedDirectionInt(float angle)
 	{
 		// 初期化
-		switch ((int)((angle + _ROUND_DEGREE / SPLIT_DIRECTION / 2) / (_ROUND_DEGREE / SPLIT_DIRECTION)))	// 攻撃方向によって分岐
+		switch ((int)(angle / (_ROUND_DEGREE / SPLIT_DIRECTION)))	// 方向によって分岐
 		{
 			// 0 / 8
 			case 0:

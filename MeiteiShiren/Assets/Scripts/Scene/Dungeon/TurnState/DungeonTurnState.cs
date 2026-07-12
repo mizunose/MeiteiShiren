@@ -115,6 +115,7 @@ public class DungeonTurnState : MonoBehaviour
 		// イベント接続
 		_DungeonScene.Player.GetComponent<InputMove>().OnMoveStarted += OnMoveStarted;	// プレイヤー移動時処理を接続
 		_DungeonScene.Player.GetComponent<InputAttack>().OnAttacked += OnAttacked;	// プレイヤー攻撃時処理を接続
+		_DungeonScene.Player.GetComponent<InputWait>().OnWaitStarted += OnWaitStarted;	// プレイヤー待機時処理を接続
 	}
 
 
@@ -128,6 +129,7 @@ public class DungeonTurnState : MonoBehaviour
 		{
 			_DungeonScene.Player.GetComponent<InputMove>().OnMoveStarted -= OnMoveStarted;	// プレイヤー移動時処理を解除
 			_DungeonScene.Player.GetComponent<InputAttack>().OnAttacked -= OnAttacked;	// プレイヤー攻撃時処理を解除
+			_DungeonScene.Player.GetComponent<InputWait>().OnWaitStarted -= OnWaitStarted;	// プレイヤー待機時処理を解除
 		}
 	}
 
@@ -149,6 +151,16 @@ public class DungeonTurnState : MonoBehaviour
 	{
 		// ターンの実行
 		StartCoroutine(TurnFlow(TurnCommandType.ATTACK));	// 攻撃によってターンを起動する
+	}
+
+
+	/// <summary>
+	/// <para>プレイヤー待機時処理</para>
+	/// </summary>
+	private void OnWaitStarted()
+	{
+		// ターンの実行
+		StartCoroutine(TurnFlow(TurnCommandType.ATTACK));	// 待機によってターンを起動する
 	}
 
 
