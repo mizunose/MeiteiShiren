@@ -30,7 +30,7 @@ public class Hunger : MonoBehaviour
 	// プロパティ定義
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	private Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 	/// <value>空腹値</value>
 	public int Value
@@ -69,7 +69,7 @@ public class Hunger : MonoBehaviour
 		_value = 10;	//TODO:ダンジョン突入時は100、それ以外は探索データを用いて初期化
 
 		// イベント接続
-		DungeonScene.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン変更時処理を接続
+		_DungeonScene.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン変更時処理を接続
 	}
 
 

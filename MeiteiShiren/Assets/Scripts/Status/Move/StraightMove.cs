@@ -28,7 +28,7 @@ public class StraightMove : Move
 	// プロパティ定義
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	private Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 	/// <value><see cref="_data"/></value>
 	protected override MoveData _Data => _data;
@@ -105,17 +105,17 @@ public class StraightMove : Move
 		Vector2Int _next_mass_idx = Map.PositionToMass(_world_moved);	// 移動先のワールド座標から該当マスの番号を取得
 
 		// 保全
-		if (_next_mass_idx.x < 0 || _next_mass_idx.x >= DungeonScene.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
+		if (_next_mass_idx.x < 0 || _next_mass_idx.x >= _DungeonScene.FloorData.MapData.Masses.GetLength(1))	// x軸方向に見てマップ外のマス
 		{
 			_next_mass_idx.x = _current_mass_idx.x;	// 移動先として選択させない
 		}
-		if (_next_mass_idx.y < 0 ||_next_mass_idx.y >= DungeonScene.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
+		if (_next_mass_idx.y < 0 ||_next_mass_idx.y >= _DungeonScene.FloorData.MapData.Masses.GetLength(0))	// y軸方向に見てマップ外のマス
 		{
 			_next_mass_idx.y = _current_mass_idx.y;	// 移動先として選択させない
 		}
 
 		// 変数宣言
-		Mass _next_mass = DungeonScene.FloorData.MapData.Masses[_next_mass_idx.y, _next_mass_idx.x];	// 移動先のマス番号からマス本体を取得
+		Mass _next_mass = _DungeonScene.FloorData.MapData.Masses[_next_mass_idx.y, _next_mass_idx.x];	// 移動先のマス番号からマス本体を取得
 		
 		// 移動可否検査
 		if(!IsMovable(_next_mass))	// 移動不可能

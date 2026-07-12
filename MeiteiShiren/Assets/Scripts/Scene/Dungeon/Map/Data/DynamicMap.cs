@@ -68,7 +68,7 @@ public class DynamicMap : MapData
 	public override Vector2Int MapSize => _size + Vector2Int.one * _arround_wall * 2;
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	private Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 
 	/// <summary>
@@ -993,7 +993,7 @@ public class DynamicMap : MapData
 			GameObject _contact_object = new GameObject();	// 接続部屋のインスタンス
 
 			// 初期化
-			_contact_object.transform.SetParent(DungeonScene.Map.transform, false);	// マップの子に登録
+			_contact_object.transform.SetParent(_DungeonScene.Map.transform, false);	// マップの子に登録
 			if (_contact_idx == 0)	// 主部分
 			{
 				MainContact = _contact_object;	// 主部分を意味
@@ -1055,7 +1055,7 @@ public class DynamicMap : MapData
 		// プレイヤー作成	//TODO:チーム配置
 		_main_spwan_masses.RemoveAt(_player_spawn_idx);	// プレイヤー生成に使うマスなので他の生成に使わない
 		_player_position = PositionAreaToMap(_player_position);	// マップでの構成に位置を補正
-		Masses[_player_position.y, _player_position.x].AddCharacter(DungeonScene.Player);	// 対象マスに管理させる
+		Masses[_player_position.y, _player_position.x].AddCharacter(_DungeonScene.Player);	// 対象マスに管理させる
 
 		// 変数宣言
 		int _item_count = UnityEngine.Random.Range(_min_set_items, _min_set_items + _margin_set_items + 1);
@@ -1200,7 +1200,7 @@ public class DynamicMap : MapData
 				Mass _mass = null;	// マスの機能
 
 				// 初期化
-				_mass_object.transform.SetParent(DungeonScene.Map.transform, false);	// マップの子に登録
+				_mass_object.transform.SetParent(_DungeonScene.Map.transform, false);	// マップの子に登録
 #if UNITY_EDITOR
 				_mass_object.name = "Mass_" + _x_idx + "_" + _y_idx;	// デバッグ時にはわかりやすいように命名しておく
 #endif	// end UNITY_EDITOR

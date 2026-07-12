@@ -30,7 +30,7 @@ public abstract class RushItem : Item
 	// プロパティ定義
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	protected Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	protected Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 	/// <value><see cref="_data"/></value>
 	public override ItemData Data => _data;
@@ -57,7 +57,7 @@ public abstract class RushItem : Item
 		var _rush_direction = _movable_directions.CalculateSplitedDirectionInt(user.gameObject.transform.eulerAngles.y);	// 突撃方向
 		Mass _user_mass = user.transform.parent.GetComponent<Mass>();	// 使用者が居るマス
 		var _start_mass_idx = Map.PositionToMass(_user_mass.transform.position) + _rush_direction;	// モーション開始マス番号
-		var _start_mass = DungeonScene.FloorData.MapData.Masses[_start_mass_idx.y, _start_mass_idx.x];	// モーション開始時の配置マス
+		var _start_mass = _DungeonScene.FloorData.MapData.Masses[_start_mass_idx.y, _start_mass_idx.x];	// モーション開始時の配置マス
 		Mass _end_mass = null;	// モーション終了時の到達マス
 
 		// 初期化

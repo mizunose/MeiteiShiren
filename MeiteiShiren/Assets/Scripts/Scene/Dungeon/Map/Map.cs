@@ -24,7 +24,7 @@ public class Map : MonoBehaviour
 	// プロパティ定義
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	private Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 
 	/// <summary>
@@ -33,7 +33,7 @@ public class Map : MonoBehaviour
 	private void Start()
 	{
 		// 変数宣言
-		MapData _data = DungeonScene.FloorData.MapData;	// データ
+		MapData _data = _DungeonScene.FloorData.MapData;	// データ
 
 		// マップ生成
 		if(_data)	// データ有り

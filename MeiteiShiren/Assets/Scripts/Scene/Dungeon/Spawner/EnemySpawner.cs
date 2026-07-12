@@ -25,7 +25,7 @@ public class EnemySpawner : MonoBehaviour
 	// プロパティ定義
 
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
-	private Dungeon DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
+	private Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 
 
 	/// <summary>
@@ -34,7 +34,7 @@ public class EnemySpawner : MonoBehaviour
 	private void Start()
 	{
 		// イベント接続
-		DungeonScene.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン終了時処理を接続
+		_DungeonScene.TurnFlow.OnTurnChanged += OnTurnChanged;	// ターン終了時処理を接続
 	}
 
 
@@ -50,7 +50,7 @@ public class EnemySpawner : MonoBehaviour
 		if (_turn_count > Settings.Instance.EnemySpawner.CycleInterval)	// 必要な経過ターンが経った
 		{
 			_turn_count = 0;	// カウント初期化
-			DungeonScene.FloorData.EnemySpawnData.Spwan();	// 生成処理
+			_DungeonScene.FloorData.EnemySpawnData.Spwan();	// 生成処理
 		}
 	}
 }

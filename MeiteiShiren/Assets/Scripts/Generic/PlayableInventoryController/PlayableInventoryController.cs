@@ -58,14 +58,14 @@ public class PlayableInventoryController : Mass
 	public override void Boot(Transform user)
 	{
 		// プレイヤ操作
-		if (user == DungeonScene.Player.transform)	// プレイヤーが乗った
+		if (user == _DungeonScene.Player.transform)	// プレイヤーが乗った
 		{
 			// 生成
-			_confirm_drop_down = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
-			_confirm_message_box = Instantiate(DungeonScene.FloorData.MapData.StairData.ConfirmMessageBox);	// 選択UIのインスタンス生成
+			_confirm_drop_down = Instantiate(_DungeonScene.FloorData.MapData.StairData.ConfirmDropDown);	// 選択UIのインスタンス生成
+			_confirm_message_box = Instantiate(_DungeonScene.FloorData.MapData.StairData.ConfirmMessageBox);	// 選択UIのインスタンス生成
 
 			// 初期化
-			_confirm_message_box.SetValue(DungeonScene.FloorData.MapData.StairData.ConfirmText);	// 表示テキスト設定
+			_confirm_message_box.SetValue(_DungeonScene.FloorData.MapData.StairData.ConfirmText);	// 表示テキスト設定
 
 			// イベント接続
 			_confirm_drop_down.YesEvent.signal += ConfirmedBootYes;	// 「はい」選択時の処理
@@ -91,7 +91,7 @@ public class PlayableInventoryController : Mass
 	private void ConfirmedBootYes()
 	{
 		ConfirmedBoot();	// 選択時処理
-		DungeonScene.BootSwitchFloor();	// 階層移動を実行
+		_DungeonScene.BootSwitchFloor();	// 階層移動を実行
 	}
 
 
