@@ -68,7 +68,7 @@ public class Dungeon : Scene
 	private void Start()
 	{
 		// 変数宣言
-		var _character_camera = Instantiate(_data.TrackerVirtualCamera);	// カメラ生成
+		var _character_camera = Instantiate(_data.TrackerVirtualCamera, SceneLoader.Instance.CurrentScene.transform);	// カメラ生成
 
 		// 初期化
 		Player = Instantiate(_data.Player);	// プレイヤー生成
