@@ -26,6 +26,9 @@ public class EnemySpawnData : CreatableData
 
 	// プロパティ定義
 
+	/// <value><see cref="_enemies"/></value>
+	public GameObject[] Enemies => _enemies;
+
 	/// <value>現在シーンがダンジョンならインスタンスを取得</value>
 	private Dungeon _DungeonScene => SceneLoader.Instance.CurrentScene as Dungeon;
 

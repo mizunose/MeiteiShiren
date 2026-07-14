@@ -27,6 +27,7 @@ public class DynamicMap : MapData
 		PUBLIC_ROOM,	// 通常部屋
 		PRIVATE_ROOM,	// 隠し部屋
 		SHOP,	// 商店
+		MONSTER_HOUSE,	// 商店
 		STAIR,	// 階段
 		WALL,	// 壁
 		MAX	// 要素数
@@ -55,8 +56,9 @@ public class DynamicMap : MapData
 	[SerializeField, Tooltip("空間分割の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _area_split_threshold = 0;
 	[SerializeField, Tooltip("部屋掘削の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _room_sharpen_threshold = 0;
 	[SerializeField, Tooltip("入口設立の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_entrance_threshold = 0;
-	[Header("商店作成")]
+	[Header("特殊部屋")]
 	[SerializeField, Tooltip("商店作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_shop_threshold = 0;
+	[SerializeField, Tooltip("モンスターハウス作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_monster_house_threshold = 0;
 	[Header("動的配置")]
 	[SerializeField, Tooltip("アイテム配置数最低値"), Min(0)] private int _min_set_items;
 	[SerializeField, Tooltip("アイテム配置数猶予(最低値に加えていくつまで配置して良いか)"), Min(0)] private int _margin_set_items;
@@ -897,10 +899,10 @@ public class DynamicMap : MapData
 		}
 
 		// 変数宣言
-		List<RectInt> _main_contact = _room_contacts[0];	// 主部分連続区域
+		List<RectInt> _main_contact = new(_room_contacts[0]);	// 主部分連続区域
 
 		// 商店作成
-		if (UnityEngine.Random.Range(0, _RATIO_RAND_RANGE_MAX) < _make_shop_threshold)	// 閾値チェックに成功
+		if (_main_contact.Count > 1 && UnityEngine.Random.Range(0, _RATIO_RAND_RANGE_MAX) < _make_shop_threshold)	// 閾値チェックに成功 ※変換後もゴール等を設けるスペースがある場合のみ
 		{
 			// 変数宣言
 			int _shop_idx = UnityEngine.Random.Range(0, _main_contact.Count);	// 商店にする部屋の番号
@@ -918,6 +920,34 @@ public class DynamicMap : MapData
 					}
 				}
 			}
+
+			// 配列管理
+			_main_contact.RemoveAt(_shop_idx);	// 商店作成に使用したため、今後扱わない
+		}
+
+
+		// モンスターハウス作成
+		if (_main_contact.Count > 1 && UnityEngine.Random.Range(0, _RATIO_RAND_RANGE_MAX) < _make_monster_house_threshold)	// 閾値チェックに成功 ※変換後もゴール等を設けるスペースがある場合のみ
+		{
+			// 変数宣言
+			int _monster_house_idx = UnityEngine.Random.Range(0, _main_contact.Count);	// モンスターハウスにする部屋の番号
+			RectInt _monster_house_area = _main_contact[_monster_house_idx];	// モンスターハウス
+			
+			// 部屋をモンスターハウスに変換
+			for (int _y_idx = _monster_house_area.yMin; _y_idx < _monster_house_area.yMax; _y_idx++)	// 行単位でのループ
+			{
+				for (int _x_idx = _monster_house_area.xMin; _x_idx < _monster_house_area.xMax; _x_idx++)	// マス単位でのループ
+				{
+					if (IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
+					{
+						// 階層の情報を更新
+						_area_infos[_y_idx][_x_idx] = MassType.MONSTER_HOUSE;	// 部屋をモンスターハウスに変換する
+					}
+				}
+			}
+			
+			// 配列管理
+			_main_contact.RemoveAt(_monster_house_idx);	// 商店作成に使用したため、今後扱わない
 		}
 
 		// 変数宣言
@@ -1106,7 +1136,12 @@ public class DynamicMap : MapData
 
 					// 商店
 					case MassType.SHOP:
-						pixels[_y_idx * MapSize.x + _x_idx] = new Color(1.0f, 0.2f, 0.2f, 1.0f);
+						pixels[_y_idx * MapSize.x + _x_idx] = new Color(1.0f, 0.4f, 0.4f, 1.0f);
+						break;	// 分岐処理完了
+
+					// 商店
+					case MassType.MONSTER_HOUSE:
+						pixels[_y_idx * MapSize.x + _x_idx] = new Color(1.0f, 0.0f, 0.0f, 1.0f);
 						break;	// 分岐処理完了
 
 					// 壁
@@ -1174,7 +1209,7 @@ public class DynamicMap : MapData
 	private bool IsRoomType(MassType target)
 	{
 		// 提供
-		return target == MassType.PUBLIC_ROOM || target == MassType.PRIVATE_ROOM || target == MassType.SHOP;	// 部屋に分類できるマス種か
+		return target == MassType.PUBLIC_ROOM || target == MassType.PRIVATE_ROOM || target == MassType.SHOP || target == MassType.MONSTER_HOUSE;	// 部屋に分類できるマス種か
 	}
 
 
@@ -1210,7 +1245,12 @@ public class DynamicMap : MapData
 				{
 					// 商店
 					case MassType.SHOP:
-						_mass = _mass_object.AddComponent<Mass>();	// マスの機能作成	//TODO:商店マスとして生成
+						_mass = _mass_object.AddComponent<ShopMass>();	// マスの機能作成
+						break;	// 分岐処理完了
+
+					// 商店
+					case MassType.MONSTER_HOUSE:
+						_mass = _mass_object.AddComponent<MonsterHouse>();	// マスの機能作成
 						break;	// 分岐処理完了
 
 					// 階段

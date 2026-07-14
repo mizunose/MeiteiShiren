@@ -94,6 +94,9 @@ public class Stair : Mass
 	/// <param name="user">起動者</param>
 	public override void Boot(Transform user)
 	{
+		// 継承
+		base.Boot(user);	// 親クラスの実行
+
 		// プレイヤ操作
 		if (user == _DungeonScene.Player.transform)	// プレイヤーが乗った
 		{

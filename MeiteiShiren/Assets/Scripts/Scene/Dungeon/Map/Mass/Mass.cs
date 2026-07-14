@@ -10,8 +10,6 @@
 
 // 名前空間宣言
 using UnityEngine;
-using UnityEngine.TextCore.Text;
-using static UnityEditor.Progress;
 
 // クラス定義
 
@@ -119,11 +117,13 @@ public class Mass : VirtualizeMono
 	/// <summary>
 	/// <para>ターン制行動</para>
 	/// </summary>
-	private void TurnedAction()
+	protected virtual void TurnedAction()
 	{
 		// アイテム回収
 		if (_character_inventory != null && _above_item != null && !_above_character.IsTargeted)	// インベントリを持っていて、アイテムを受け取れ、まだ処理していない
 		{
+			// TODO:キャラに負債デバフがあり、且つ商店外なら、精算イベント
+
 			if (_character_inventory.AddItem(_above_item.Instance))	// インベントリに登録
 			{
 				_above_item = null;	// アイテムを託したため管理から外す
@@ -225,7 +225,6 @@ public class Mass : VirtualizeMono
 	/// </summary>
 	public GameObject ReleaseCharacter()
 	{
-		
 		// すでにキャラクタがいる場合受け入れない
 		if (_above_character?.Instance)	// ヌルチェック
 		{

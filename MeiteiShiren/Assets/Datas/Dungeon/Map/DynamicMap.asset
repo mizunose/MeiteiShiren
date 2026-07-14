@@ -27,6 +27,7 @@ MonoBehaviour:
   _room_sharpen_threshold: 2
   _make_entrance_threshold: 30
   _make_shop_threshold: 50
+  _make_monster_house_threshold: 70
   _min_set_items: 1
   _margin_set_items: 5
   _item_list:
