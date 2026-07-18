@@ -1,5 +1,5 @@
 ﻿/*=====
-<ShopMass.cs>
+<MonsterHouse.cs>
 
 -author
 	mizunose
@@ -8,14 +8,14 @@
 	モンスターハウスを実装
 =====*/
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Unity.VisualScripting;
+// 名前空間宣言
 using UnityEngine;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
 
+// クラス定義
 
+/// <summary>
+/// <para>モンスターハウス</para>
+/// </summary>
 public class MonsterHouse : Mass
 {
 	// 変数宣言
@@ -23,8 +23,8 @@ public class MonsterHouse : Mass
 
 	// プロパティ定義
 
-	/// <value>特殊生成対象</value>
-	public List<GameObject> SpawnableEnemies { private get; set;} = null;
+	/// <value>特殊モンスターハウス情報</value>
+	public SpecialMonsterHouseData SpecialData { private get; set;} = null;
 
 
 	/// <summary>
@@ -39,6 +39,8 @@ public class MonsterHouse : Mass
 		// 起動
 		if (_is_active && user.GetComponent<Camp>()?.Type == CampData.CampType.Comrade)	// 有効時に味方陣営が起動した
 		{
+			//TODO:モンスターハウスコール→メッセージログ
+
 			// 変数宣言
 			var _room = GetComponentInParent<Room>();	// 所属する部屋を取得
 			var _room_masses = _room.GetComponentsInChildren<MonsterHouse>();	// 連動するモンスターハウスを取得
@@ -66,10 +68,10 @@ public class MonsterHouse : Mass
 				GameObject _spawn_target;	// 生成対象
 
 				// 抽選
-				if (SpawnableEnemies != null && SpawnableEnemies.Count > 0)	// 生成対象が限定されている
+				if (SpecialData?.SpawnableEnemies != null && SpecialData.SpawnableEnemies.Count > 0)	// 生成対象が限定されている
 				{
 					// 更新
-					_spawn_target = SpawnableEnemies[UnityEngine.Random.Range(0, SpawnableEnemies.Count)];	// 生成可能対象に応じてランダムに決定
+					_spawn_target = SpecialData.SpawnableEnemies[UnityEngine.Random.Range(0, SpecialData.SpawnableEnemies.Count)];	// 生成可能対象に応じてランダムに決定
 				}
 				else
 				{

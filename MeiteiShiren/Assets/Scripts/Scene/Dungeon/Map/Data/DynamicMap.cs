@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 // クラス定義
 
@@ -59,6 +60,7 @@ public class DynamicMap : MapData
 	[Header("特殊部屋")]
 	[SerializeField, Tooltip("商店作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_shop_threshold = 0;
 	[SerializeField, Tooltip("モンスターハウス作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_monster_house_threshold = 0;
+	[SerializeField, Tooltip("特殊モンスターハウス情報")] private SpecializeMonsterHouseData _specialize_monster_house_data;
 	[Header("動的配置")]
 	[SerializeField, Tooltip("アイテム配置数最低値"), Min(0)] private int _min_set_items;
 	[SerializeField, Tooltip("アイテム配置数猶予(最低値に加えていくつまで配置して良いか)"), Min(0)] private int _margin_set_items;
@@ -376,7 +378,7 @@ public class DynamicMap : MapData
 					case Edge.LEFT:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (IsRoomType(_area_infos[_idx][_room.room.xMin]))	// 削り取られていないマス
+							if (_IsRoomType(_area_infos[_idx][_room.room.xMin]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_room.room.xMin, _idx));	// 入口の候補として優先される
 							}
@@ -391,7 +393,7 @@ public class DynamicMap : MapData
 					case Edge.RIGHT:
 						for(int _idx = _room.room.yMin + 1; _idx < _room.room.yMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (IsRoomType(_area_infos[_idx][_room.room.xMax - 1]))	// 削り取られていないマス
+							if (_IsRoomType(_area_infos[_idx][_room.room.xMax - 1]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_room.room.xMax - 1, _idx));	// 入口の候補として優先される
 							}
@@ -406,7 +408,7 @@ public class DynamicMap : MapData
 					case Edge.TOP:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (IsRoomType(_area_infos[_room.room.yMin][_idx]))	// 削り取られていないマス
+							if (_IsRoomType(_area_infos[_room.room.yMin][_idx]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_idx, _room.room.yMin));	// 入口の候補として優先される
 							}
@@ -421,7 +423,7 @@ public class DynamicMap : MapData
 					case Edge.BOTTOM:
 						for(int _idx = _room.room.xMin + 1; _idx < _room.room.xMax - 1; _idx++)	// 辺のうち角以外のマス単位でのループ
 						{
-							if (IsRoomType(_area_infos[_room.room.yMax - 1][_idx]))	// 削り取られていないマス
+							if (_IsRoomType(_area_infos[_room.room.yMax - 1][_idx]))	// 削り取られていないマス
 							{
 								_entryables.Add(new Vector2Int(_idx, _room.room.yMax - 1));	// 入口の候補として優先される
 							}
@@ -913,7 +915,7 @@ public class DynamicMap : MapData
 			{
 				for (int _x_idx = _shop_area.xMin; _x_idx < _shop_area.xMax; _x_idx++)	// マス単位でのループ
 				{
-					if (IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
+					if (_IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
 					{
 						// 階層の情報を更新
 						_area_infos[_y_idx][_x_idx] = MassType.SHOP;	// 部屋を商店に変換する
@@ -926,19 +928,24 @@ public class DynamicMap : MapData
 		}
 
 
+		// 変数宣言
+		RectInt _monster_house_area = RectInt.zero;	// モンスターハウス領域
+
 		// モンスターハウス作成
 		if (_main_contact.Count > 1 && UnityEngine.Random.Range(0, _RATIO_RAND_RANGE_MAX) < _make_monster_house_threshold)	// 閾値チェックに成功 ※変換後もゴール等を設けるスペースがある場合のみ
 		{
 			// 変数宣言
 			int _monster_house_idx = UnityEngine.Random.Range(0, _main_contact.Count);	// モンスターハウスにする部屋の番号
-			RectInt _monster_house_area = _main_contact[_monster_house_idx];	// モンスターハウス
-			
+
+			// 更新
+			_monster_house_area = _main_contact[_monster_house_idx];	// モンスターハウス登録
+
 			// 部屋をモンスターハウスに変換
 			for (int _y_idx = _monster_house_area.yMin; _y_idx < _monster_house_area.yMax; _y_idx++)	// 行単位でのループ
 			{
 				for (int _x_idx = _monster_house_area.xMin; _x_idx < _monster_house_area.xMax; _x_idx++)	// マス単位でのループ
 				{
-					if (IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
+					if (_IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
 					{
 						// 階層の情報を更新
 						_area_infos[_y_idx][_x_idx] = MassType.MONSTER_HOUSE;	// 部屋をモンスターハウスに変換する
@@ -1014,7 +1021,7 @@ public class DynamicMap : MapData
 		Masses = new Mass[MapSize.y, MapSize.x];	// マス管理のリサイズ
 
 		// マス作成
-		MakeMass(_map_info);
+		_MakeMass(_map_info);
 
 		// 連続区域のインスタンス作成
 		for (int _contact_idx = 0; _contact_idx < _room_contacts.Count; _contact_idx++)	// 連続区域単位でのループ
@@ -1062,10 +1069,10 @@ public class DynamicMap : MapData
 				{
 					for (int _x_idx = _room_contacts[_contact_idx][_room_idx].xMin; _x_idx < _room_contacts[_contact_idx][_room_idx].xMax; _x_idx++)	// マス単位でのループ
 					{
-						if (IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
+						if (_IsRoomType(_area_infos[_y_idx][_x_idx]))	// 部屋のマス
 						{
 							// 変数宣言
-							Vector2Int _position_on_map = PositionAreaToMap(new Vector2Int(_x_idx, _y_idx));	// マップ上での位置
+							Vector2Int _position_on_map = _PositionAreaToMap(new Vector2Int(_x_idx, _y_idx));	// マップ上での位置
 
 							// 初期化
 							Masses[_position_on_map.y, _position_on_map.x].transform.SetParent(_room_object.transform, false);	// 部屋にマスを持たせる
@@ -1084,7 +1091,7 @@ public class DynamicMap : MapData
 
 		// プレイヤー作成	//TODO:チーム配置
 		_main_spwan_masses.RemoveAt(_player_spawn_idx);	// プレイヤー生成に使うマスなので他の生成に使わない
-		_player_position = PositionAreaToMap(_player_position);	// マップでの構成に位置を補正
+		_player_position = _PositionAreaToMap(_player_position);	// マップでの構成に位置を補正
 		Masses[_player_position.y, _player_position.x].AddCharacter(_DungeonScene.Player);	// 対象マスに管理させる
 
 		// 変数宣言
@@ -1100,8 +1107,31 @@ public class DynamicMap : MapData
 
 			// アイテム配置
 			_main_spwan_masses.RemoveAt(_item_spawn_idx);	// アイテム生成に使うマスなので他の生成に使わない
-			_item_position = PositionAreaToMap(_item_position);	// マップでの構成に位置を補正
+			_item_position = _PositionAreaToMap(_item_position);	// マップでの構成に位置を補正
 			Masses[_item_position.y, _item_position.x].AddItem(_created_item);	// 対象マスに管理させる
+		}
+
+		// 変数宣言
+		var _monster_house_type = _specialize_monster_house_data?.DrawLots();	// 特殊モンスターハウスのデータを抽選
+
+		// モンスターハウスの特殊化
+		if (_monster_house_type)	// ヌルチェック
+		{
+			for (int _y_idx = _monster_house_area.yMin; _y_idx < _monster_house_area.yMax; _y_idx++)	// 行単位でのループ
+			{
+				for (int _x_idx = _monster_house_area.xMin; _x_idx < _monster_house_area.xMax; _x_idx++)	// マス単位でのループ
+				{
+					if (_area_infos[_y_idx][_x_idx] == MassType.MONSTER_HOUSE)  // モンスターハウスとして扱うマス	※削られて壁となったマスなどを除外
+					{
+						// 変数宣言
+						Vector2Int _position_on_map = _PositionAreaToMap(new Vector2Int(_x_idx, _y_idx));	// マップ上での位置
+						var _target_mass= Masses[_position_on_map.y, _position_on_map.x].GetComponent<MonsterHouse>();	// 対象マス
+
+						// 更新
+						_target_mass.SpecialData = _monster_house_type;	// 特殊化設定
+					}
+				}
+			}
 		}
 
 		// テクスチャ作成
@@ -1173,7 +1203,7 @@ public class DynamicMap : MapData
 	/// </summary>
 	/// <param name="area_position">空間ベースでの位置</param>
 	/// <returns>マップベースでの位置</returns>
-	private Vector2Int PositionAreaToMap (Vector2Int area_position)
+	private Vector2Int _PositionAreaToMap (Vector2Int area_position)
 	{
 		// 変数宣言
 		Vector2Int _result = area_position;	// 演算結果格納用
@@ -1206,7 +1236,7 @@ public class DynamicMap : MapData
 	/// </summary>
 	/// <param name="target">見分ける対象</param>
 	/// <returns>マスを部屋と見做せるときtrue, そうでなければfalse</returns>
-	private bool IsRoomType(MassType target)
+	private bool _IsRoomType(MassType target)
 	{
 		// 提供
 		return target == MassType.PUBLIC_ROOM || target == MassType.PRIVATE_ROOM || target == MassType.SHOP || target == MassType.MONSTER_HOUSE;	// 部屋に分類できるマス種か
@@ -1217,7 +1247,7 @@ public class DynamicMap : MapData
 	/// <para>マスをインスタンスとして作成</para>
 	/// </summary>
 	/// <param name="_map_info">マップの構成マス情報</param>
-	private void MakeMass(List<MassType[]> _map_info)
+	private void _MakeMass(List<MassType[]> _map_info)
 	{
 		// 生成
 		for (int _y_idx = 0;  _y_idx < _map_info.Count; _y_idx++)	// 行単位でのループ
