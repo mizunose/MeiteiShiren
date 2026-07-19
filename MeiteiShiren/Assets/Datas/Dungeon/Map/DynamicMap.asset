@@ -27,9 +27,12 @@ MonoBehaviour:
   _room_sharpen_threshold: 2
   _make_entrance_threshold: 30
   _make_shop_threshold: 50
-  _make_monster_house_threshold: 99
+  _make_monster_house_threshold: 10
   _specialize_monster_house_data: {fileID: 11400000, guid: f9341b55a313df042ac7c509ad5a1fb8, type: 2}
+  _set_item_threshold_monster_house: 30
   _min_set_items: 1
   _margin_set_items: 5
-  _item_list:
-  - {fileID: -6601806260531083905, guid: d5f3ef7aca39ea7419008771ef6fca1b, type: 3}
+  _item_table:
+    _random_table:
+    - relative_probability: 1
+      target: {fileID: -6601806260531083905, guid: d5f3ef7aca39ea7419008771ef6fca1b, type: 3}

@@ -57,14 +57,16 @@ public class DynamicMap : MapData
 	[SerializeField, Tooltip("空間分割の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _area_split_threshold = 0;
 	[SerializeField, Tooltip("部屋掘削の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _room_sharpen_threshold = 0;
 	[SerializeField, Tooltip("入口設立の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_entrance_threshold = 0;
-	[Header("特殊部屋")]
+	[Header("商店")]
 	[SerializeField, Tooltip("商店作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_shop_threshold = 0;
+	[Header("モンスターハウス")]
 	[SerializeField, Tooltip("モンスターハウス作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_monster_house_threshold = 0;
 	[SerializeField, Tooltip("特殊モンスターハウス情報")] private SpecializeMonsterHouseData _specialize_monster_house_data;
-	[Header("動的配置")]
+	[SerializeField, Tooltip("アイテム再抽選成功率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _set_item_threshold_monster_house;
+	[Header("アイテム")]
 	[SerializeField, Tooltip("アイテム配置数最低値"), Min(0)] private int _min_set_items;
 	[SerializeField, Tooltip("アイテム配置数猶予(最低値に加えていくつまで配置して良いか)"), Min(0)] private int _margin_set_items;
-	[SerializeField, Tooltip("出現アイテム")] private List<Item> _item_list = new();
+	[SerializeField, Tooltip("出現アイテム")] private WeightedRandom<Item> _item_table = new();
 
 	// プロパティ定義
 
@@ -927,7 +929,6 @@ public class DynamicMap : MapData
 			_main_contact.RemoveAt(_shop_idx);	// 商店作成に使用したため、今後扱わない
 		}
 
-
 		// 変数宣言
 		RectInt _monster_house_area = RectInt.zero;	// モンスターハウス領域
 
@@ -1103,7 +1104,7 @@ public class DynamicMap : MapData
 			// 変数宣言
 			int _item_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// アイテム生成位置の番号
 			Vector2Int _item_position = _main_spwan_masses[_item_spawn_idx];	// アイテム生成マス
-			Item _created_item = Instantiate(_item_list[UnityEngine.Random.Range(0, _item_list.Count)]);	// アイテムのインスタンス
+			Item _created_item = Instantiate(_item_table.DrawLots());	// アイテムのインスタンス
 
 			// アイテム配置
 			_main_spwan_masses.RemoveAt(_item_spawn_idx);	// アイテム生成に使うマスなので他の生成に使わない
@@ -1129,6 +1130,27 @@ public class DynamicMap : MapData
 
 						// 更新
 						_target_mass.SpecialData = _monster_house_type;	// 特殊化設定
+					}
+				}
+			}
+		}
+
+		// モンスターハウスにアイテム設置
+		for (int _y_idx = _monster_house_area.yMin; _y_idx < _monster_house_area.yMax; _y_idx++)	// 行単位でのループ
+		{
+			for (int _x_idx = _monster_house_area.xMin; _x_idx < _monster_house_area.xMax; _x_idx++)	// マス単位でのループ
+			{
+				if (_area_infos[_y_idx][_x_idx] == MassType.MONSTER_HOUSE)  // モンスターハウスとして扱うマス	※削られて壁となったマスなどを除外
+				{
+					if (UnityEngine.Random.Range(0, _RATIO_RAND_RANGE_MAX) < _set_item_threshold_monster_house) // アイテム追加生成成功
+					{
+						// 変数宣言
+						Item _created_item = Instantiate(_item_table.DrawLots());	// アイテムのインスタンス
+						Vector2Int _item_position = new Vector2Int(_x_idx, _y_idx);	// アイテム生成マス
+
+						// アイテム配置
+						_item_position = _PositionAreaToMap(_item_position);	// マップでの構成に位置を補正
+						Masses[_item_position.y, _item_position.x].AddItem(_created_item);	// 対象マスに管理させる
 					}
 				}
 			}
