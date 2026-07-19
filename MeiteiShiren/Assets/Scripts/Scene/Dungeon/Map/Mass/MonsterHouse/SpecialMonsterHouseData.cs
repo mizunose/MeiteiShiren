@@ -20,11 +20,11 @@ using UnityEngine;
 public class SpecialMonsterHouseData : CreatableData
 {
 	// 変数宣言
-	[SerializeField, Tooltip("特殊生成対象")] private List<GameObject> _spawnable_enemies = null;
+	[SerializeField, Tooltip("特殊生成対象")] private WeightedRandom<GameObject> _spawnable_enemies = new();
 
 
 	// プロパティ定義
 
 	/// <value><see cref="_spawnable_enemies"/></value>
-	public List<GameObject> SpawnableEnemies => _spawnable_enemies;
+	public WeightedRandom<GameObject> SpawnableEnemies => _spawnable_enemies;
 }

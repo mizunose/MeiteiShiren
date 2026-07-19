@@ -68,18 +68,13 @@ public class MonsterHouse : Mass
 				GameObject _spawn_target;	// 生成対象
 
 				// 抽選
-				if (SpecialData?.SpawnableEnemies != null && SpecialData.SpawnableEnemies.Count > 0)	// 生成対象が限定されている
+				if (SpecialData != null && SpecialData.SpawnableEnemies.IsEmpty())	// 生成対象が限定されている
 				{
-					// 更新
-					_spawn_target = SpecialData.SpawnableEnemies[UnityEngine.Random.Range(0, SpecialData.SpawnableEnemies.Count)];	// 生成可能対象に応じてランダムに決定
+					_spawn_target = SpecialData.SpawnableEnemies.DrawLots();	// 生成可能対象に応じてランダムに決定
 				}
 				else
 				{
-					// 変数宣言
-					var _samples = _DungeonScene.FloorData.EnemySpawnData.Enemies;	// 生成対象一覧
-
-					// 更新
-					_spawn_target = _samples[UnityEngine.Random.Range(0, _samples.Length)];	// ダンジョンに応じてランダムに決定
+					_spawn_target = _DungeonScene.FloorData.EnemySpawnData.Enemies.DrawLots();	// ダンジョンに応じてランダムに決定
 				}
 
 				//変数宣言
