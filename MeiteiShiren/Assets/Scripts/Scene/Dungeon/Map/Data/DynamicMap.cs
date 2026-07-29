@@ -59,6 +59,7 @@ public class DynamicMap : MapData
 	[SerializeField, Tooltip("入口設立の打ち切り率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_entrance_threshold = 0;
 	[Header("商店")]
 	[SerializeField, Tooltip("商店作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_shop_threshold = 0;
+	[SerializeField, Tooltip("データ")] private ShopData _shop_data;
 	[Header("モンスターハウス")]
 	[SerializeField, Tooltip("モンスターハウス作成率"), Range(0, _RATIO_RAND_RANGE_MAX)] private int _make_monster_house_threshold = 0;
 	[SerializeField, Tooltip("特殊モンスターハウス情報")] private SpecializeMonsterHouseData _specialize_monster_house_data;
@@ -904,13 +905,16 @@ public class DynamicMap : MapData
 
 		// 変数宣言
 		List<RectInt> _main_contact = new(_room_contacts[0]);	// 主部分連続区域
+		RectInt _shop_area = RectInt.zero;	// 商店領域
 
 		// 商店作成
 		if (_main_contact.Count > 1 && UnityEngine.Random.Range(0, _RATIO_RAND_RANGE_MAX) < _make_shop_threshold)	// 閾値チェックに成功 ※変換後もゴール等を設けるスペースがある場合のみ
 		{
 			// 変数宣言
 			int _shop_idx = UnityEngine.Random.Range(0, _main_contact.Count);	// 商店にする部屋の番号
-			RectInt _shop_area = _main_contact[_shop_idx];	// 商店
+			
+			// 更新
+			_shop_area = _main_contact[_shop_idx];	// 商店
 			
 			// 部屋を商店に変換
 			for (int _y_idx = _shop_area.yMin; _y_idx < _shop_area.yMax; _y_idx++)	// 行単位でのループ
@@ -1096,10 +1100,10 @@ public class DynamicMap : MapData
 		Masses[_player_position.y, _player_position.x].AddCharacter(_DungeonScene.Player);	// 対象マスに管理させる
 
 		// 変数宣言
-		int _item_count = UnityEngine.Random.Range(_min_set_items, _min_set_items + _margin_set_items + 1);
+		int _item_count = UnityEngine.Random.Range(_min_set_items, _min_set_items + _margin_set_items + 1);	// アイテム配置数
 
 		// アイテム作成
-		for (int _idx = 0; _idx < _item_count; _idx++)	// 生成空間の行単位でのループ
+		for (int _idx = 0; _idx < _item_count && 0 < _main_spwan_masses.Count; _idx++)	// 生成空間の行単位でのループ
 		{
 			// 変数宣言
 			int _item_spawn_idx = UnityEngine.Random.Range(0, _main_spwan_masses.Count);	// アイテム生成位置の番号
@@ -1140,7 +1144,7 @@ public class DynamicMap : MapData
 		{
 			for (int _x_idx = _monster_house_area.xMin; _x_idx < _monster_house_area.xMax; _x_idx++)	// マス単位でのループ
 			{
-				if (_area_infos[_y_idx][_x_idx] == MassType.MONSTER_HOUSE)  // モンスターハウスとして扱うマス	※削られて壁となったマスなどを除外
+				if (_area_infos[_y_idx][_x_idx] == MassType.MONSTER_HOUSE)	// モンスターハウスとして扱うマス	※削られて壁となったマスなどを除外
 				{
 					if (UnityEngine.Random.Range(0, _RATIO_RAND_RANGE_MAX) < _set_item_threshold_monster_house) // アイテム追加生成成功
 					{
@@ -1153,6 +1157,72 @@ public class DynamicMap : MapData
 						Masses[_item_position.y, _item_position.x].AddItem(_created_item);	// 対象マスに管理させる
 					}
 				}
+			}
+		}
+
+		// 変数宣言
+		int _shop_goods_count = UnityEngine.Random.Range(_shop_data.MinSetGoods, _shop_data.MinSetGoods + _shop_data.MarginSetGoods + 1);	// 商品配置数
+
+		// ショップにアイテム設置
+		Vector2Int _vertical_shop_center = Vector2Int.one * (_shop_area.xMin - 1 + (_shop_area.width + 1) / 2) + (_shop_area.width % 2 != 0 ? Vector2Int.zero : Vector2Int.up);	// 横中央値(偶数の場合は二か所)
+		Vector2Int _horizonal_shop_center = Vector2Int.one * (_shop_area.yMin - 1 + (_shop_area.height + 1) / 2) + (_shop_area.height % 2 != 0 ? Vector2Int.zero : Vector2Int.up);	// 縦中央値(偶数の場合は二か所)
+		Vector2Int _movement = new Vector2Int(-1, 1);	// 巡回の移動量
+		int _created_goods_count = 0;	// 商品生成数
+		int _max_lap = Math.Max((_shop_area.width + 1) / 2, (_shop_area.height + 1) / 2) - _shop_data.UnsellMargin;	// 最大周回数
+
+		// 配置場所探索
+		for (int _lap = 0; _lap < _max_lap; _lap++)	// 周単位でのループ
+		{
+			// 変数宣言
+			var _vertical_indices = _vertical_shop_center + _movement * _lap;	// 扱う列
+			var _horizonal_indices = _horizonal_shop_center + _movement * _lap;	// 扱う行
+			bool _is_returnable = (_vertical_indices.y - _vertical_indices.x) * (_horizonal_indices.y - _horizonal_indices.x) != 0;	// 戻りが発生するか。trueでする。	※潰れている場合は戻りが発生しない
+			Vector2Int _searcher = new Vector2Int(_vertical_indices.x, _horizonal_indices.x + (_is_returnable ? 0 : -1));	// 探索場所	※潰れている場合は右下から始まり、そうでない場合は右下を最後に通る
+			var _steps = new (Vector2Int move, int max_count)[] {
+				(Vector2Int.up, _horizonal_indices.y - _horizonal_indices.x + (_is_returnable ? 0 : 1)),	// 縦行き	※潰れている場合戻り分がなく、初項も行きでつぶすことになる
+				(Vector2Int.right, _vertical_indices.y - _vertical_indices.x),	// 横行き
+				(Vector2Int.down, (_is_returnable ? _horizonal_indices.y - _horizonal_indices.x : 0)),	// 縦戻り
+				(Vector2Int.left, (_is_returnable ? _vertical_indices.y - _vertical_indices.x : 0)),	// 横戻り
+			};	// 探索順
+
+			// 周を巡回
+			for (int _idx = 0, _axis_idx =0; _created_goods_count < _shop_goods_count && _axis_idx < _steps.Length;)	// 軸単位でのループ
+			{
+				// 軸
+				if (!(_idx < _steps[_axis_idx].max_count))	// 軸の限界に到達
+				{
+					// 更新
+					_axis_idx++;	// 軸変更
+					_idx = 0;	// 添え字リセット
+					continue;	// 新軸でやり直す
+				}
+
+				// 更新
+				_searcher += _steps[_axis_idx].move;	// 座標更新
+				if(_searcher.x > _shop_area.xMin + _shop_data.UnsellMargin - 1 && _searcher.y > _shop_area.yMin + _shop_data.UnsellMargin - 1
+					&& _searcher.x < _shop_area.xMax - _shop_data.UnsellMargin && _searcher.y < _shop_area.yMax - _shop_data.UnsellMargin)	// 設置可能範囲
+				{
+					if (_area_infos[_searcher.y][_searcher.x] == MassType.SHOP)	// 店として扱うマス	※削られて壁となったマスなどを除外
+					{
+						// 変数宣言
+						Item _created_item = Instantiate(_shop_data.Goods.DrawLots());	// アイテムのインスタンス
+						var _set_point = _PositionAreaToMap(_searcher);	// マップでの構成に位置を補正
+						
+						// 商品配置
+						if (Masses[_set_point.y, _set_point.x].AddItem(_created_item))	// 対象マスに管理させる
+						{
+							//TODO:_created_item.Labeling();
+							_created_goods_count++;	// 生成数を更新
+						}
+#if UNITY_EDITOR
+						else
+						{
+							Debug.LogError("商品の配置が阻害されました");
+						}
+#endif	// !UNITY_EDITOR
+					}
+				}
+				_idx++;	// 添え字更新	※ここに到達できない場合は更新しないのでfor文に含めない
 			}
 		}
 

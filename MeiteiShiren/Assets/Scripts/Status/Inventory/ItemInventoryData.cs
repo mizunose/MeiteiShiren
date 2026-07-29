@@ -22,9 +22,10 @@ using UnityEngine.UIElements;
 public class ItemInventoryData : CreatableData
 {
 	// イベント定義
-	public event Action OnListChanged;	// リスト操作時のイベント
+	public event Action OnListChanged;  // リスト操作時のイベント
 
 	// 変数宣言
+	[SerializeField, Tooltip("所持上限"), Min(0)] private int _max_slot;
 	[SerializeField, Tooltip("捨てる範囲	※データ内での設定順に優先度付けされます")] private MassRange _drop_range;
 	private List<Item> _items = new();	// 管理領域
 
@@ -44,22 +45,35 @@ public class ItemInventoryData : CreatableData
 	/// <summary>
 	/// <para>アイテム保存処理</para>
 	/// </summary>
-	public void Add(Item item)
+	/// <returns>成功でtrue, 失敗でfalse</returns>
+	public bool Add(Item item)
 	{
-		// 更新
-		_items.Add(item);	// リスト登録
-
-		// イベント接続
-		item.OnDestroyed += ()=>{
+		// 容量検査
+		if (_items.Count + 1 < _max_slot)	// 容量に空きがある
+		{
 			// 更新
-			_items.Remove(item);	// 消えるアイテムを管理対象から外す
+			_items.Add(item);	// リスト登録
+
+			// イベント接続
+			item.OnDestroyed += ()=>{
+				// 更新
+				_items.Remove(item);	// 消えるアイテムを管理対象から外す
+
+				// イベント発行
+				OnListChanged?.Invoke();	// リスト操作時イベント発行
+			};	// アイテムを失ったときリストを更新する
 
 			// イベント発行
 			OnListChanged?.Invoke();	// リスト操作時イベント発行
-		};	// アイテムを失ったときリストを更新する
 
-		// イベント発行
-		OnListChanged?.Invoke();	// リスト操作時イベント発行
+			// 終了
+			return true;	// 追加に成功
+		}
+		else	// 容量に空きがない
+		{
+			// 終了
+			return false;	// 追加に失敗
+		}
 	}
 
 
